@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
-> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, code graph intelligence engine (GraphRAG), categorized memory system, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
+> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, code graph intelligence engine (GraphRAG), categorized memory system, model benchmark battery, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
 
 ---
 
@@ -14,17 +14,18 @@
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 Quick Start](#-quick-start)
 - [💻 CLI Command Reference](#-cli-command-reference)
-  - [1. Project Knowledge Graph & GraphRAG (`proton graph`)](#1-project-knowledge-graph--graphrag-proton-graph)
-  - [2. Deep Repository Inspection (`proton inspect`)](#2-deep-repository-inspection-proton-inspect)
-  - [3. Persistent Task Manager (`proton task`)](#3-persistent-task-manager-proton-task)
-  - [4. Explicit Categorized Memory (`proton memory`)](#4-explicit-categorized-memory-proton-memory)
-  - [5. Max-Level Autonomous Agent (`proton agent`)](#5-max-level-autonomous-agent-proton-agent)
-  - [6. Interactive AI Assistant (`proton`)](#6-interactive-ai-assistant-proton)
-  - [7. Terminal Web Browser (`proton browser`)](#7-terminal-web-browser-proton-browser)
-  - [8. Live Stock Market Tracker (`proton stock`)](#8-live-stock-market-tracker-proton-stock)
-  - [9. Host System Diagnostics (`proton doctor --sys`)](#9-host-system-diagnostics-proton-doctor---sys)
-  - [10. Knowledge Base & Hybrid RAG (`proton rag`)](#10-knowledge-base--hybrid-rag-proton-rag)
-  - [11. Connection Manager (`proton connection`)](#11-connection-manager-proton-connection)
+  - [1. LLM Model & Provider Benchmark (`proton benchmark`)](#1-llm-model--provider-benchmark-proton-benchmark)
+  - [2. Project Knowledge Graph & GraphRAG (`proton graph`)](#2-project-knowledge-graph--graphrag-proton-graph)
+  - [3. Deep Repository Inspection (`proton inspect`)](#3-deep-repository-inspection-proton-inspect)
+  - [4. Persistent Task Manager (`proton task`)](#4-persistent-task-manager-proton-task)
+  - [5. Explicit Categorized Memory (`proton memory`)](#5-explicit-categorized-memory-proton-memory)
+  - [6. Max-Level Autonomous Agent (`proton agent`)](#6-max-level-autonomous-agent-proton-agent)
+  - [7. Interactive AI Assistant (`proton`)](#7-interactive-ai-assistant-proton)
+  - [8. Terminal Web Browser (`proton browser`)](#8-terminal-web-browser-proton-browser)
+  - [9. Live Stock Market Tracker (`proton stock`)](#9-live-stock-market-tracker-proton-stock)
+  - [10. Host System Diagnostics (`proton doctor --sys`)](#10-host-system-diagnostics-proton-doctor---sys)
+  - [11. Knowledge Base & Hybrid RAG (`proton rag`)](#11-knowledge-base--hybrid-rag-proton-rag)
+  - [12. Connection Manager (`proton connection`)](#12-connection-manager-proton-connection)
 - [🧠 Recommended Models & Hardware Requirements](#-recommended-models--hardware-requirements)
   - [1. Small Models (1B to 10B)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -40,6 +41,7 @@
 
 ## ✨ Key Features
 
+- **⚡ Rigorous Model & Provider Benchmark (`proton benchmark`)**: Multi-dimensional test battery evaluating **Model, Provider, Latency (TTFT), Tokens/sec, Context Retention, Tool Calling, RAG Synthesis, Coding, Planning, and Error Recovery** with letter grading and autonomous agent readiness ratings.
 - **🌐 Project Knowledge Graph & GraphRAG (`proton graph`)**: Full AST structural relationship index (`Function ➔ Calls ➔ Function`, `Class ➔ Inherits ➔ Class`, `Module ➔ Imports ➔ Module`, `Test ➔ Tests ➔ Function`). Answers *"What will break if I change this function?"* with exact blast radius analysis.
 - **🧠 Explicit Categorized Memory (`proton memory`)**: Structure persistent memory into typed domains (**`PROJECT`**, **`DECISION`**, **`PREFERENCE`**, **`FACT`**, **`TASK`**, **`USER`**, **`SESSION`**) to prevent memory from becoming an unorganized dump of raw chat history.
 - **🔍 Deep Codebase & Repository Inspection (`proton inspect`)**: Instantly inspect languages, frameworks, dependencies, design patterns, entry points, test suites, git status, docs, environment, security vulnerabilities, and performance bottlenecks.
@@ -82,36 +84,39 @@ proton --version
 # 1. Configure and test your AI connection (LM Studio / Ollama)
 proton connection
 
-# 2. Add explicit project decisions and preferences to memory
+# 2. Benchmark your local model across 8 dimensions (speed, tools, RAG, coding, planning)
+proton benchmark
+
+# 3. Add explicit project decisions and preferences to memory
 proton memory add "Use LM Studio as primary local provider" --type DECISION
 proton memory add "Prefer single-file Arduino examples" --type PREFERENCE
 proton memory list
 
-# 3. Build the project AST knowledge graph & run impact analysis
+# 4. Build the project AST knowledge graph & run impact analysis
 proton graph build
 proton graph impact validate_path
 
-# 4. Deeply inspect current repository structure and health
+# 5. Deeply inspect current repository structure and health
 proton inspect
 
-# 5. Create and run a persistent development task
+# 6. Create and run a persistent development task
 proton task create "simple AI UI" "Create a simple web UI for an AI assistant"
 proton task run <task-id>
 
-# 6. Launch the autonomous agent on any goal
+# 7. Launch the autonomous agent on any goal
 proton agent "Refactor stock tracker error handling and run tests"
 
-# 7. Launch the interactive AI Assistant REPL (or resume a saved session)
+# 8. Launch the interactive AI Assistant REPL (or resume a saved session)
 proton
 proton --test
 
-# 8. Launch Proton Terminal Web Browser
+# 9. Launch Proton Terminal Web Browser
 proton browser "fastapi tutorial"
 
-# 9. Launch Live Stock Market Tracker in Indian Rupees (₹)
+# 10. Launch Live Stock Market Tracker in Indian Rupees (₹)
 proton stock
 
-# 10. Check host machine hardware & RAM status
+# 11. Check host machine hardware & RAM status
 proton doctor --sys
 ```
 
@@ -119,7 +124,44 @@ proton doctor --sys
 
 ## 💻 CLI Command Reference
 
-### 1. Project Knowledge Graph & GraphRAG (`proton graph`)
+### 1. LLM Model & Provider Benchmark (`proton benchmark`)
+Rigorously test your local or network LLM to evaluate whether it is ready for autonomous agent execution:
+
+```text
+┌──────────────── ⚡ Proton LLM & Provider Benchmark Results ─────────────────┐
+│ Model: qwen2.5-coder-7b   Provider: lmstudio   Base URL: 192.168.16.120     │
+│ TTFT: 140.2 ms   Throughput: 42.8 tokens/sec   Overall Rating: [A+] 96 / 100│
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Evaluated Capabilities:**
+- 🏎️ **Latency & TTFT**: Time to First Token and connection latency
+- ⚡ **Tokens / Sec Throughput**: Real-world streaming generation speed
+- 🔍 **Context Retention**: Needle-in-a-haystack retrieval across long contexts
+- 🛠️ **Tool Calling**: JSON schema generation and parameter routing
+- 📚 **RAG Synthesis**: Grounded document comprehension without hallucination
+- 💻 **Coding Quality**: Python AST validation, syntax, and algorithmic logic
+- 📋 **Planning**: Multi-step technical decomposition
+- 🩹 **Error Recovery**: Self-healing code from runtime tracebacks
+
+**Commands:**
+```bash
+# Run full 8-dimension benchmark test suite
+proton benchmark
+
+# Run fast 3-stage benchmark (Speed, Coding, Tool Calling)
+proton benchmark --quick
+
+# View past benchmark runs and model rating history
+proton benchmark history
+
+# Output machine-readable JSON report
+proton benchmark --json
+```
+
+---
+
+### 2. Project Knowledge Graph & GraphRAG (`proton graph`)
 Beyond ordinary vector search: extract, store, and traverse the exact structural relationships across your entire codebase:
 
 ```text
@@ -150,7 +192,7 @@ proton graph
 
 ---
 
-### 2. Deep Repository Inspection (`proton inspect`)
+### 3. Deep Repository Inspection (`proton inspect`)
 Understand any new or existing repository at a glance before making code changes:
 
 ```text
@@ -193,7 +235,7 @@ proton inspect --json
 
 ---
 
-### 3. Persistent Task Manager (`proton task`)
+### 4. Persistent Task Manager (`proton task`)
 Separate one-off chat questions from persistent, long-running engineering projects. Every task maintains a stateful checkpoint on disk (`~/.proton/tasks/`):
 
 ```text
@@ -238,7 +280,7 @@ proton task delete <task-id>
 
 ---
 
-### 4. Explicit Categorized Memory (`proton memory`)
+### 5. Explicit Categorized Memory (`proton memory`)
 Structure persistent memories into explicit domain categories to prevent memory clutter:
 
 | Category | Description | Example |
@@ -278,7 +320,7 @@ proton memory clear --type SESSION
 
 ---
 
-### 5. Max-Level Autonomous Agent (`proton agent`)
+### 6. Max-Level Autonomous Agent (`proton agent`)
 Execute end-to-end software engineering tasks with a full **10-stage autonomous lifecycle**:
 
 ```text
@@ -299,7 +341,7 @@ proton agent "Fix failing test cases in auth module" -y --max-steps 30
 
 ---
 
-### 6. Interactive AI Assistant (`proton`)
+### 7. Interactive AI Assistant (`proton`)
 Launch the interactive terminal session with live token streaming, tools, and stateful memory:
 ```bash
 # Launch interactive REPL
@@ -327,7 +369,7 @@ proton ask "Generate quicksort in python" --json
 
 ---
 
-### 7. Terminal Web Browser (`proton browser`)
+### 8. Terminal Web Browser (`proton browser`)
 Browse the internet, search via DuckDuckGo, open numbered links, and summarize pages using AI:
 ```bash
 # Search DuckDuckGo and view results with interactive links
@@ -357,7 +399,7 @@ proton browser "machine learning papers" --ai_mode
 
 ---
 
-### 8. Live Stock Market Tracker (`proton stock`)
+### 9. Live Stock Market Tracker (`proton stock`)
 Live market intelligence in **Indian Rupees (`₹`)** with 10-minute auto-refresh, 20 assets per page, and continuous price charts:
 ```bash
 # Launch live stock dashboard
@@ -392,7 +434,7 @@ proton stock --page 3    # Global Indices, ETFs & Crypto
 
 ---
 
-### 9. Host System Diagnostics (`proton doctor --sys`)
+### 10. Host System Diagnostics (`proton doctor --sys`)
 ```bash
 # Inspect host machine hardware, CPU cores, RAM load bar, and disk storage
 proton doctor --sys
@@ -403,7 +445,7 @@ proton doctor
 
 ---
 
-### 10. Knowledge Base & Hybrid RAG (`proton rag`)
+### 11. Knowledge Base & Hybrid RAG (`proton rag`)
 Ingest large programming datasets and documentation into Proton's SQLite vector store:
 ```bash
 # Download and index comprehensive programming knowledge guides
@@ -421,7 +463,7 @@ proton rag status
 
 ---
 
-### 11. Connection Manager (`proton connection`)
+### 12. Connection Manager (`proton connection`)
 ```bash
 # Interactive setup wizard
 proton connection
@@ -516,6 +558,7 @@ Inside the interactive `proton >` shell, you can use built-in slash commands wit
 
 | Slash Command | Description |
 |---|---|
+| `/benchmark [args]` | Benchmark LLM latency, tok/s, context, tools, RAG, coding, planning |
 | `/memory [subcmd]` | Manage categorized memory (`/memory list\|add\|search\|forget\|export\|clear`) |
 | `/graph [subcmd]` | Project Knowledge Graph & GraphRAG (`/graph impact\|callers\|tests\|build`) |
 | `/inspect [subcmd]` | Deep repo inspection (`/inspect security\|architecture\|dependencies\|tests\|performance`) |
@@ -572,8 +615,9 @@ Proton/
 ├── src/
 │   └── proton/
 │       ├── agent/          # Autonomous agent orchestrator, max agent lifecycle, context assembler, & telemetry
+│       ├── benchmark/      # Multi-dimensional LLM benchmark runner (latency, tok/s, context, tools, RAG, coding, planning)
 │       ├── browser/        # Terminal browser engine, HTML parser, & DuckDuckGo scraper
-│       ├── cli/            # Typer CLI commands (app, agent_cmd, task_cmd, memory_cmd, inspect_cmd, graph_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
+│       ├── cli/            # Typer CLI commands (app, benchmark_cmd, agent_cmd, task_cmd, memory_cmd, inspect_cmd, graph_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
 │       ├── connection/     # Multi-provider connection manager & latency tester
 │       ├── core/           # Configuration, types, and database management
 │       ├── graph/          # AST code extractor, GraphRAG engine, impact analyzer, and callers map

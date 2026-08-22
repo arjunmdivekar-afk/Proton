@@ -624,6 +624,17 @@ class ProtonREPL:
                 ctx = typer.Context(typer.main.get_command(graph_app))
                 default_graph_callback(ctx, str(self.workspace_path))
 
+        elif base == "/benchmark":
+            quick_mode = "--quick" in arg or "-q" in arg or "quick" in arg.lower()
+            if "history" in arg.lower():
+                from proton.cli.benchmark_cmd import history_benchmark_cmd
+                history_benchmark_cmd()
+            else:
+                from proton.cli.benchmark_cmd import default_benchmark_callback
+                import typer
+                ctx = typer.Context(typer.main.get_command(benchmark_app))
+                default_benchmark_callback(ctx, quick=quick_mode, json_mode=False)
+
         elif base in ("/new", "/reset"):
             active_conn = self.conn_mgr.get_active_connection()
             self.current_session = self.session_mgr.create_session(

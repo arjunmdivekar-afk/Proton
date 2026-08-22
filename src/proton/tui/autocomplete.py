@@ -5,6 +5,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
 
 SLASH_COMMANDS = {
+    "/benchmark": "Benchmark LLM latency, tok/s, context, tools, RAG, coding, planning",
     "/graph": "Project Knowledge Graph & GraphRAG (/graph impact|callers|tests|build)",
     "/inspect": "Deep repo inspection (/inspect [security|architecture|dependencies|tests|performance])",
     "/task": "Manage persistent tasks (/task create|list|show|run|pause|resume|cancel)",
