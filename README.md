@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
-> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
+> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
 
 ---
 
@@ -14,13 +14,14 @@
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 Quick Start](#-quick-start)
 - [💻 CLI Command Reference](#-cli-command-reference)
-  - [1. Max-Level Autonomous Agent (`proton agent`)](#1-max-level-autonomous-agent-proton-agent)
-  - [2. Interactive AI Assistant (`proton`)](#2-interactive-ai-assistant-proton)
-  - [3. Terminal Web Browser (`proton browser`)](#3-terminal-web-browser-proton-browser)
-  - [4. Live Stock Market Tracker (`proton stock`)](#4-live-stock-market-tracker-proton-stock)
-  - [5. Host System Diagnostics (`proton doctor --sys`)](#5-host-system-diagnostics-proton-doctor---sys)
-  - [6. Knowledge Base & Hybrid RAG (`proton rag`)](#6-knowledge-base--hybrid-rag-proton-rag)
-  - [7. Connection Manager (`proton connection`)](#7-connection-manager-proton-connection)
+  - [1. Persistent Task Manager (`proton task`)](#1-persistent-task-manager-proton-task)
+  - [2. Max-Level Autonomous Agent (`proton agent`)](#2-max-level-autonomous-agent-proton-agent)
+  - [3. Interactive AI Assistant (`proton`)](#3-interactive-ai-assistant-proton)
+  - [4. Terminal Web Browser (`proton browser`)](#4-terminal-web-browser-proton-browser)
+  - [5. Live Stock Market Tracker (`proton stock`)](#5-live-stock-market-tracker-proton-stock)
+  - [6. Host System Diagnostics (`proton doctor --sys`)](#6-host-system-diagnostics-proton-doctor---sys)
+  - [7. Knowledge Base & Hybrid RAG (`proton rag`)](#7-knowledge-base--hybrid-rag-proton-rag)
+  - [8. Connection Manager (`proton connection`)](#8-connection-manager-proton-connection)
 - [🧠 Recommended Models & Hardware Requirements](#-recommended-models--hardware-requirements)
   - [1. Small Models (1B to 10B)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -36,6 +37,7 @@
 
 ## ✨ Key Features
 
+- **📋 Persistent Task Management (`proton task`)**: Separate one-off questions from long-running engineering projects. Tracks **Goal, Plan, Progress %, Files changed, Commands executed, Tool calls, Errors, Approvals, Tests, and Final deliverables** with pause/resume checkpoints.
 - **🤖 Max-Level Autonomous Agent**: 10-stage autonomous lifecycle (`Understand Task ➔ Inspect Repo ➔ Create Plan ➔ Ask Approval ➔ Use Tools ➔ Modify Files ➔ Run Tests ➔ Review Changes ➔ Fix Failures ➔ Generate Report`) with self-healing and automatic code persistence.
 - **🌐 Provider & Model Neutral**: First-class support for **LM Studio** (local and LAN IP `http://192.168.x.x:1234`), **Ollama**, and any OpenAI-compatible inference server.
 - **⚡ Interactive Stream-First TUI REPL**: Live token streaming, light-grey code block highlights, large `#` heading panels, and `*` text highlighting.
@@ -74,19 +76,23 @@ proton --version
 # 1. Configure and test your AI connection (LM Studio / Ollama)
 proton connection
 
-# 2. Launch interactive Autonomous Agent on a software task
-proton agent "create responsive navigation header with tests"
+# 2. Create and run a persistent development task
+proton task create "Build ESP32 camera server with streaming endpoint"
+proton task run task-b2336e9d
 
-# 3. Launch the interactive AI Assistant REPL
+# 3. Launch the autonomous agent on any goal
+proton agent "Refactor stock tracker error handling and run tests"
+
+# 4. Launch the interactive AI Assistant REPL
 proton
 
-# 4. Launch Proton Terminal Web Browser
+# 5. Launch Proton Terminal Web Browser
 proton browser "fastapi tutorial"
 
-# 5. Launch Live Stock Market Tracker in Indian Rupees (₹)
+# 6. Launch Live Stock Market Tracker in Indian Rupees (₹)
 proton stock
 
-# 6. Check host machine hardware & RAM status
+# 7. Check host machine hardware & RAM status
 proton doctor --sys
 ```
 
@@ -94,7 +100,51 @@ proton doctor --sys
 
 ## 💻 CLI Command Reference
 
-### 1. Max-Level Autonomous Agent (`proton agent`)
+### 1. Persistent Task Manager (`proton task`)
+Separate one-off chat questions from persistent, long-running engineering projects. Every task maintains a stateful checkpoint on disk (`~/.proton/tasks/`):
+
+```text
+┌────────────────────────────────────────────────────────┐
+│ PROTON PERSISTENT TASK CHECKPOINT                      │
+├────────────────────────────────────────────────────────┤
+│ • Goal & Scope              • Commands Executed        │
+│ • Step-by-Step Plan         • Tool Invocation Logs     │
+│ • Progress Percentage (%)   • Errors & Tracebacks      │
+│ • Files Modified & Created  • Approvals Granted        │
+│ • Automated Test Results    • Final Audit Report       │
+└────────────────────────────────────────────────────────┘
+```
+
+**Commands:**
+```bash
+# Create a new persistent task
+proton task create "Build ESP32 camera server with video streaming and wifi config"
+
+# List all tracked development tasks with status & progress
+proton task list
+proton task list --status IN_PROGRESS
+
+# Inspect detailed task record (Goal, Plan, Files, Commands, Tests, Errors)
+proton task show <task-id>
+
+# Run or continue an active task
+proton task run <task-id>
+proton task run <task-id> --auto-approve
+
+# Pause task execution and freeze state
+proton task pause <task-id>
+
+# Resume a paused task from its latest checkpoint
+proton task resume <task-id>
+
+# Cancel or delete task
+proton task cancel <task-id>
+proton task delete <task-id>
+```
+
+---
+
+### 2. Max-Level Autonomous Agent (`proton agent`)
 Execute end-to-end software engineering tasks with a full **10-stage autonomous lifecycle**:
 
 ```text
@@ -115,7 +165,7 @@ proton agent "Fix failing test cases in auth module" -y --max-steps 30
 
 ---
 
-### 2. Interactive AI Assistant (`proton`)
+### 3. Interactive AI Assistant (`proton`)
 Launch the interactive terminal session with live token streaming and memory:
 ```bash
 # Launch interactive REPL
@@ -130,7 +180,7 @@ proton ask "Generate quicksort in python" --json
 
 ---
 
-### 3. Terminal Web Browser (`proton browser`)
+### 4. Terminal Web Browser (`proton browser`)
 Browse the internet, search via DuckDuckGo, open numbered links, and summarize pages using AI:
 ```bash
 # Search DuckDuckGo and view results with interactive links
@@ -160,7 +210,7 @@ proton browser "machine learning papers" --ai_mode
 
 ---
 
-### 4. Live Stock Market Tracker (`proton stock`)
+### 5. Live Stock Market Tracker (`proton stock`)
 Live market intelligence in **Indian Rupees (`₹`)** with 10-minute auto-refresh, 20 assets per page, and continuous price charts:
 ```bash
 # Launch live stock dashboard
@@ -195,7 +245,7 @@ proton stock --page 3    # Global Indices, ETFs & Crypto
 
 ---
 
-### 5. Host System Diagnostics (`proton doctor --sys`)
+### 6. Host System Diagnostics (`proton doctor --sys`)
 ```bash
 # Inspect host machine hardware, CPU cores, RAM load bar, and disk storage
 proton doctor --sys
@@ -206,7 +256,7 @@ proton doctor
 
 ---
 
-### 6. Knowledge Base & Hybrid RAG (`proton rag`)
+### 7. Knowledge Base & Hybrid RAG (`proton rag`)
 Ingest large programming datasets and documentation into Proton's SQLite vector store:
 ```bash
 # Download and index comprehensive programming knowledge guides
@@ -224,7 +274,7 @@ proton rag status
 
 ---
 
-### 7. Connection Manager (`proton connection`)
+### 8. Connection Manager (`proton connection`)
 ```bash
 # Interactive setup wizard
 proton connection
@@ -319,6 +369,7 @@ Inside the interactive `proton >` shell, you can use built-in slash commands wit
 
 | Slash Command | Description |
 |---|---|
+| `/task [create\|list\|show\|run\|pause\|resume\|cancel]` | Manage and run persistent development tasks |
 | `/agent <goal>` | Launch Proton Max-Level Autonomous Agent with 10-stage lifecycle |
 | `/stock [SYMBOL]` | Launch live stock market tracker with charts in Rupees (`₹`) |
 | `/browser [URL]` | Launch Proton Terminal Web Browser (`/browser --ai_mode`) |
@@ -373,7 +424,7 @@ Proton/
 │   └── proton/
 │       ├── agent/          # Autonomous agent orchestrator, max agent lifecycle, context assembler, & telemetry
 │       ├── browser/        # Terminal browser engine, HTML parser, & DuckDuckGo scraper
-│       ├── cli/            # Typer CLI commands (app, agent_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
+│       ├── cli/            # Typer CLI commands (app, agent_cmd, task_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
 │       ├── connection/     # Multi-provider connection manager & latency tester
 │       ├── core/           # Configuration, types, and database management
 │       ├── memory/         # Persistent memory and session management
@@ -381,6 +432,7 @@ Proton/
 │       ├── rag/            # Hybrid vector & BM25 store, chunker, and corpus fetcher
 │       ├── security/       # Policy engine, approval manager, and sandbox
 │       ├── stocks/         # yfinance data service, chart rasterizer, and TUI app
+│       ├── tasks/          # Persistent task models, manager, runner, and checkpoints
 │       ├── tools/          # File, shell, git, and web search tools
 │       └── tui/            # REPL, code highlighter, and autocomplete
 ├── pyproject.toml          # Package configuration and dependencies

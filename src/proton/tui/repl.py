@@ -327,6 +327,51 @@ class ProtonREPL:
                 self.console.print(f"[bold]RAG Status:[/bold] Total indexed chunks: {self.rag_pipeline.store.count()}")
                 self.console.print("[dim]Usage: `/rag fetch` (download coding knowledge), `/rag index`, or `/rag search <query>`[/dim]")
 
+        elif base in ("/task", "/tasks"):
+            subcmd = arg.strip().split(maxsplit=1)
+            action = subcmd[0].lower() if subcmd else "list"
+            sub_arg = subcmd[1] if len(subcmd) > 1 else ""
+
+            from proton.tasks.manager import TaskManager
+            from proton.tasks.runner import TaskRunner
+            mgr = TaskManager()
+
+            if action == "create":
+                if not sub_arg:
+                    self.console.print("[dim]Usage: `/task create <goal>`[/dim]")
+                else:
+                    t = mgr.create_task(goal=sub_arg, workspace_path=self.workspace_path)
+                    self.console.print(f"[bold green]✓ Created task:[/bold green] [cyan]{t.id}[/cyan] — {t.title}")
+            elif action in ("list", "ls", ""):
+                tasks = mgr.list_tasks()
+                if not tasks:
+                    self.console.print("[dim]No persistent tasks recorded. Create one with `/task create <goal>`[/dim]")
+                else:
+                    self.console.print("[bold cyan]Persistent Tasks:[/bold cyan]")
+                    for t in tasks:
+                        self.console.print(f"  • [cyan]{t.id}[/cyan] [{t.status.value}] ({t.progress_pct}%) - {t.title}")
+            elif action in ("show", "get", "info"):
+                if not sub_arg:
+                    self.console.print("[dim]Usage: `/task show <id>`[/dim]")
+                else:
+                    from proton.cli.task_cmd import show_task_cmd
+                    show_task_cmd(sub_arg)
+            elif action in ("run", "exec", "start"):
+                if not sub_arg:
+                    self.console.print("[dim]Usage: `/task run <id>`[/dim]")
+                else:
+                    runner = TaskRunner(mgr)
+                    await runner.run_task(sub_arg)
+                    self.print_banner()
+            elif action == "pause":
+                mgr.pause_task(sub_arg)
+                self.console.print(f"[yellow]⏸ Paused task '{sub_arg}'.[/yellow]")
+            elif action == "cancel":
+                mgr.cancel_task(sub_arg)
+                self.console.print(f"[red]✗ Cancelled task '{sub_arg}'.[/red]")
+            else:
+                self.console.print("[dim]Usage: `/task [create <goal> | list | show <id> | run <id> | pause <id> | cancel <id>]`[/dim]")
+
         elif base == "/agent":
             goal = arg.strip()
             if not goal:
