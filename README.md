@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
-> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, code graph intelligence engine (GraphRAG), categorized memory system, model benchmark battery, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
+> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, code graph intelligence engine (GraphRAG), categorized memory system, automated security verification suite, model benchmark battery, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
 
 ---
 
@@ -14,18 +14,19 @@
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 Quick Start](#-quick-start)
 - [💻 CLI Command Reference](#-cli-command-reference)
-  - [1. LLM Model & Provider Benchmark (`proton benchmark`)](#1-llm-model--provider-benchmark-proton-benchmark)
-  - [2. Project Knowledge Graph & GraphRAG (`proton graph`)](#2-project-knowledge-graph--graphrag-proton-graph)
-  - [3. Deep Repository Inspection (`proton inspect`)](#3-deep-repository-inspection-proton-inspect)
-  - [4. Persistent Task Manager (`proton task`)](#4-persistent-task-manager-proton-task)
-  - [5. Explicit Categorized Memory (`proton memory`)](#5-explicit-categorized-memory-proton-memory)
-  - [6. Max-Level Autonomous Agent (`proton agent`)](#6-max-level-autonomous-agent-proton-agent)
-  - [7. Interactive AI Assistant (`proton`)](#7-interactive-ai-assistant-proton)
-  - [8. Terminal Web Browser (`proton browser`)](#8-terminal-web-browser-proton-browser)
-  - [9. Live Stock Market Tracker (`proton stock`)](#9-live-stock-market-tracker-proton-stock)
-  - [10. Host System Diagnostics (`proton doctor --sys`)](#10-host-system-diagnostics-proton-doctor---sys)
-  - [11. Knowledge Base & Hybrid RAG (`proton rag`)](#11-knowledge-base--hybrid-rag-proton-rag)
-  - [12. Connection Manager (`proton connection`)](#12-connection-manager-proton-connection)
+  - [1. Security Verification & Audit (`proton security`)](#1-security-verification--audit-proton-security)
+  - [2. LLM Model & Provider Benchmark (`proton benchmark`)](#2-llm-model--provider-benchmark-proton-benchmark)
+  - [3. Project Knowledge Graph & GraphRAG (`proton graph`)](#3-project-knowledge-graph--graphrag-proton-graph)
+  - [4. Deep Repository Inspection (`proton inspect`)](#4-deep-repository-inspection-proton-inspect)
+  - [5. Persistent Task Manager (`proton task`)](#5-persistent-task-manager-proton-task)
+  - [6. Explicit Categorized Memory (`proton memory`)](#6-explicit-categorized-memory-proton-memory)
+  - [7. Max-Level Autonomous Agent (`proton agent`)](#7-max-level-autonomous-agent-proton-agent)
+  - [8. Interactive AI Assistant (`proton`)](#8-interactive-ai-assistant-proton)
+  - [9. Terminal Web Browser (`proton browser`)](#9-terminal-web-browser-proton-browser)
+  - [10. Live Stock Market Tracker (`proton stock`)](#10-live-stock-market-tracker-proton-stock)
+  - [11. Host System Diagnostics (`proton doctor --sys`)](#11-host-system-diagnostics-proton-doctor---sys)
+  - [12. Knowledge Base & Hybrid RAG (`proton rag`)](#12-knowledge-base--hybrid-rag-proton-rag)
+  - [13. Connection Manager (`proton connection`)](#13-connection-manager-proton-connection)
 - [🧠 Recommended Models & Hardware Requirements](#-recommended-models--hardware-requirements)
   - [1. Small Models (1B to 10B)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -41,6 +42,7 @@
 
 ## ✨ Key Features
 
+- **🛡️ Security Verification & Live Defense Testing (`proton security test` / `proton security audit`)**: Automated self-test battery verifying active guardrails against **path traversal, command injection, secret leakage, malicious tool arguments, prompt injection, workspace escapes, unauthorized network access, and dangerous shell commands**.
 - **⚡ Rigorous Model & Provider Benchmark (`proton benchmark`)**: Multi-dimensional test battery evaluating **Model, Provider, Latency (TTFT), Tokens/sec, Context Retention, Tool Calling, RAG Synthesis, Coding, Planning, and Error Recovery** with letter grading and autonomous agent readiness ratings.
 - **🌐 Project Knowledge Graph & GraphRAG (`proton graph`)**: Full AST structural relationship index (`Function ➔ Calls ➔ Function`, `Class ➔ Inherits ➔ Class`, `Module ➔ Imports ➔ Module`, `Test ➔ Tests ➔ Function`). Answers *"What will break if I change this function?"* with exact blast radius analysis.
 - **🧠 Explicit Categorized Memory (`proton memory`)**: Structure persistent memory into typed domains (**`PROJECT`**, **`DECISION`**, **`PREFERENCE`**, **`FACT`**, **`TASK`**, **`USER`**, **`SESSION`**) to prevent memory from becoming an unorganized dump of raw chat history.
@@ -81,42 +83,46 @@ proton --version
 ## 🚀 Quick Start
 
 ```bash
-# 1. Configure and test your AI connection (LM Studio / Ollama)
+# 1. Run automated defense verification tests & workspace audit
+proton security test
+proton security audit
+
+# 2. Configure and test your AI connection (LM Studio / Ollama)
 proton connection
 
-# 2. Benchmark your local model across 8 dimensions (speed, tools, RAG, coding, planning)
+# 3. Benchmark your local model across 8 dimensions (speed, tools, RAG, coding, planning)
 proton benchmark
 
-# 3. Add explicit project decisions and preferences to memory
+# 4. Add explicit project decisions and preferences to memory
 proton memory add "Use LM Studio as primary local provider" --type DECISION
 proton memory add "Prefer single-file Arduino examples" --type PREFERENCE
 proton memory list
 
-# 4. Build the project AST knowledge graph & run impact analysis
+# 5. Build the project AST knowledge graph & run impact analysis
 proton graph build
 proton graph impact validate_path
 
-# 5. Deeply inspect current repository structure and health
+# 6. Deeply inspect current repository structure and health
 proton inspect
 
-# 6. Create and run a persistent development task
+# 7. Create and run a persistent development task
 proton task create "simple AI UI" "Create a simple web UI for an AI assistant"
 proton task run <task-id>
 
-# 7. Launch the autonomous agent on any goal
+# 8. Launch the autonomous agent on any goal
 proton agent "Refactor stock tracker error handling and run tests"
 
-# 8. Launch the interactive AI Assistant REPL (or resume a saved session)
+# 9. Launch the interactive AI Assistant REPL (or resume a saved session)
 proton
 proton --test
 
-# 9. Launch Proton Terminal Web Browser
+# 10. Launch Proton Terminal Web Browser
 proton browser "fastapi tutorial"
 
-# 10. Launch Live Stock Market Tracker in Indian Rupees (₹)
+# 11. Launch Live Stock Market Tracker in Indian Rupees (₹)
 proton stock
 
-# 11. Check host machine hardware & RAM status
+# 12. Check host machine hardware & RAM status
 proton doctor --sys
 ```
 
@@ -124,7 +130,45 @@ proton doctor --sys
 
 ## 💻 CLI Command Reference
 
-### 1. LLM Model & Provider Benchmark (`proton benchmark`)
+### 1. Security Verification & Audit (`proton security`)
+Transition from passive security features to active **security verification**:
+
+```text
+┌───────────── 🛡️ Proton Automated Security Defense Verification ─────────────┐
+│ Target Workspace: C:\Users\arjun.divekar\Desktop\Proton                     │
+│ Defense Checks Passed: 8 / 8   Security Score: 100 / 100                    │
+│ Verification Verdict: 🛡️ Enterprise Secure — All Guardrails Verified        │
+└─────────────────────────────────────────────────────────────────────────────┘
+```
+
+**Tested Defense Layers:**
+- 🛑 **Path Traversal Defense**: Blocks directory traversal payloads (`../../etc/passwd`, `..\..\Windows\`)
+- 🔒 **Workspace Boundary Containment**: Enforces containment inside active workspace boundary
+- ⚡ **Command Injection & Chaining**: Intercepts shell command chaining (`; rm -rf /`, `&& del /f`, fork bombs)
+- 🚫 **Dangerous Shell Blacklist**: Catches dangerous commands (`format c:`, `mkfs`, `drop database`, force push)
+- 🗝️ **Secret Leakage & Redaction**: Automatically scrubs API keys, Bearer tokens, and passwords
+- 🛠️ **Malicious Tool Arguments**: Appropriately classifies tool risk levels (`SAFE`, `MODIFICATION`, `DESTRUCTIVE`)
+- 🧠 **Prompt Injection & Jailbreaks**: Detects adversarial prompt overrides and safety bypass heuristics
+- 🌐 **Unauthorized Network Access**: Confines outbound inference calls to authorized connection endpoints
+
+**Commands:**
+```bash
+# Run automated defense verification test battery
+proton security test
+
+# Run static workspace security audit (exposed keys, permissions, CVEs)
+proton security audit
+
+# View security posture overview & active controls
+proton security
+
+# Output machine-readable JSON verification report
+proton security test --json
+```
+
+---
+
+### 2. LLM Model & Provider Benchmark (`proton benchmark`)
 Rigorously test your local or network LLM to evaluate whether it is ready for autonomous agent execution:
 
 ```text
@@ -161,7 +205,7 @@ proton benchmark --json
 
 ---
 
-### 2. Project Knowledge Graph & GraphRAG (`proton graph`)
+### 3. Project Knowledge Graph & GraphRAG (`proton graph`)
 Beyond ordinary vector search: extract, store, and traverse the exact structural relationships across your entire codebase:
 
 ```text
@@ -192,7 +236,7 @@ proton graph
 
 ---
 
-### 3. Deep Repository Inspection (`proton inspect`)
+### 4. Deep Repository Inspection (`proton inspect`)
 Understand any new or existing repository at a glance before making code changes:
 
 ```text
@@ -235,7 +279,7 @@ proton inspect --json
 
 ---
 
-### 4. Persistent Task Manager (`proton task`)
+### 5. Persistent Task Manager (`proton task`)
 Separate one-off chat questions from persistent, long-running engineering projects. Every task maintains a stateful checkpoint on disk (`~/.proton/tasks/`):
 
 ```text
@@ -280,7 +324,7 @@ proton task delete <task-id>
 
 ---
 
-### 5. Explicit Categorized Memory (`proton memory`)
+### 6. Explicit Categorized Memory (`proton memory`)
 Structure persistent memories into explicit domain categories to prevent memory clutter:
 
 | Category | Description | Example |
@@ -320,7 +364,7 @@ proton memory clear --type SESSION
 
 ---
 
-### 6. Max-Level Autonomous Agent (`proton agent`)
+### 7. Max-Level Autonomous Agent (`proton agent`)
 Execute end-to-end software engineering tasks with a full **10-stage autonomous lifecycle**:
 
 ```text
@@ -341,7 +385,7 @@ proton agent "Fix failing test cases in auth module" -y --max-steps 30
 
 ---
 
-### 7. Interactive AI Assistant (`proton`)
+### 8. Interactive AI Assistant (`proton`)
 Launch the interactive terminal session with live token streaming, tools, and stateful memory:
 ```bash
 # Launch interactive REPL
@@ -369,7 +413,7 @@ proton ask "Generate quicksort in python" --json
 
 ---
 
-### 8. Terminal Web Browser (`proton browser`)
+### 9. Terminal Web Browser (`proton browser`)
 Browse the internet, search via DuckDuckGo, open numbered links, and summarize pages using AI:
 ```bash
 # Search DuckDuckGo and view results with interactive links
@@ -383,23 +427,9 @@ proton browser --ai_mode
 proton browser "machine learning papers" --ai_mode
 ```
 
-**In-Browser Navigation Commands:**
-| Command / Key | Description |
-|---|---|
-| `1` - `50` or `open 1` | Open the corresponding numbered link on the current page |
-| `search <query>` | Search DuckDuckGo for new query |
-| `open <url>` | Navigate directly to web URL |
-| `links` | Display full table of all numbered hyperlinks on the page |
-| `back` / `b` | Return to previous page in history |
-| `forward` / `f` | Go forward in history |
-| `reload` / `r` | Reload current page |
-| `summarize` / `sum` | Use Proton AI to generate a structured executive summary of the page |
-| `ask <question>` | Ask the AI Copilot questions about the active web page |
-| `exit` / `q` | Exit browser |
-
 ---
 
-### 9. Live Stock Market Tracker (`proton stock`)
+### 10. Live Stock Market Tracker (`proton stock`)
 Live market intelligence in **Indian Rupees (`₹`)** with 10-minute auto-refresh, 20 assets per page, and continuous price charts:
 ```bash
 # Launch live stock dashboard
@@ -411,30 +441,11 @@ proton stock TCS
 proton stock INFY
 proton stock AAPL
 proton stock BTC-USD
-
-# Open specific market category page
-proton stock --page 1    # Indian Market & NIFTY 50 Leaders
-proton stock --page 2    # Global Tech Giants & AI Leaders
-proton stock --page 3    # Global Indices, ETFs & Crypto
 ```
-
-**Stock Dashboard Controls:**
-| Key / Command | Description |
-|---|---|
-| `1` - `20` or `<SYMBOL>` | Deep-dive into stock fundamentals and price chart |
-| `next` / `n` | Jump to next page |
-| `prev` / `p` | Jump to previous page |
-| `page <1-3>` | Switch directly to Page 1, 2, or 3 |
-| `refresh` / `r` | Trigger instant price refresh |
-| `1d`, `5d`, `1m`, `6m`, `1y` | Inside stock view: switch chart historical timeframe |
-| `analyze` | Run Proton AI corporate metrics, valuation & growth analysis |
-| `ask <question>` | Ask Proton AI questions about the stock's financials |
-| `back` / `b` | Return from chart view to market watch table |
-| `exit` / `q` | Exit stock tracker |
 
 ---
 
-### 10. Host System Diagnostics (`proton doctor --sys`)
+### 11. Host System Diagnostics (`proton doctor --sys`)
 ```bash
 # Inspect host machine hardware, CPU cores, RAM load bar, and disk storage
 proton doctor --sys
@@ -445,8 +456,7 @@ proton doctor
 
 ---
 
-### 11. Knowledge Base & Hybrid RAG (`proton rag`)
-Ingest large programming datasets and documentation into Proton's SQLite vector store:
+### 12. Knowledge Base & Hybrid RAG (`proton rag`)
 ```bash
 # Download and index comprehensive programming knowledge guides
 proton rag fetch-knowledge
@@ -463,7 +473,7 @@ proton rag status
 
 ---
 
-### 12. Connection Manager (`proton connection`)
+### 13. Connection Manager (`proton connection`)
 ```bash
 # Interactive setup wizard
 proton connection
@@ -515,11 +525,6 @@ Proton connects seamlessly to any model hosted locally (via **LM Studio** or **O
 | **Mistral Small 24B / Codestral** | `22B` / `24B` | Excellent latency-to-quality ratio, native fill-in-the-middle (FIM) code editing. | 32k tokens |
 | **Command R+** | `35B` / `104B` | Optimized specifically for RAG document retrieval, citations, and tool routing. | 128k tokens |
 
-**💻 Hardware Requirements (Medium Models):**
-- **RAM / VRAM**: 32 GB – 64 GB System RAM (or 16 GB – 48 GB VRAM).
-- **GPU**: 1x or 2x NVIDIA RTX 3090 / 4090 (24GB VRAM) / RTX 4080 (16GB) / Apple M2/M3/M4 Pro or Max (36GB – 64GB Unified Memory).
-- **Disk Space**: ~10 GB – 45 GB per GGUF model (`Q4_K_M` / `Q5_K_M`).
-
 ---
 
 ### 3. Large Models (100B+ Parameters & Frontier MoE) — *Enterprise Agents*
@@ -532,11 +537,6 @@ Proton connects seamlessly to any model hosted locally (via **LM Studio** or **O
 | **Qwen 2.5 Instruct** | `72B` / `110B` | Massive multilingual coding and multi-step complex problem-solving. | 128k tokens |
 | **WizardLM-2** | `8x22B` MoE | Highly capable Mixture-of-Experts for software engineering and complex reasoning. | 64k tokens |
 | **DBRX Instruct** | `132B` (36B active MoE) | Fast inference speed MoE with high code generation accuracy. | 32k tokens |
-
-**💻 Hardware Requirements (Large Models):**
-- **RAM / VRAM**: 128 GB – 256 GB+ Unified Memory or Multi-GPU Clusters (4x–8x RTX 3090/4090 24GB, 2x–4x NVIDIA A100/H100 80GB, or Apple M2/M3/M4 Ultra with 128GB–192GB Unified Memory).
-- **Alternatively**: Connect Proton to a LAN server or cloud API endpoint running these models using `proton connection`.
-- **Disk Space**: ~70 GB – 250 GB+ NVMe SSD.
 
 ---
 
@@ -558,6 +558,7 @@ Inside the interactive `proton >` shell, you can use built-in slash commands wit
 
 | Slash Command | Description |
 |---|---|
+| `/security [subcmd]` | Security defense verification & workspace audit (`/security test\|audit`) |
 | `/benchmark [args]` | Benchmark LLM latency, tok/s, context, tools, RAG, coding, planning |
 | `/memory [subcmd]` | Manage categorized memory (`/memory list\|add\|search\|forget\|export\|clear`) |
 | `/graph [subcmd]` | Project Knowledge Graph & GraphRAG (`/graph impact\|callers\|tests\|build`) |
@@ -617,7 +618,7 @@ Proton/
 │       ├── agent/          # Autonomous agent orchestrator, max agent lifecycle, context assembler, & telemetry
 │       ├── benchmark/      # Multi-dimensional LLM benchmark runner (latency, tok/s, context, tools, RAG, coding, planning)
 │       ├── browser/        # Terminal browser engine, HTML parser, & DuckDuckGo scraper
-│       ├── cli/            # Typer CLI commands (app, benchmark_cmd, agent_cmd, task_cmd, memory_cmd, inspect_cmd, graph_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
+│       ├── cli/            # Typer CLI commands (app, security_cmd, benchmark_cmd, agent_cmd, task_cmd, memory_cmd, inspect_cmd, graph_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
 │       ├── connection/     # Multi-provider connection manager & latency tester
 │       ├── core/           # Configuration, types, and database management
 │       ├── graph/          # AST code extractor, GraphRAG engine, impact analyzer, and callers map
@@ -625,13 +626,14 @@ Proton/
 │       ├── memory/         # Explicit categorized memory store (PROJECT, DECISION, PREFERENCE, FACT, TASK, USER, SESSION)
 │       ├── providers/      # LM Studio, Ollama, & OpenAI-compatible providers
 │       ├── rag/            # Hybrid vector & BM25 store, chunker, and corpus fetcher
-│       ├── security/       # Policy engine, approval manager, and sandbox
+│       ├── security/       # Policy engine, approval manager, sandbox, and automated security verification tester
 │       ├── stocks/         # yfinance data service, chart rasterizer, and TUI app
 │       ├── tasks/          # Persistent task models, manager, runner, and checkpoints
 │       ├── tools/          # File, shell, git, and web search tools
 │       └── tui/            # REPL, code highlighter, and autocomplete
 ├── pyproject.toml          # Package configuration and dependencies
 ├── .gitignore              # Python, database, and cache ignore rules
+├── SECURITY.md             # Security architecture and verification policies
 └── README.md               # Project documentation
 ```
 

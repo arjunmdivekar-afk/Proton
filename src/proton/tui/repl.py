@@ -635,6 +635,20 @@ class ProtonREPL:
                 ctx = typer.Context(typer.main.get_command(benchmark_app))
                 default_benchmark_callback(ctx, quick=quick_mode, json_mode=False)
 
+        elif base == "/security":
+            sub = arg.strip().lower()
+            if sub in ("test", "verify"):
+                from proton.cli.security_cmd import test_security_cmd
+                test_security_cmd(str(self.workspace_path))
+            elif sub == "audit":
+                from proton.cli.security_cmd import audit_security_cmd
+                audit_security_cmd(str(self.workspace_path))
+            else:
+                from proton.cli.security_cmd import default_security_callback
+                import typer
+                ctx = typer.Context(typer.main.get_command(security_app))
+                default_security_callback(ctx, json_mode=False)
+
         elif base in ("/new", "/reset"):
             active_conn = self.conn_mgr.get_active_connection()
             self.current_session = self.session_mgr.create_session(

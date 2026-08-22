@@ -5,6 +5,7 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
 
 SLASH_COMMANDS = {
+    "/security": "Security defense verification & workspace audit (/security test|audit)",
     "/benchmark": "Benchmark LLM latency, tok/s, context, tools, RAG, coding, planning",
     "/graph": "Project Knowledge Graph & GraphRAG (/graph impact|callers|tests|build)",
     "/inspect": "Deep repo inspection (/inspect [security|architecture|dependencies|tests|performance])",
