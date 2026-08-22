@@ -1,26 +1,42 @@
-"""Memory Manager orchestrating session, project, and user level memory."""
+"""Memory Manager orchestrating categorized project, user, preference, and decision memory."""
 
-from typing import Dict, List, Optional
-from proton.memory.store import MemoryStore, MemoryScope, MemoryRecord
+from typing import Any, Dict, List, Optional
+from proton.memory.store import MemoryStore, MemoryType, MemoryScope, MemoryRecord
 
 
 class MemoryManager:
-    """Manages memory retrieval and persistence across all scopes."""
+    """Manages categorized memory persistence and retrieval across all explicit types."""
 
     def __init__(self, store: Optional[MemoryStore] = None) -> None:
         self.store = store or MemoryStore()
 
-    def remember(self, key: str, content: str, scope: MemoryScope = MemoryScope.PROJECT, metadata: Optional[Dict[str, str]] = None) -> MemoryRecord:
-        return self.store.add(scope=scope, key=key, content=content, metadata=metadata)
+    def remember(
+        self,
+        content: str,
+        memory_type: MemoryType = MemoryType.PROJECT,
+        key: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+        scope: Optional[Any] = None,
+    ) -> MemoryRecord:
+        return self.store.add(
+            content=content,
+            memory_type=memory_type,
+            key=key,
+            metadata=metadata,
+            scope=scope,
+        )
 
-    def recall(self, query: str, scope: Optional[MemoryScope] = None) -> List[MemoryRecord]:
-        return self.store.search(query=query, scope=scope)
+    def recall(self, query: str, memory_type: Optional[MemoryType] = None, scope: Optional[Any] = None) -> List[MemoryRecord]:
+        return self.store.search(query=query, memory_type=memory_type, scope=scope)
 
-    def list_all(self, scope: Optional[MemoryScope] = None) -> List[MemoryRecord]:
-        return self.store.list_memories(scope=scope)
+    def list_all(self, memory_type: Optional[MemoryType] = None, scope: Optional[Any] = None) -> List[MemoryRecord]:
+        return self.store.list_memories(memory_type=memory_type, scope=scope)
 
     def forget(self, record_id: int) -> bool:
         return self.store.delete(record_id)
+
+    def clear(self, memory_type: Optional[MemoryType] = None) -> int:
+        return self.store.clear(memory_type=memory_type)
 
 
 # Singleton instance

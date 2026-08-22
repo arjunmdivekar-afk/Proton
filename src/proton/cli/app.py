@@ -205,9 +205,11 @@ from proton.cli.agent_cmd import launch_max_agent
 from proton.cli.task_cmd import task_app
 from proton.cli.inspect_cmd import inspect_app
 from proton.cli.graph_cmd import graph_app
+from proton.cli.memory_cmd import memory_app
 
 app.add_typer(task_app, name="task", help="Manage persistent development tasks (create, list, show, run, pause, resume, cancel)")
 app.add_typer(task_app, name="tasks", help="Alias for proton task")
+app.add_typer(memory_app, name="memory", help="Manage categorized memories (PROJECT, DECISION, PREFERENCE, FACT, TASK, USER, SESSION)")
 app.add_typer(inspect_app, name="inspect", help="Deep codebase inspection (architecture, security, dependencies, tests, performance)")
 app.add_typer(graph_app, name="graph", help="Project Knowledge Graph & GraphRAG (impact analysis, callers, tests, AST map)")
 app.command("agent", help="Launch Proton Max-Level Autonomous Agent — 10-stage lifecycle with planning, tools, tests, self-healing, and audit reporting")(launch_max_agent)
@@ -220,7 +222,7 @@ def main() -> None:
     # Check if a dynamic named session flag like `proton --test` was passed directly
     args = sys.argv[1:]
     known_flags = {"--version", "-v", "--help", "-h", "--stdin", "--json", "--session", "-s", "--resume"}
-    known_subcmds = {"agent", "browser", "stock", "stocks", "task", "tasks", "inspect", "graph", "connection", "rag", "ask", "doctor"}
+    known_subcmds = {"agent", "browser", "stock", "stocks", "task", "tasks", "memory", "inspect", "graph", "connection", "rag", "ask", "doctor"}
 
     if args:
         first = args[0]

@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
-> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, code graph intelligence engine (GraphRAG), terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
+> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, code graph intelligence engine (GraphRAG), categorized memory system, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
 
 ---
 
@@ -17,13 +17,14 @@
   - [1. Project Knowledge Graph & GraphRAG (`proton graph`)](#1-project-knowledge-graph--graphrag-proton-graph)
   - [2. Deep Repository Inspection (`proton inspect`)](#2-deep-repository-inspection-proton-inspect)
   - [3. Persistent Task Manager (`proton task`)](#3-persistent-task-manager-proton-task)
-  - [4. Max-Level Autonomous Agent (`proton agent`)](#4-max-level-autonomous-agent-proton-agent)
-  - [5. Interactive AI Assistant (`proton`)](#5-interactive-ai-assistant-proton)
-  - [6. Terminal Web Browser (`proton browser`)](#6-terminal-web-browser-proton-browser)
-  - [7. Live Stock Market Tracker (`proton stock`)](#7-live-stock-market-tracker-proton-stock)
-  - [8. Host System Diagnostics (`proton doctor --sys`)](#8-host-system-diagnostics-proton-doctor---sys)
-  - [9. Knowledge Base & Hybrid RAG (`proton rag`)](#9-knowledge-base--hybrid-rag-proton-rag)
-  - [10. Connection Manager (`proton connection`)](#10-connection-manager-proton-connection)
+  - [4. Explicit Categorized Memory (`proton memory`)](#4-explicit-categorized-memory-proton-memory)
+  - [5. Max-Level Autonomous Agent (`proton agent`)](#5-max-level-autonomous-agent-proton-agent)
+  - [6. Interactive AI Assistant (`proton`)](#6-interactive-ai-assistant-proton)
+  - [7. Terminal Web Browser (`proton browser`)](#7-terminal-web-browser-proton-browser)
+  - [8. Live Stock Market Tracker (`proton stock`)](#8-live-stock-market-tracker-proton-stock)
+  - [9. Host System Diagnostics (`proton doctor --sys`)](#9-host-system-diagnostics-proton-doctor---sys)
+  - [10. Knowledge Base & Hybrid RAG (`proton rag`)](#10-knowledge-base--hybrid-rag-proton-rag)
+  - [11. Connection Manager (`proton connection`)](#11-connection-manager-proton-connection)
 - [🧠 Recommended Models & Hardware Requirements](#-recommended-models--hardware-requirements)
   - [1. Small Models (1B to 10B)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -40,6 +41,7 @@
 ## ✨ Key Features
 
 - **🌐 Project Knowledge Graph & GraphRAG (`proton graph`)**: Full AST structural relationship index (`Function ➔ Calls ➔ Function`, `Class ➔ Inherits ➔ Class`, `Module ➔ Imports ➔ Module`, `Test ➔ Tests ➔ Function`). Answers *"What will break if I change this function?"* with exact blast radius analysis.
+- **🧠 Explicit Categorized Memory (`proton memory`)**: Structure persistent memory into typed domains (**`PROJECT`**, **`DECISION`**, **`PREFERENCE`**, **`FACT`**, **`TASK`**, **`USER`**, **`SESSION`**) to prevent memory from becoming an unorganized dump of raw chat history.
 - **🔍 Deep Codebase & Repository Inspection (`proton inspect`)**: Instantly inspect languages, frameworks, dependencies, design patterns, entry points, test suites, git status, docs, environment, security vulnerabilities, and performance bottlenecks.
 - **📋 Persistent Task Management (`proton task`)**: Separate one-off questions from long-running engineering projects. Tracks **Goal, Plan, Progress %, Files changed, Commands executed, Tool calls, Errors, Approvals, Tests, and Final deliverables** with pause/resume checkpoints.
 - **🤖 Max-Level Autonomous Agent**: 10-stage autonomous lifecycle (`Understand Task ➔ Inspect Repo ➔ Create Plan ➔ Ask Approval ➔ Use Tools ➔ Modify Files ➔ Run Tests ➔ Review Changes ➔ Fix Failures ➔ Generate Report`) with self-healing and automatic code persistence.
@@ -80,31 +82,36 @@ proton --version
 # 1. Configure and test your AI connection (LM Studio / Ollama)
 proton connection
 
-# 2. Build the project AST knowledge graph & run impact analysis
+# 2. Add explicit project decisions and preferences to memory
+proton memory add "Use LM Studio as primary local provider" --type DECISION
+proton memory add "Prefer single-file Arduino examples" --type PREFERENCE
+proton memory list
+
+# 3. Build the project AST knowledge graph & run impact analysis
 proton graph build
 proton graph impact validate_path
 
-# 3. Deeply inspect current repository structure and health
+# 4. Deeply inspect current repository structure and health
 proton inspect
 
-# 4. Create and run a persistent development task
+# 5. Create and run a persistent development task
 proton task create "simple AI UI" "Create a simple web UI for an AI assistant"
 proton task run <task-id>
 
-# 5. Launch the autonomous agent on any goal
+# 6. Launch the autonomous agent on any goal
 proton agent "Refactor stock tracker error handling and run tests"
 
-# 6. Launch the interactive AI Assistant REPL (or resume a saved session)
+# 7. Launch the interactive AI Assistant REPL (or resume a saved session)
 proton
 proton --test
 
-# 7. Launch Proton Terminal Web Browser
+# 8. Launch Proton Terminal Web Browser
 proton browser "fastapi tutorial"
 
-# 8. Launch Live Stock Market Tracker in Indian Rupees (₹)
+# 9. Launch Live Stock Market Tracker in Indian Rupees (₹)
 proton stock
 
-# 9. Check host machine hardware & RAM status
+# 10. Check host machine hardware & RAM status
 proton doctor --sys
 ```
 
@@ -231,7 +238,47 @@ proton task delete <task-id>
 
 ---
 
-### 4. Max-Level Autonomous Agent (`proton agent`)
+### 4. Explicit Categorized Memory (`proton memory`)
+Structure persistent memories into explicit domain categories to prevent memory clutter:
+
+| Category | Description | Example |
+|---|---|---|
+| **`PROJECT`** | Architecture constraints and repo setup | `ESP32 camera uses GPIO configuration X.` |
+| **`DECISION`** | Architectural and technology choices | `Use LM Studio as primary local provider.` |
+| **`PREFERENCE`** | Coding styles and formatting rules | `Prefer single-file Arduino examples.` |
+| **`FACT`** | Domain knowledge, pinouts, and constants | `Camera frame buffer allocated in external PSRAM.` |
+| **`TASK`** | Persistent goal and requirement reminders | `Always run pytest before pushing to main.` |
+| **`USER`** | User role, background, and environment | `User prefers PowerShell on Windows.` |
+| **`SESSION`** | Ephemeral active conversation notes | `Working on branch feat-graphrag.` |
+
+**Commands:**
+```bash
+# List all memories (or filter by type)
+proton memory list
+proton memory list --type DECISION
+
+# Add categorized memory records
+proton memory add "ESP32 camera uses GPIO configuration X" --type PROJECT
+proton memory add "Use LM Studio as primary local provider" --type DECISION
+proton memory add "Prefer single-file Arduino examples" --type PREFERENCE
+
+# Search memory records by keyword
+proton memory search "ESP32"
+
+# Delete / Forget a specific memory record by ID
+proton memory forget 3
+
+# Export memories to Markdown or JSON
+proton memory export
+proton memory export --format json --file my_memory.json
+
+# Clear memories (by category or all)
+proton memory clear --type SESSION
+```
+
+---
+
+### 5. Max-Level Autonomous Agent (`proton agent`)
 Execute end-to-end software engineering tasks with a full **10-stage autonomous lifecycle**:
 
 ```text
@@ -252,7 +299,7 @@ proton agent "Fix failing test cases in auth module" -y --max-steps 30
 
 ---
 
-### 5. Interactive AI Assistant (`proton`)
+### 6. Interactive AI Assistant (`proton`)
 Launch the interactive terminal session with live token streaming, tools, and stateful memory:
 ```bash
 # Launch interactive REPL
@@ -280,7 +327,7 @@ proton ask "Generate quicksort in python" --json
 
 ---
 
-### 6. Terminal Web Browser (`proton browser`)
+### 7. Terminal Web Browser (`proton browser`)
 Browse the internet, search via DuckDuckGo, open numbered links, and summarize pages using AI:
 ```bash
 # Search DuckDuckGo and view results with interactive links
@@ -310,7 +357,7 @@ proton browser "machine learning papers" --ai_mode
 
 ---
 
-### 7. Live Stock Market Tracker (`proton stock`)
+### 8. Live Stock Market Tracker (`proton stock`)
 Live market intelligence in **Indian Rupees (`₹`)** with 10-minute auto-refresh, 20 assets per page, and continuous price charts:
 ```bash
 # Launch live stock dashboard
@@ -345,7 +392,7 @@ proton stock --page 3    # Global Indices, ETFs & Crypto
 
 ---
 
-### 8. Host System Diagnostics (`proton doctor --sys`)
+### 9. Host System Diagnostics (`proton doctor --sys`)
 ```bash
 # Inspect host machine hardware, CPU cores, RAM load bar, and disk storage
 proton doctor --sys
@@ -356,7 +403,7 @@ proton doctor
 
 ---
 
-### 9. Knowledge Base & Hybrid RAG (`proton rag`)
+### 10. Knowledge Base & Hybrid RAG (`proton rag`)
 Ingest large programming datasets and documentation into Proton's SQLite vector store:
 ```bash
 # Download and index comprehensive programming knowledge guides
@@ -374,7 +421,7 @@ proton rag status
 
 ---
 
-### 10. Connection Manager (`proton connection`)
+### 11. Connection Manager (`proton connection`)
 ```bash
 # Interactive setup wizard
 proton connection
@@ -469,6 +516,7 @@ Inside the interactive `proton >` shell, you can use built-in slash commands wit
 
 | Slash Command | Description |
 |---|---|
+| `/memory [subcmd]` | Manage categorized memory (`/memory list\|add\|search\|forget\|export\|clear`) |
 | `/graph [subcmd]` | Project Knowledge Graph & GraphRAG (`/graph impact\|callers\|tests\|build`) |
 | `/inspect [subcmd]` | Deep repo inspection (`/inspect security\|architecture\|dependencies\|tests\|performance`) |
 | `/task [subcmd]` | Manage and run persistent development tasks (`/task create\|list\|show\|run\|pause\|resume\|cancel`) |
@@ -485,7 +533,6 @@ Inside the interactive `proton >` shell, you can use built-in slash commands wit
 | `/review` | Review uncommitted git diffs for bugs and security risks |
 | `/diff` | View colorized unstaged git diff |
 | `/plan <goal>` | Generate a structured implementation plan |
-| `/memory` | Inspect persistent project memory records |
 | `/session list` | View recent conversation sessions |
 | `/export` | Export current conversation to Markdown |
 | `/clear` | Clear the terminal screen |
@@ -526,12 +573,12 @@ Proton/
 │   └── proton/
 │       ├── agent/          # Autonomous agent orchestrator, max agent lifecycle, context assembler, & telemetry
 │       ├── browser/        # Terminal browser engine, HTML parser, & DuckDuckGo scraper
-│       ├── cli/            # Typer CLI commands (app, agent_cmd, task_cmd, inspect_cmd, graph_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
+│       ├── cli/            # Typer CLI commands (app, agent_cmd, task_cmd, memory_cmd, inspect_cmd, graph_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
 │       ├── connection/     # Multi-provider connection manager & latency tester
 │       ├── core/           # Configuration, types, and database management
 │       ├── graph/          # AST code extractor, GraphRAG engine, impact analyzer, and callers map
 │       ├── inspect/        # Repository analysis, architecture detector, security auditor, and performance scanner
-│       ├── memory/         # Persistent memory and session management
+│       ├── memory/         # Explicit categorized memory store (PROJECT, DECISION, PREFERENCE, FACT, TASK, USER, SESSION)
 │       ├── providers/      # LM Studio, Ollama, & OpenAI-compatible providers
 │       ├── rag/            # Hybrid vector & BM25 store, chunker, and corpus fetcher
 │       ├── security/       # Policy engine, approval manager, and sandbox

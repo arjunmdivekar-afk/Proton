@@ -58,9 +58,9 @@ class ContextAssembler:
         tz_formatted = f"UTC{tz_offset[:3]}:{tz_offset[3:]}" if tz_offset else "UTC"
         timezone_info = f"{tz_name} ({tz_formatted})"
 
-        # 2. Recall relevant memories
+        # 2. Recall relevant categorized memories
         memories = self.memory_mgr.recall(query=user_query) if user_query else self.memory_mgr.list_all()
-        mem_lines = [f"- [{m.key}] ({m.scope.value}): {m.content}" for m in memories[:5]]
+        mem_lines = [f"- [{m.memory_type.value}] {m.content}" for m in memories[:8]]
         memory_str = "\n".join(mem_lines) if mem_lines else "None recorded yet."
 
         content = SYSTEM_PROMPT_TEMPLATE.format(

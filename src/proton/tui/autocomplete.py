@@ -20,7 +20,7 @@ SLASH_COMMANDS = {
     "/mode": "Switch mode (/mode chat or /mode agent)",
     "/new": "Start a fresh conversation session",
     "/rag": "Manage RAG index and search project docs",
-    "/memory": "Search or add project rules and facts",
+    "/memory": "Manage categorized memory (/memory list|add|search|forget|export|clear)",
     "/review": "Review git diff or code changes",
     "/plan": "Generate step-by-step implementation plan",
     "/diff": "View unstaged git diff",

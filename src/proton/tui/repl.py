@@ -519,16 +519,49 @@ class ProtonREPL:
                     await self._execute_agent_turn(ai_prompt)
 
         elif base == "/memory":
-            if arg:
-                recs = memory_manager.recall(arg)
+            import shlex
+            parts = shlex.split(arg) if arg else []
+            sub = parts[0].lower() if parts else "list"
+
+            from proton.memory.store import MemoryType
+            from proton.cli.memory_cmd import list_memories_cmd, add_memory_cmd, search_memory_cmd, forget_memory_cmd, clear_memory_cmd, export_memory_cmd
+
+            if sub == "list":
+                m_type = parts[1] if len(parts) > 1 else None
+                list_memories_cmd(mem_type=m_type)
+            elif sub == "add":
+                if len(parts) < 2:
+                    self.console.print("[dim]Usage: `/memory add \"<content>\" [CATEGORY]` or `/memory add [CATEGORY] \"<content>\"`[/dim]")
+                else:
+                    # Check if first or second arg is category
+                    first, second = parts[1], (parts[2] if len(parts) > 2 else None)
+                    cat = "PROJECT"
+                    content = first
+                    if first.upper() in [m.value for m in MemoryType]:
+                        cat = first.upper()
+                        content = second or ""
+                    elif second and second.upper() in [m.value for m in MemoryType]:
+                        cat = second.upper()
+                    add_memory_cmd(content=content, mem_type=cat)
+            elif sub == "search":
+                q = " ".join(parts[1:]) if len(parts) > 1 else ""
+                if not q:
+                    self.console.print("[dim]Usage: `/memory search \"<query>\"`[/dim]")
+                else:
+                    search_memory_cmd(query=q)
+            elif sub in ("forget", "delete", "rm"):
+                if len(parts) < 2 or not parts[1].isdigit():
+                    self.console.print("[dim]Usage: `/memory forget <id>`[/dim]")
+                else:
+                    forget_memory_cmd(record_id=int(parts[1]))
+            elif sub == "export":
+                export_memory_cmd()
+            elif sub == "clear":
+                cat = parts[1] if len(parts) > 1 else None
+                clear_memory_cmd(mem_type=cat, yes=True)
             else:
-                recs = memory_manager.list_all()
-            if recs:
-                self.console.print("[bold]Persistent Memory Records:[/bold]")
-                for r in recs:
-                    self.console.print(f"  • [cyan][{r.key}][/cyan] ({r.scope.value}): {r.content}")
-            else:
-                self.console.print("[dim]No memory items recorded.[/dim]")
+                # If user typed arbitrary search string directly
+                search_memory_cmd(query=arg)
 
         elif base == "/inspect":
             sub = arg.strip().lower()
