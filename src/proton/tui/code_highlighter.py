@@ -3,7 +3,7 @@
 import re
 import sys
 from rich.console import Console
-from rich.markup import escape
+from rich.text import Text
 
 if sys.platform == "win32":
     try:
@@ -46,21 +46,25 @@ class StreamingCodeHighlighter:
                 self.console.print("[dim]----------------------------------------------------------[/dim]\n")
         elif self.in_code_block:
             # Code block line: highlight with subtle light grey background and clean white text
-            escaped_code = escape(line)
-            self.console.print(f"  [bright_white on grey15]{escaped_code}[/bright_white on grey15]", highlight=False)
+            code_text = Text("  ")
+            code_text.append(line, style="bright_white on grey15")
+            self.console.print(code_text)
         else:
             # Markdown Headings (#) -> Change Size and Visual Prominence
             if stripped.startswith("#"):
-                m = re.match(r"^(#{1,6})\s+(.*)$", stripped)
-                if m:
-                    level = len(m.group(1))
-                    heading_text = escape(m.group(2).strip())
+                heading_match = re.match(r"^(#{1,6})\s+(.*)$", stripped)
+                if heading_match:
+                    level = len(heading_match.group(1))
+                    heading_text = heading_match.group(2).strip()
+
                     if level == 1:
                         divider = "=" * min(65, max(30, len(heading_text) + 8))
-                        self.console.print(f"\n[bold bright_white on grey23]  # {heading_text.upper()}  [/bold bright_white on grey23]\n[dim]{divider}[/dim]")
+                        self.console.print(f"\n[bold bright_white on grey23]  # {heading_text.upper()}  [/bold bright_white on grey23]")
+                        self.console.print(f"[dim]{divider}[/dim]")
                     elif level == 2:
                         divider = "-" * min(55, max(25, len(heading_text) + 6))
-                        self.console.print(f"\n[bold cyan]## {heading_text}[/bold cyan]\n[dim]{divider}[/dim]")
+                        self.console.print(f"\n[bold cyan]## {heading_text}[/bold cyan]")
+                        self.console.print(f"[dim]{divider}[/dim]")
                     elif level == 3:
                         self.console.print(f"\n[bold yellow]### {heading_text}[/bold yellow]")
                     else:
@@ -72,50 +76,46 @@ class StreamingCodeHighlighter:
             if bullet_match:
                 indent = bullet_match.group(1)
                 item_text = bullet_match.group(2)
-                formatted = self._format_inline_markdown(item_text)
-                self.console.print(f"{indent}[bold cyan]*[/bold cyan] {formatted}", highlight=False)
+                t = Text(indent)
+                t.append("* ", style="bold cyan")
+                t.append_text(self._parse_inline_styles(item_text))
+                self.console.print(t)
                 return
 
-            # Regular conversational text line (with inline `code` and *text* / **text** highlighting)
-            formatted_line = self._format_inline_markdown(line)
-            self.console.print(formatted_line, highlight=False)
+            # Regular text line with inline formatting
+            t = self._parse_inline_styles(line)
+            self.console.print(t)
 
-    def _format_inline_markdown(self, text: str) -> str:
-        """Format inline markdown elements: **highlight**, *highlight*, and `code`."""
-        code_placeholders = []
+    def _parse_inline_styles(self, text: str) -> Text:
+        """Parse inline **bold/highlight**, *italic*, and `code` into a native styled Rich Text object."""
+        # Tokenize by inline code, double asterisks, and single asterisks
+        pattern = re.compile(r"(`[^`]+`|\*\*[^*]+\*\*|(?<!\*)\*[^*]+\*(?!\*))")
+        tokens = pattern.split(text)
 
-        def code_sub(match):
-            code_placeholders.append(match.group(1))
-            return f"__CODE_PH_{len(code_placeholders)-1}__"
-
-        temp = re.sub(r"(`[^`]+`)", code_sub, text)
-
-        # Highlight double asterisks **text** with bright yellow on dark grey background
-        temp = re.sub(r"\*\*([^*]+)\*\*", r"[bold bright_yellow on grey23] \1 [/bold bright_yellow on grey23]", temp)
-
-        # Highlight single asterisk *text* with bold yellow accent
-        temp = re.sub(r"(?<!\*)\*([^*]+)\*(?!\*)", r"[bold yellow]\1[/bold yellow]", temp)
-
-        # Escape non-markup characters
-        escaped_temp = escape(temp)
-        escaped_temp = escaped_temp.replace("&amp;", "&")
-        escaped_temp = escaped_temp.replace("\\[bold bright_yellow on grey23\\]", "[bold bright_yellow on grey23]").replace("\\[/bold bright_yellow on grey23\\]", "[/bold bright_yellow on grey23]")
-        escaped_temp = escaped_temp.replace("\\[bold yellow\\]", "[bold yellow]").replace("\\[/bold yellow\\]", "[/bold yellow]")
-        escaped_temp = escaped_temp.replace("\\[bold cyan\\]", "[bold cyan]").replace("\\[/bold cyan\\]", "[/bold cyan]")
-
-        # Restore code placeholders with light-grey background styling
-        for i, code_val in enumerate(code_placeholders):
-            inner_code = escape(code_val[1:-1])
-            escaped_temp = escaped_temp.replace(f"__CODE_PH_{i}__", f"[bold cyan on grey23] {inner_code} [/bold cyan on grey23]")
-
-        return escaped_temp
+        res = Text()
+        for tok in tokens:
+            if not tok:
+                continue
+            if tok.startswith("`") and tok.endswith("`") and len(tok) >= 2:
+                # Inline code: light grey background with cyan text
+                res.append(f" {tok[1:-1]} ", style="bold cyan on grey23")
+            elif tok.startswith("**") and tok.endswith("**") and len(tok) >= 4:
+                # **Highlighted text**: bright yellow bold highlight on dark background
+                res.append(tok[2:-2], style="bold bright_yellow on grey23")
+            elif tok.startswith("*") and tok.endswith("*") and len(tok) >= 2:
+                # *Italic / highlighted text*: bold yellow
+                res.append(tok[1:-1], style="bold yellow")
+            else:
+                res.append(tok)
+        return res
 
     def flush(self) -> None:
         if self.buffer:
             if self.in_code_block:
-                escaped_code = escape(self.buffer)
-                self.console.print(f"  [bright_white on grey15]{escaped_code}[/bright_white on grey15]", highlight=False)
+                code_text = Text("  ")
+                code_text.append(self.buffer, style="bright_white on grey15")
+                self.console.print(code_text)
             else:
-                formatted = self._format_inline_markdown(self.buffer)
-                self.console.print(formatted, highlight=False)
+                t = self._parse_inline_styles(self.buffer)
+                self.console.print(t)
             self.buffer = ""
