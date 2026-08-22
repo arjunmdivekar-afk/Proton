@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
-> **Proton** is a high-performance, provider-neutral AI CLI assistant, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
+> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
 
 ---
 
@@ -20,6 +20,7 @@
   - [4. Live Stock Market Tracker (`proton stock`)](#4-live-stock-market-tracker-proton-stock)
   - [5. Host System Diagnostics (`proton doctor --sys`)](#5-host-system-diagnostics-proton-doctor---sys)
   - [6. Knowledge Base & Hybrid RAG (`proton rag`)](#6-knowledge-base--hybrid-rag-proton-rag)
+  - [7. Connection Manager (`proton connection`)](#7-connection-manager-proton-connection)
 - [🧠 Recommended Models & Hardware Requirements](#-recommended-models--hardware-requirements)
   - [1. Small Models (1B to 10B)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -35,12 +36,13 @@
 
 ## ✨ Key Features
 
+- **🤖 Max-Level Autonomous Agent**: 10-stage autonomous lifecycle (`Understand Task ➔ Inspect Repo ➔ Create Plan ➔ Ask Approval ➔ Use Tools ➔ Modify Files ➔ Run Tests ➔ Review Changes ➔ Fix Failures ➔ Generate Report`) with self-healing and automatic code persistence.
 - **🌐 Provider & Model Neutral**: First-class support for **LM Studio** (local and LAN IP `http://192.168.x.x:1234`), **Ollama**, and any OpenAI-compatible inference server.
 - **⚡ Interactive Stream-First TUI REPL**: Live token streaming, light-grey code block highlights, large `#` heading panels, and `*` text highlighting.
-- **🌍 Proton Terminal Web Browser**: Keyboard-first browser with live DuckDuckGo web search, numbered interactive links `[1-20]`, multi-hop page navigation, and embedded **Proton AI Copilot** (`/browser --ai_mode`).
+- **🌍 Proton Terminal Web Browser**: Keyboard-first browser with live DuckDuckGo web search, numbered interactive links `[1-50]`, multi-hop page navigation, and embedded **Proton AI Copilot** (`/browser --ai_mode`).
 - **📈 Live Stock Market Tracker (`yfinance`)**: Real-time stock dashboard in **Indian Rupees (`₹`)** with 10-minute auto-refresh, 20 stocks per page across Indian NSE/BSE & Global markets, high-resolution continuous vector price charts, and **Proton AI Stock Analyst**.
 - **🖥️ Host System & Hardware Diagnostics**: `proton doctor --sys` inspects CPU cores, live RAM usage bar, disk partitions, uptime, and network interfaces.
-- **🧠 Local Hybrid Vector & BM25 RAG**: In-process parent-child chunking with SQLite vector indexing (`~/.proton/knowledge/`) and dynamic code retrieval.
+- **🧠 Local Hybrid Vector & BM25 RAG**: In-process parent-child chunking with SQLite vector indexing (`~/.proton/knowledge/`) and dynamic code retrieval (`proton rag fetch-knowledge`).
 - **🛡️ Strict Human-in-the-Loop Security**: Path traversal prevention, secret redaction, granular tool execution policies, and audit logging.
 
 ---
@@ -72,16 +74,19 @@ proton --version
 # 1. Configure and test your AI connection (LM Studio / Ollama)
 proton connection
 
-# 2. Launch the interactive AI Assistant REPL
+# 2. Launch interactive Autonomous Agent on a software task
+proton agent "create responsive navigation header with tests"
+
+# 3. Launch the interactive AI Assistant REPL
 proton
 
-# 3. Launch Proton Terminal Web Browser
-proton browser "react 19 release notes"
+# 4. Launch Proton Terminal Web Browser
+proton browser "fastapi tutorial"
 
-# 4. Launch Live Stock Market Tracker in Indian Rupees (₹)
+# 5. Launch Live Stock Market Tracker in Indian Rupees (₹)
 proton stock
 
-# 5. Check host machine hardware & RAM status
+# 6. Check host machine hardware & RAM status
 proton doctor --sys
 ```
 
@@ -366,9 +371,9 @@ Proton includes an enterprise-grade security layer:
 Proton/
 ├── src/
 │   └── proton/
-│       ├── agent/          # Agent orchestration engine, context assembler, & telemetry
+│       ├── agent/          # Autonomous agent orchestrator, max agent lifecycle, context assembler, & telemetry
 │       ├── browser/        # Terminal browser engine, HTML parser, & DuckDuckGo scraper
-│       ├── cli/            # Typer CLI commands (app, browser_cmd, stock_cmd, doctor_cmd)
+│       ├── cli/            # Typer CLI commands (app, agent_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
 │       ├── connection/     # Multi-provider connection manager & latency tester
 │       ├── core/           # Configuration, types, and database management
 │       ├── memory/         # Persistent memory and session management
