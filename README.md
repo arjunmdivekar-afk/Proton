@@ -167,10 +167,14 @@ proton agent "Fix failing test cases in auth module" -y --max-steps 30
 ---
 
 ### 3. Interactive AI Assistant (`proton`)
-Launch the interactive terminal session with live token streaming and memory:
+Launch the interactive terminal session with live token streaming, tools, and stateful memory:
 ```bash
 # Launch interactive REPL
 proton
+
+# Resume a previously saved conversation directly
+proton --test
+proton --auth_refactor
 
 # Run non-interactive query
 proton ask "Explain the architecture of this project"
@@ -178,6 +182,15 @@ proton ask "Explain the architecture of this project"
 # Output machine-readable JSON
 proton ask "Generate quicksort in python" --json
 ```
+
+**💾 Naming & Resuming Conversations (`Ctrl+T`):**
+- Press **`Ctrl+T`** (or type `/exit`) anytime during your conversation.
+- Proton prompts: `Save conversation as named session? (e.g. 'test'): `
+- Enter any name (e.g. `test`).
+- You can instantly resume that exact conversation with its entire message history anytime by running:
+  ```bash
+  proton --test
+  ```
 
 ---
 

@@ -62,6 +62,8 @@ def main_callback(
     ),
     stdin: bool = typer.Option(False, "--stdin", help="Read prompt/data from stdin"),
     json_mode: bool = typer.Option(False, "--json", help="Output machine-readable JSON"),
+    session: Optional[str] = typer.Option(None, "--session", "-s", help="Resume named conversation session"),
+    resume: Optional[str] = typer.Option(None, "--resume", help="Alias for --session"),
 ) -> None:
     """Launch Proton interactive REPL or execute prompt non-interactively."""
     if ctx.invoked_subcommand is not None:
@@ -78,8 +80,9 @@ def main_callback(
     if pipe_input:
         asyncio.run(_run_non_interactive(pipe_input, json_mode=json_mode))
     else:
-        # Launch Interactive TUI REPL
-        repl = ProtonREPL()
+        # Launch Interactive TUI REPL (with optional resumed session)
+        target_session = session or resume
+        repl = ProtonREPL(initial_session=target_session)
         asyncio.run(repl.run())
 
 
@@ -210,6 +213,19 @@ app.command("stocks", help="Alias for proton stock")(launch_stock_dashboard)
 
 
 def main() -> None:
+    # Check if a dynamic named session flag like `proton --test` was passed directly
+    args = sys.argv[1:]
+    known_flags = {"--version", "-v", "--help", "-h", "--stdin", "--json", "--session", "-s", "--resume"}
+    known_subcmds = {"agent", "browser", "stock", "stocks", "task", "tasks", "connection", "rag", "ask", "doctor"}
+
+    if args:
+        first = args[0]
+        if first.startswith("--") and first not in known_flags and not any(first.startswith(f"--{k}") for k in ("help", "version", "stdin", "json", "session", "resume")):
+            session_name = first.lstrip("-")
+            repl = ProtonREPL(initial_session=session_name)
+            asyncio.run(repl.run())
+            return
+
     app()
 
 

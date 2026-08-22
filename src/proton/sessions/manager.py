@@ -152,6 +152,61 @@ class SessionManager:
             messages=messages,
         )
 
+    def find_session_by_name_or_id(self, name_or_id: str) -> Optional[SessionDetail]:
+        """Find session by exact ID, exact title/name, or case-insensitive title match."""
+        clean_target = name_or_id.lstrip("-").strip().lower()
+        if not clean_target:
+            return None
+
+        # 1. Try exact ID
+        sess = self.get_session(clean_target)
+        if sess:
+            return sess
+
+        # 2. Try exact title match in SQLite
+        with sqlite3.connect(str(self.db_path)) as conn:
+            cur = conn.cursor()
+            cur.execute(
+                "SELECT id FROM sessions WHERE LOWER(title) = ? ORDER BY updated_at DESC LIMIT 1",
+                (clean_target,),
+            )
+            row = cur.fetchone()
+            if row:
+                return self.get_session(row[0])
+
+            # 3. Try partial title match
+            cur.execute(
+                "SELECT id FROM sessions WHERE LOWER(title) LIKE ? ORDER BY updated_at DESC LIMIT 1",
+                (f"%{clean_target}%",),
+            )
+            row = cur.fetchone()
+            if row:
+                return self.get_session(row[0])
+
+        return None
+
+    def rename_session(self, session_id: str, new_title: str) -> bool:
+        """Update session title and persist JSON copy in ~/.proton/sessions/."""
+        now = datetime.now(timezone.utc).isoformat()
+        with sqlite3.connect(str(self.db_path)) as conn:
+            conn.execute("UPDATE sessions SET title = ?, updated_at = ? WHERE id = ?", (new_title, now, session_id))
+            conn.commit()
+
+        # Also write named JSON checkpoint for easy user inspection
+        try:
+            sess = self.get_session(session_id)
+            if sess:
+                sessions_dir = get_proton_home() / "sessions"
+                sessions_dir.mkdir(parents=True, exist_ok=True)
+                clean_name = "".join(c for c in new_title if c.isalnum() or c in ("-", "_")).strip() or session_id
+                target_file = sessions_dir / f"{clean_name}.json"
+                with open(target_file, "w", encoding="utf-8") as f:
+                    f.write(sess.model_dump_json(indent=2))
+        except Exception:
+            pass
+
+        return True
+
     def list_sessions(self, limit: int = 20) -> List[SessionSummary]:
         with sqlite3.connect(str(self.db_path)) as conn:
             cur = conn.cursor()

@@ -94,7 +94,7 @@ class KeyInterruptListener:
 class ProtonREPL:
     """Stream-First Terminal REPL for Proton."""
 
-    def __init__(self, workspace_path: Optional[Path] = None) -> None:
+    def __init__(self, workspace_path: Optional[Path] = None, initial_session: Optional[str] = None) -> None:
         self.workspace_path = (workspace_path or Path.cwd()).resolve()
         self.console = Console()
         self.config_mgr = ConfigManager(self.workspace_path)
@@ -116,18 +116,38 @@ class ProtonREPL:
 
         # Active Session
         active_conn = self.conn_mgr.get_active_connection()
-        self.current_session = self.session_mgr.create_session(
-            workspace_path=str(self.workspace_path),
-            connection_id=active_conn.id,
-            model_id=self.config_mgr.config.active_model,
-        )
+        if initial_session:
+            existing = self.session_mgr.find_session_by_name_or_id(initial_session)
+            if existing:
+                self.current_session = existing
+            else:
+                self.current_session = self.session_mgr.create_session(
+                    workspace_path=str(self.workspace_path),
+                    title=initial_session.lstrip("-"),
+                    connection_id=active_conn.id,
+                    model_id=self.config_mgr.config.active_model,
+                )
+        else:
+            self.current_session = self.session_mgr.create_session(
+                workspace_path=str(self.workspace_path),
+                connection_id=active_conn.id,
+                model_id=self.config_mgr.config.active_model,
+            )
 
-        # Setup prompt_toolkit history
+        # Setup prompt_toolkit history & keybindings
+        from prompt_toolkit.key_binding import KeyBindings
+        self.key_bindings = KeyBindings()
+
+        @self.key_bindings.add("c-t")
+        def _on_ctrl_t(event):
+            event.app.exit(result="__CTRL_T_SAVE_EXIT__")
+
         hist_file = str(get_proton_home() / "history.txt")
         try:
             self.prompt_session = PromptSession(
                 history=FileHistory(hist_file),
                 completer=SlashCommandCompleter(),
+                key_bindings=self.key_bindings,
             )
         except Exception:
             from prompt_toolkit.input import DummyInput
@@ -136,6 +156,7 @@ class ProtonREPL:
             self.prompt_session = PromptSession(
                 history=FileHistory(hist_file),
                 completer=SlashCommandCompleter(),
+                key_bindings=self.key_bindings,
                 input=DummyInput(),
                 output=DummyOutput(),
             )
@@ -185,10 +206,44 @@ class ProtonREPL:
             f"[bold]Workspace:[/bold] [dim]{self.workspace_path.name}[/dim]  "
             f"[bold]Security:[/bold] [yellow]Strict Approval[/yellow]\n\n"
             f"[dim]Type your request or use slash commands like [bold]/help[/bold], [bold]/connection[/bold], [bold]/model[/bold], [bold]/mode[/bold], [bold]/exit[/bold][/dim]\n"
-            f"[dim]Tip: Press [bold cyan]Ctrl+T[/bold cyan] anytime during streaming to stop generation instantly.[/dim]",
+            f"[dim]Tip: Press [bold cyan]Ctrl+T[/bold cyan] anytime to end and name/save your conversation session.[/dim]",
             border_style="cyan",
         )
         self.console.print(banner)
+
+        if self.current_session and getattr(self.current_session, "messages", None):
+            self.console.print(
+                f"[bold green]● Resumed Conversation Session:[/bold green] [bold cyan]{self.current_session.title}[/bold cyan] "
+                f"[dim]({len(self.current_session.messages)} messages loaded)[/dim]"
+            )
+            for msg in self.current_session.messages[-4:]:
+                prefix = "[bold cyan]User:[/bold cyan]" if msg.role.value == "user" else "[bold magenta]Proton:[/bold magenta]"
+                preview = msg.content.strip().split("\n")[0][:90]
+                self.console.print(f"  {prefix} [dim]{preview}[/dim]")
+            self.console.print()
+
+    def _prompt_and_save_session(self) -> None:
+        """Prompt user to name and save conversation session upon exit/Ctrl+T."""
+        try:
+            self.console.print("\n[bold cyan]💾 Save Conversation Session[/bold cyan]")
+            self.console.print("[dim]Name this conversation to resume it later (e.g. 'test' -> `proton --test`), or press Enter to skip:[/dim]")
+            name = input("Session name: ").strip()
+            if name:
+                clean_name = name.lstrip("-").strip()
+                self.session_mgr.rename_session(self.current_session.id, clean_name)
+                self.current_session.title = clean_name
+                self.console.print(
+                    Panel.fit(
+                        f"[bold green]✓ Conversation saved as:[/bold green] [bold cyan]{clean_name}[/bold cyan]\n"
+                        f"[dim]You can resume this conversation anytime using:[/dim]\n"
+                        f"  [bold bright_white]proton --{clean_name}[/bold bright_white]\n"
+                        f"  [dim]or[/dim] [bold bright_white]proton --session {clean_name}[/bold bright_white]",
+                        border_style="green",
+                    )
+                )
+        except Exception:
+            pass
+        self.console.print("[yellow]Exiting Proton... Goodbye![/yellow]")
 
     async def run(self) -> None:
         self.print_banner()
@@ -201,6 +256,10 @@ class ProtonREPL:
                     None,
                     lambda: self.prompt_session.prompt(HTML("<ansicyan><b>proton &gt; </b></ansicyan>")).strip()
                 )
+
+                if user_input == "__CTRL_T_SAVE_EXIT__":
+                    self._prompt_and_save_session()
+                    break
 
                 if not user_input:
                     continue
@@ -215,7 +274,7 @@ class ProtonREPL:
                 await self._execute_agent_turn(user_input)
 
             except (KeyboardInterrupt, EOFError):
-                self.console.print("\n[yellow]Exiting Proton... Goodbye![/yellow]")
+                self._prompt_and_save_session()
                 break
             except Exception as e:
                 self.console.print(f"[bold red]Error:[/bold red] {e}")
@@ -226,7 +285,7 @@ class ProtonREPL:
         arg = parts[1] if len(parts) > 1 else ""
 
         if base in ("/exit", "/quit", "/q"):
-            self.console.print("[yellow]Goodbye![/yellow]")
+            self._prompt_and_save_session()
             return "exit"
 
         elif base == "/clear":
