@@ -530,6 +530,32 @@ class ProtonREPL:
             else:
                 self.console.print("[dim]No memory items recorded.[/dim]")
 
+        elif base == "/inspect":
+            sub = arg.strip().lower()
+            from proton.inspect.analyzer import RepoAnalyzer
+            analyzer = RepoAnalyzer(self.workspace_path)
+
+            if sub == "security":
+                from proton.cli.inspect_cmd import inspect_security_cmd
+                inspect_security_cmd(str(self.workspace_path))
+            elif sub == "architecture":
+                from proton.cli.inspect_cmd import inspect_architecture_cmd
+                inspect_architecture_cmd(str(self.workspace_path))
+            elif sub == "dependencies":
+                from proton.cli.inspect_cmd import inspect_dependencies_cmd
+                inspect_dependencies_cmd(str(self.workspace_path))
+            elif sub == "tests":
+                from proton.cli.inspect_cmd import inspect_tests_cmd
+                inspect_tests_cmd(str(self.workspace_path))
+            elif sub == "performance":
+                from proton.cli.inspect_cmd import inspect_performance_cmd
+                inspect_performance_cmd(str(self.workspace_path))
+            else:
+                from proton.cli.inspect_cmd import default_inspect_callback
+                import typer
+                ctx = typer.Context(typer.main.get_command(inspect_app))
+                default_inspect_callback(ctx, str(self.workspace_path), json_mode=False)
+
         elif base in ("/new", "/reset"):
             active_conn = self.conn_mgr.get_active_connection()
             self.current_session = self.session_mgr.create_session(

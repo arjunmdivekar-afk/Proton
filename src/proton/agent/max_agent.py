@@ -243,24 +243,28 @@ class ProtonMaxAgent:
         return resp.strip()
 
     async def _stage_inspect_repo(self) -> str:
-        """Stage 2: Scan directory tree and discover files."""
-        # Find key config files and top-level directories
-        repo_files: List[str] = []
-        for root, dirs, files in os.walk(self.workspace):
-            dirs[:] = [d for d in dirs if d not in {".git", "__pycache__", "node_modules", ".venv", "venv", ".proton"}]
-            for f in files[:20]:
-                p = Path(root) / f
-                rel = str(p.relative_to(self.workspace))
-                repo_files.append(rel)
-                self.inspected_files.add(rel)
-                if len(repo_files) >= 40:
-                    break
-            if len(repo_files) >= 40:
-                break
+        """Stage 2: Scan repository structure, languages, frameworks, and architecture."""
+        from proton.inspect.analyzer import RepoAnalyzer
+        analyzer = RepoAnalyzer(self.workspace)
+        rep = analyzer.inspect_all()
 
-        file_list_str = "\n".join(repo_files[:25])
-        self.console.print(f"[green]✓ Inspected workspace:[/green] Discovered {len(repo_files)} repository files.")
-        return file_list_str
+        langs_str = ", ".join(f"{l.name} ({l.percentage}%)" for l in rep.languages[:3]) or "None"
+        fw_str = ", ".join(f.name for f in rep.frameworks[:4]) or "Standard"
+
+        self.console.print(
+            f"[green]✓ Inspected workspace:[/green] Pattern: [magenta]{rep.architecture.pattern}[/magenta]  "
+            f"Languages: [cyan]{langs_str}[/cyan]  Frameworks: [yellow]{fw_str}[/yellow]"
+        )
+
+        summary_lines = [
+            f"Project: {rep.project_name}",
+            f"Languages: {langs_str}",
+            f"Frameworks: {fw_str}",
+            f"Architecture Pattern: {rep.architecture.pattern}",
+            f"Entry Points: {', '.join(rep.entry_points[:3])}",
+            f"Test Framework: {rep.test_framework.framework}",
+        ]
+        return "\n".join(summary_lines)
 
     async def _stage_create_plan(self, goal: str, task_context: str, repo_summary: str) -> Plan:
         """Stage 3: Formulate actionable multi-step plan."""

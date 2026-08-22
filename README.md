@@ -5,7 +5,7 @@
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
 
-> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
+> **Proton** is a high-performance, provider-neutral AI CLI assistant, autonomous software engineering agent, persistent task manager, repository intelligence engine, terminal web browser, and market intelligence platform designed for developers, DevOps engineers, and researchers operating directly from the terminal.
 
 ---
 
@@ -14,14 +14,15 @@
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 Quick Start](#-quick-start)
 - [💻 CLI Command Reference](#-cli-command-reference)
-  - [1. Persistent Task Manager (`proton task`)](#1-persistent-task-manager-proton-task)
-  - [2. Max-Level Autonomous Agent (`proton agent`)](#2-max-level-autonomous-agent-proton-agent)
-  - [3. Interactive AI Assistant (`proton`)](#3-interactive-ai-assistant-proton)
-  - [4. Terminal Web Browser (`proton browser`)](#4-terminal-web-browser-proton-browser)
-  - [5. Live Stock Market Tracker (`proton stock`)](#5-live-stock-market-tracker-proton-stock)
-  - [6. Host System Diagnostics (`proton doctor --sys`)](#6-host-system-diagnostics-proton-doctor---sys)
-  - [7. Knowledge Base & Hybrid RAG (`proton rag`)](#7-knowledge-base--hybrid-rag-proton-rag)
-  - [8. Connection Manager (`proton connection`)](#8-connection-manager-proton-connection)
+  - [1. Deep Repository Inspection (`proton inspect`)](#1-deep-repository-inspection-proton-inspect)
+  - [2. Persistent Task Manager (`proton task`)](#2-persistent-task-manager-proton-task)
+  - [3. Max-Level Autonomous Agent (`proton agent`)](#3-max-level-autonomous-agent-proton-agent)
+  - [4. Interactive AI Assistant (`proton`)](#4-interactive-ai-assistant-proton)
+  - [5. Terminal Web Browser (`proton browser`)](#5-terminal-web-browser-proton-browser)
+  - [6. Live Stock Market Tracker (`proton stock`)](#6-live-stock-market-tracker-proton-stock)
+  - [7. Host System Diagnostics (`proton doctor --sys`)](#7-host-system-diagnostics-proton-doctor---sys)
+  - [8. Knowledge Base & Hybrid RAG (`proton rag`)](#8-knowledge-base--hybrid-rag-proton-rag)
+  - [9. Connection Manager (`proton connection`)](#9-connection-manager-proton-connection)
 - [🧠 Recommended Models & Hardware Requirements](#-recommended-models--hardware-requirements)
   - [1. Small Models (1B to 10B)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -37,6 +38,7 @@
 
 ## ✨ Key Features
 
+- **🔍 Deep Codebase & Repository Inspection (`proton inspect`)**: Instantly inspect languages, frameworks, dependencies, design patterns, entry points, test suites, git status, docs, environment, security vulnerabilities, and performance bottlenecks.
 - **📋 Persistent Task Management (`proton task`)**: Separate one-off questions from long-running engineering projects. Tracks **Goal, Plan, Progress %, Files changed, Commands executed, Tool calls, Errors, Approvals, Tests, and Final deliverables** with pause/resume checkpoints.
 - **🤖 Max-Level Autonomous Agent**: 10-stage autonomous lifecycle (`Understand Task ➔ Inspect Repo ➔ Create Plan ➔ Ask Approval ➔ Use Tools ➔ Modify Files ➔ Run Tests ➔ Review Changes ➔ Fix Failures ➔ Generate Report`) with self-healing and automatic code persistence.
 - **🌐 Provider & Model Neutral**: First-class support for **LM Studio** (local and LAN IP `http://192.168.x.x:1234`), **Ollama**, and any OpenAI-compatible inference server.
@@ -76,23 +78,27 @@ proton --version
 # 1. Configure and test your AI connection (LM Studio / Ollama)
 proton connection
 
-# 2. Create and run a persistent development task
-proton task create "simple AI UI" "Create a simple web UI for an AI assistant"
-proton task run task-b2336e9d
+# 2. Deeply inspect current repository structure and health
+proton inspect
 
-# 3. Launch the autonomous agent on any goal
+# 3. Create and run a persistent development task
+proton task create "simple AI UI" "Create a simple web UI for an AI assistant"
+proton task run <task-id>
+
+# 4. Launch the autonomous agent on any goal
 proton agent "Refactor stock tracker error handling and run tests"
 
-# 4. Launch the interactive AI Assistant REPL
+# 5. Launch the interactive AI Assistant REPL (or resume a saved session)
 proton
+proton --test
 
-# 5. Launch Proton Terminal Web Browser
+# 6. Launch Proton Terminal Web Browser
 proton browser "fastapi tutorial"
 
-# 6. Launch Live Stock Market Tracker in Indian Rupees (₹)
+# 7. Launch Live Stock Market Tracker in Indian Rupees (₹)
 proton stock
 
-# 7. Check host machine hardware & RAM status
+# 8. Check host machine hardware & RAM status
 proton doctor --sys
 ```
 
@@ -100,7 +106,50 @@ proton doctor --sys
 
 ## 💻 CLI Command Reference
 
-### 1. Persistent Task Manager (`proton task`)
+### 1. Deep Repository Inspection (`proton inspect`)
+Understand any new or existing repository at a glance before making code changes:
+
+```text
+PROJECT
+├── Language detection
+├── Framework detection
+├── Dependencies
+├── Architecture
+├── Entry points
+├── Test framework
+├── Git status
+├── Documentation
+├── Environment
+└── Potential problems
+```
+
+**Commands:**
+```bash
+# Run full comprehensive inspection tree
+proton inspect
+
+# Run specialized security audit (detects hardcoded keys, CVE patterns, and permissions)
+proton inspect security
+
+# Analyze design patterns, detected layers, and execution flow
+proton inspect architecture
+
+# List direct packages, version constraints, and package managers
+proton inspect dependencies
+
+# Discover test framework, test file counts, and CI configurations
+proton inspect tests
+
+# Analyze repo disk size and detect large files (> 500 KB)
+proton inspect performance
+
+# Output machine-readable JSON for agents / automated tooling
+proton inspect --json
+```
+
+---
+
+### 2. Persistent Task Manager (`proton task`)
 Separate one-off chat questions from persistent, long-running engineering projects. Every task maintains a stateful checkpoint on disk (`~/.proton/tasks/`):
 
 ```text
@@ -145,7 +194,7 @@ proton task delete <task-id>
 
 ---
 
-### 2. Max-Level Autonomous Agent (`proton agent`)
+### 3. Max-Level Autonomous Agent (`proton agent`)
 Execute end-to-end software engineering tasks with a full **10-stage autonomous lifecycle**:
 
 ```text
@@ -166,7 +215,7 @@ proton agent "Fix failing test cases in auth module" -y --max-steps 30
 
 ---
 
-### 3. Interactive AI Assistant (`proton`)
+### 4. Interactive AI Assistant (`proton`)
 Launch the interactive terminal session with live token streaming, tools, and stateful memory:
 ```bash
 # Launch interactive REPL
@@ -194,7 +243,7 @@ proton ask "Generate quicksort in python" --json
 
 ---
 
-### 4. Terminal Web Browser (`proton browser`)
+### 5. Terminal Web Browser (`proton browser`)
 Browse the internet, search via DuckDuckGo, open numbered links, and summarize pages using AI:
 ```bash
 # Search DuckDuckGo and view results with interactive links
@@ -224,7 +273,7 @@ proton browser "machine learning papers" --ai_mode
 
 ---
 
-### 5. Live Stock Market Tracker (`proton stock`)
+### 6. Live Stock Market Tracker (`proton stock`)
 Live market intelligence in **Indian Rupees (`₹`)** with 10-minute auto-refresh, 20 assets per page, and continuous price charts:
 ```bash
 # Launch live stock dashboard
@@ -259,7 +308,7 @@ proton stock --page 3    # Global Indices, ETFs & Crypto
 
 ---
 
-### 6. Host System Diagnostics (`proton doctor --sys`)
+### 7. Host System Diagnostics (`proton doctor --sys`)
 ```bash
 # Inspect host machine hardware, CPU cores, RAM load bar, and disk storage
 proton doctor --sys
@@ -270,7 +319,7 @@ proton doctor
 
 ---
 
-### 7. Knowledge Base & Hybrid RAG (`proton rag`)
+### 8. Knowledge Base & Hybrid RAG (`proton rag`)
 Ingest large programming datasets and documentation into Proton's SQLite vector store:
 ```bash
 # Download and index comprehensive programming knowledge guides
@@ -288,7 +337,7 @@ proton rag status
 
 ---
 
-### 8. Connection Manager (`proton connection`)
+### 9. Connection Manager (`proton connection`)
 ```bash
 # Interactive setup wizard
 proton connection
@@ -383,7 +432,8 @@ Inside the interactive `proton >` shell, you can use built-in slash commands wit
 
 | Slash Command | Description |
 |---|---|
-| `/task [create\|list\|show\|run\|pause\|resume\|cancel]` | Manage and run persistent development tasks |
+| `/inspect [subcmd]` | Deep repo inspection (`/inspect security\|architecture\|dependencies\|tests\|performance`) |
+| `/task [subcmd]` | Manage and run persistent development tasks (`/task create\|list\|show\|run\|pause\|resume\|cancel`) |
 | `/agent <goal>` | Launch Proton Max-Level Autonomous Agent with 10-stage lifecycle |
 | `/stock [SYMBOL]` | Launch live stock market tracker with charts in Rupees (`₹`) |
 | `/browser [URL]` | Launch Proton Terminal Web Browser (`/browser --ai_mode`) |
@@ -402,7 +452,7 @@ Inside the interactive `proton >` shell, you can use built-in slash commands wit
 | `/export` | Export current conversation to Markdown |
 | `/clear` | Clear the terminal screen |
 | `/help` | Display command help and keyboard shortcuts |
-| `/exit` | Exit Proton session |
+| `/exit` | Exit Proton session (prompts to save named session) |
 
 ---
 
@@ -438,9 +488,10 @@ Proton/
 │   └── proton/
 │       ├── agent/          # Autonomous agent orchestrator, max agent lifecycle, context assembler, & telemetry
 │       ├── browser/        # Terminal browser engine, HTML parser, & DuckDuckGo scraper
-│       ├── cli/            # Typer CLI commands (app, agent_cmd, task_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
+│       ├── cli/            # Typer CLI commands (app, agent_cmd, task_cmd, inspect_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
 │       ├── connection/     # Multi-provider connection manager & latency tester
 │       ├── core/           # Configuration, types, and database management
+│       ├── inspect/        # Repository analysis, architecture detector, security auditor, and performance scanner
 │       ├── memory/         # Persistent memory and session management
 │       ├── providers/      # LM Studio, Ollama, & OpenAI-compatible providers
 │       ├── rag/            # Hybrid vector & BM25 store, chunker, and corpus fetcher
