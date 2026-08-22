@@ -77,7 +77,7 @@ proton --version
 proton connection
 
 # 2. Create and run a persistent development task
-proton task create "Build ESP32 camera server with streaming endpoint"
+proton task create "simple AI UI" "Create a simple web UI for an AI assistant"
 proton task run task-b2336e9d
 
 # 3. Launch the autonomous agent on any goal
@@ -117,8 +117,9 @@ Separate one-off chat questions from persistent, long-running engineering projec
 
 **Commands:**
 ```bash
-# Create a new persistent task
-proton task create "Build ESP32 camera server with video streaming and wifi config"
+# Create a new persistent task (Title and Goal)
+proton task create "simple AI UI" "Create a simple web UI for an AI assistant"
+proton task create "ESP32 Camera Server" "Build ESP32 camera server with video streaming and wifi config"
 
 # List all tracked development tasks with status & progress
 proton task list

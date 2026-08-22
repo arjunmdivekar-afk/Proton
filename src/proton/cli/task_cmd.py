@@ -22,12 +22,13 @@ console = Console(safe_box=True)
 
 @task_app.command("create")
 def create_task_cmd(
-    goal: str = typer.Argument(..., help="Goal or objective of the persistent task (e.g. 'Build ESP32 camera server')"),
-    title: Optional[str] = typer.Option(None, "--title", "-t", help="Optional short title for the task"),
+    title: str = typer.Argument(..., help="Short title for the task (e.g. 'simple AI UI' or 'ESP32 Camera Server')"),
+    goal: Optional[str] = typer.Argument(None, help="Detailed goal/objective (e.g. 'Create a simple web UI for an AI assistant'). If omitted, title is used as goal."),
 ) -> None:
-    """Create a new persistent task and stage it in PENDING status."""
+    """Create a new persistent task with title and goal: `proton task create \"<title>\" \"<goal>\"`."""
+    actual_goal = goal.strip() if (goal and goal.strip()) else title.strip()
     manager = TaskManager()
-    task = manager.create_task(goal=goal, title=title, workspace_path=Path.cwd())
+    task = manager.create_task(goal=actual_goal, title=title.strip(), workspace_path=Path.cwd())
 
     console.print(
         Panel.fit(

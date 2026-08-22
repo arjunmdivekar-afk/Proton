@@ -338,10 +338,17 @@ class ProtonREPL:
 
             if action == "create":
                 if not sub_arg:
-                    self.console.print("[dim]Usage: `/task create <goal>`[/dim]")
+                    self.console.print("[dim]Usage: `/task create \"<title>\" \"<goal>\"`[/dim]")
                 else:
-                    t = mgr.create_task(goal=sub_arg, workspace_path=self.workspace_path)
-                    self.console.print(f"[bold green]✓ Created task:[/bold green] [cyan]{t.id}[/cyan] — {t.title}")
+                    import shlex
+                    try:
+                        parts = shlex.split(sub_arg)
+                    except Exception:
+                        parts = [sub_arg]
+                    title = parts[0] if parts else "Untitled Task"
+                    goal = parts[1] if len(parts) > 1 else title
+                    t = mgr.create_task(goal=goal, title=title, workspace_path=self.workspace_path)
+                    self.console.print(f"[bold green]✓ Created task:[/bold green] [cyan]{t.id}[/cyan] — [bold]{t.title}[/bold] (Goal: {t.goal})")
             elif action in ("list", "ls", ""):
                 tasks = mgr.list_tasks()
                 if not tasks:
