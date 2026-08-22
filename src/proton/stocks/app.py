@@ -212,8 +212,8 @@ class ProtonStockApp:
                     time.sleep(1.5)
 
     async def _run_ai_stock_analysis(self, detail: StockDetail) -> None:
-        """Run ProAura AI stock analysis on fundamentals and trend."""
-        self.console.print(f"\n[bold cyan]ProAura AI is analyzing {detail.name} ({detail.symbol})...[/bold cyan]\n")
+        """Run Proton AI stock analysis on fundamentals and trend."""
+        self.console.print(f"\n[bold cyan]Proton AI is analyzing {detail.name} ({detail.symbol})...[/bold cyan]\n")
         prompt = (
             f"Review and analyze the following corporate metrics and market data for {detail.name} ({detail.symbol}):\n\n"
             f"• Current Market Price: ${detail.price:.2f} ({detail.change_pct:+.2f}%)\n"
@@ -234,7 +234,7 @@ class ProtonStockApp:
 
     async def _ask_ai_about_stock(self, detail: StockDetail, question: str) -> None:
         """Answer specific user question about the active stock."""
-        self.console.print(f"\n[bold cyan]ProAura AI answering about {detail.symbol}...[/bold cyan]\n")
+        self.console.print(f"\n[bold cyan]Proton AI answering about {detail.symbol}...[/bold cyan]\n")
         prompt = (
             f"Stock Context: {detail.name} ({detail.symbol}), Price: ${detail.price:.2f}, Sector: {detail.sector}, P/E: {detail.trailing_pe}, EPS: ${detail.eps}.\n\n"
             f"Question: {question}\n\n"
@@ -247,7 +247,7 @@ class ProtonStockApp:
         messages = [
             Message(
                 role=Role.SYSTEM,
-                content="You are ProAura, an AI financial data analyst and metrics researcher. You analyze publicly available corporate performance data, valuation ratios, business models, and market metrics objectively and educationally. Break down the provided data with clear, structured explanations."
+                content="You are Proton, an AI financial data analyst and metrics researcher. You analyze publicly available corporate performance data, valuation ratios, business models, and market metrics objectively and educationally. Break down the provided data with clear, structured explanations."
             ),
             Message(role=Role.USER, content=prompt),
         ]

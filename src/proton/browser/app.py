@@ -110,7 +110,7 @@ class ProtonBrowserApp:
             self.console.print("[yellow]No page content to summarize. Navigate to a page first.[/yellow]")
             return
 
-        self.console.print(f"\n[bold cyan]ProAura AI is analyzing and summarizing: {page.title}...[/bold cyan]\n")
+        self.console.print(f"\n[bold cyan]Proton AI is analyzing and summarizing: {page.title}...[/bold cyan]\n")
         prompt = (
             f"Please read this web page from {page.url} (Title: {page.title}) and provide a concise, structured executive summary with key points and takeaways:\n\n"
             f"{page.content[:6000]}"
@@ -124,7 +124,7 @@ class ProtonBrowserApp:
             self.console.print("[yellow]No page loaded. Please search or open a URL first.[/yellow]")
             return
 
-        self.console.print(f"\n[bold cyan]ProAura AI answering about {page.title}...[/bold cyan]\n")
+        self.console.print(f"\n[bold cyan]Proton AI answering about {page.title}...[/bold cyan]\n")
         prompt = (
             f"You are reviewing the following web page from {page.url}:\n\n"
             f"--- PAGE CONTENT ---\n{page.content[:6000]}\n--- END CONTENT ---\n\n"
@@ -139,7 +139,7 @@ class ProtonBrowserApp:
         messages = [
             Message(
                 role=Role.SYSTEM,
-                content="You are ProAura, the embedded AI Co-Pilot in Proton Browser. Answer accurately based on the browsing context."
+                content="You are Proton, the embedded AI Co-Pilot in Proton Browser. Answer accurately based on the browsing context."
             ),
             Message(role=Role.USER, content=prompt),
         ]

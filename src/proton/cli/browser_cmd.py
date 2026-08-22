@@ -20,6 +20,6 @@ def launch_browser(
         help="Launch Proton Browser with AI Copilot enabled",
     ),
 ) -> None:
-    """Launch Proton Browser — a keyboard-first terminal web browser with live DuckDuckGo search, clickable numbered links, and ProAura AI Copilot."""
+    """Launch Proton Browser — a keyboard-first terminal web browser with live DuckDuckGo search, clickable numbered links, and Proton AI Copilot."""
     app = ProtonBrowserApp(ai_mode=ai_mode, initial_target=target)
     asyncio.run(app.run())
