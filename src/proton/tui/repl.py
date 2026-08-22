@@ -327,6 +327,13 @@ class ProtonREPL:
                 self.console.print(f"[bold]RAG Status:[/bold] Total indexed chunks: {self.rag_pipeline.store.count()}")
                 self.console.print("[dim]Usage: `/rag fetch` (download coding knowledge), `/rag index`, or `/rag search <query>`[/dim]")
 
+        elif base in ("/stock", "/stocks"):
+            sym = arg.strip() if arg.strip() else None
+            from proton.stocks.app import ProtonStockApp
+            stock_app = ProtonStockApp(initial_symbol=sym)
+            await stock_app.run()
+            self.print_banner()
+
         elif base in ("/browser", "/browse"):
             target = arg.strip()
             ai_flag = False

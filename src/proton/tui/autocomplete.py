@@ -5,6 +5,8 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
 
 SLASH_COMMANDS = {
+    "/stock": "Launch live stock tracker with 2s refresh and charts (/stock [SYMBOL])",
+    "/stocks": "Alias for /stock market dashboard",
     "/browser": "Launch Proton Browser with search and link navigation (/browser [--ai_mode])",
     "/web-search": "Search the web via DuckDuckGo and summarize with AI",
     "/search": "Quick DuckDuckGo web search",
