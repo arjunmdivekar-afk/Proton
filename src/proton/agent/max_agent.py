@@ -368,7 +368,67 @@ class ProtonMaxAgent:
         except Exception:
             pass
 
+        # Fallback: If model generated code blocks in text, extract and write them to workspace
+        if not self.created_files and not self.modified_files:
+            extracted = self._extract_and_persist_code_blocks(full_output)
+            for ef in extracted:
+                self.created_files.add(ef)
+                self.console.print(f"[bold green]✓ Automatically created workspace file:[/bold green] [cyan]{ef}[/cyan]")
+
         return full_output.strip()
+
+    def _extract_and_persist_code_blocks(self, text: str) -> List[str]:
+        """Extract code blocks from textual LLM response and persist to workspace files."""
+        created: List[str] = []
+        saved_paths: Set[str] = set()
+
+        # 1. Match named files preceding code blocks
+        file_block_pattern = re.compile(
+            r"(?:(?:file|called|in|filename|create|file called|file named)\s+[`'\"]?([a-zA-Z0-9_\-\.\/]+\.[a-zA-Z0-9]+)[`'\"]?|"
+            r"[`'\"]([a-zA-Z0-9_\-\.\/]+\.[a-zA-Z0-9]+)[`'\"])\s*(?:[^\n]*\n)*?```([a-zA-Z0-9_\-]+)?\n(.*?)```",
+            re.DOTALL | re.IGNORECASE,
+        )
+        for m in file_block_pattern.findall(text):
+            filename = m[0] or m[1]
+            code = m[3].strip()
+            if filename and code and "." in filename:
+                clean_name = Path(filename).name
+                if clean_name not in saved_paths:
+                    out_path = self.workspace / clean_name
+                    try:
+                        out_path.write_text(code, encoding="utf-8")
+                        created.append(clean_name)
+                        saved_paths.add(clean_name)
+                    except Exception:
+                        pass
+
+        # 2. Match standalone language code blocks if not already saved
+        if not created:
+            standalone_pattern = re.compile(r"```(html|css|javascript|js|python|py)\n(.*?)```", re.DOTALL | re.IGNORECASE)
+            for m in standalone_pattern.findall(text):
+                lang = m[0].lower()
+                code = m[1].strip()
+                if not code:
+                    continue
+                target_name = None
+                if lang == "html" and "index.html" not in saved_paths:
+                    target_name = "index.html"
+                elif lang == "css" and "styles.css" not in saved_paths:
+                    target_name = "styles.css"
+                elif lang in ("js", "javascript") and "script.js" not in saved_paths:
+                    target_name = "script.js"
+                elif lang in ("py", "python") and "main.py" not in saved_paths:
+                    target_name = "main.py"
+
+                if target_name:
+                    try:
+                        (self.workspace / target_name).write_text(code, encoding="utf-8")
+                        created.append(target_name)
+                        saved_paths.add(target_name)
+                    except Exception:
+                        pass
+
+        return created
 
     async def _stage_run_tests(self) -> tuple[bool, str]:
         """Stage 7: Automatically detect and run repository test suites."""

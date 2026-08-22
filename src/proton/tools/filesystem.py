@@ -54,7 +54,7 @@ class ReadFileTool(BaseTool):
 
 
 class WriteFileArgs(BaseModel):
-    path: str = Field(description="Relative path to file inside workspace")
+    path: str = Field(description="Filename with extension inside workspace, e.g. 'index.html', 'styles.css', 'main.py'. NEVER pass '.' or directory paths.")
     content: str = Field(description="Full text content to write")
     overwrite: bool = Field(default=True, description="Whether to overwrite existing file")
 
@@ -69,9 +69,37 @@ class WriteFileTool(BaseTool):
         self.sandbox = sandbox
 
     async def run(self, path: str, content: str, overwrite: bool = True) -> Dict[str, Any]:
-        target = self.sandbox.validate_path(path)
+        # Handle cases where model passed '.' or a directory as path
+        clean_path = str(path).strip()
+        if clean_path in (".", "./", ".\\", "", "/", "\\"):
+            # Infer filename based on content type
+            if "<!DOCTYPE html" in content.lower() or "<html" in content.lower() or "<header" in content.lower():
+                clean_path = "index.html"
+            elif "import " in content or "def " in content or "class " in content:
+                clean_path = "main.py"
+            elif "function " in content or "const " in content or "let " in content:
+                clean_path = "script.js"
+            elif "{" in content and ("color:" in content or "margin:" in content or "position:" in content):
+                clean_path = "styles.css"
+            else:
+                clean_path = "output.txt"
+
+        target = self.sandbox.validate_path(clean_path)
+        if target.is_dir():
+            # If validated path is an existing directory, place inferred file inside it
+            if "<!DOCTYPE html" in content.lower() or "<html" in content.lower() or "<header" in content.lower():
+                target = target / "index.html"
+            elif "import " in content or "def " in content or "class " in content:
+                target = target / "main.py"
+            elif "function " in content or "const " in content:
+                target = target / "script.js"
+            elif "{" in content and ("color:" in content or "position:" in content):
+                target = target / "styles.css"
+            else:
+                target = target / "output.txt"
+
         if target.exists() and not overwrite:
-            return {"error": f"File '{path}' already exists and overwrite is set to False."}
+            return {"error": f"File '{target.name}' already exists and overwrite is set to False."}
 
         try:
             target.parent.mkdir(parents=True, exist_ok=True)
