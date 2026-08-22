@@ -19,7 +19,11 @@
   - [3. Live Stock Market Tracker (`proton stock`)](#3-live-stock-market-tracker-proton-stock)
   - [4. Host System Diagnostics (`proton doctor --sys`)](#4-host-system-diagnostics-proton-doctor---sys)
   - [5. Knowledge Base & Hybrid RAG (`proton rag`)](#5-knowledge-base--hybrid-rag-proton-rag)
-  - [6. Connection Manager (`proton connection`)](#6-connection-manager-proton-connection)
+- [🧠 Recommended Models & Hardware Requirements](#-recommended-models--hardware-requirements)
+  - [1. Small Models (1B to 10B)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
+  - [2. Medium Models (10B to 100B)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
+  - [3. Large Models (100B+)](#3-large-models-100b-parameters--frontier-moe--enterprise-agents)
+  - [⚡ Hardware Requirements Matrix](#-hardware-requirements-matrix)
 - [⌨️ REPL Slash Commands](#️-repl-slash-commands)
 - [🎨 Visual Styling & Markdown Formatting](#-visual-styling--markdown-formatting)
 - [🔒 Security & Approvals](#-security--approvals)
@@ -207,6 +211,78 @@ proton connection test
 # Switch active connection
 proton connection switch <connection-id>
 ```
+
+---
+
+## 🧠 Recommended Models & Hardware Requirements
+
+Proton connects seamlessly to any model hosted locally (via **LM Studio** or **Ollama**) or over your local network (LAN). Below are our curated recommendations categorized by model parameter scale:
+
+---
+
+### 1. Small Models (1B to 10B Parameters) — *Fast Local Execution*
+> **Best for**: Laptops, lightweight PCs, everyday conversational queries, and fast terminal code generation.
+
+| Model | Parameter Size | Primary Strengths | Recommended Context |
+|---|---|---|---|
+| **Qwen 2.5 Coder Instruct** | `1.5B` / `7B` | 🥇 **#1 Coding Model for Local Dev**. Superb code generation, refactoring, and function calling. | 32k – 128k tokens |
+| **LLaMA 3.2 Instruct** | `1B` / `3B` | Ultra-fast token streaming, low memory usage, sharp conversational reasoning. | 8k – 128k tokens |
+| **DeepSeek-R1-Distill-Qwen** | `1.5B` / `7B` / `8B` | Deep step-by-step mathematical reasoning, algorithm planning, and chain-of-thought analysis. | 32k – 64k tokens |
+| **Mistral 7B Instruct (v0.3)** | `7B` | General problem-solving, structured JSON outputs, clean instruction-following. | 32k tokens |
+| **Gemma 2 Instruct** | `2B` / `9B` | Lightweight Google architecture, clean formatting, accurate summarization. | 8k tokens |
+
+**💻 Hardware Requirements (Small Models):**
+- **RAM**: 8 GB – 16 GB System RAM (CPU only) or 4 GB – 8 GB VRAM.
+- **GPU**: Integrated GPU (Intel Iris Xe / AMD Radeon) or NVIDIA GTX 1650 / RTX 3050 / Apple M1/M2/M3 (8GB+).
+- **Disk Space**: ~2 GB – 6 GB per GGUF model (`Q4_K_M` quantization).
+
+---
+
+### 2. Medium Models (10B to 100B Parameters) — *Coding & Deep Reasoning*
+> **Best for**: Dedicated GPU workstations, multi-file code editing, repo-wide search, and complex tool orchestration.
+
+| Model | Parameter Size | Primary Strengths | Recommended Context |
+|---|---|---|---|
+| **Qwen 2.5 Coder Instruct** | `14B` / `32B` | 🚀 **State-of-the-Art Local Coding Agent**. Outperforms GPT-4o-mini in code synthesis and repo analysis. | 32k – 128k tokens |
+| **LLaMA 3.3 Instruct** | `70B` | Enterprise-grade general intelligence, system architecture design, and nuanced reasoning. | 64k – 128k tokens |
+| **DeepSeek-R1-Distill-Llama** | `70B` | Elite competitive-level algorithmic reasoning and deep logic analysis. | 64k – 128k tokens |
+| **Mistral Small 24B / Codestral** | `22B` / `24B` | Excellent latency-to-quality ratio, native fill-in-the-middle (FIM) code editing. | 32k tokens |
+| **Command R+** | `35B` / `104B` | Optimized specifically for RAG document retrieval, citations, and tool routing. | 128k tokens |
+
+**💻 Hardware Requirements (Medium Models):**
+- **RAM / VRAM**: 32 GB – 64 GB System RAM (or 16 GB – 48 GB VRAM).
+- **GPU**: 1x or 2x NVIDIA RTX 3090 / 4090 (24GB VRAM) / RTX 4080 (16GB) / Apple M2/M3/M4 Pro or Max (36GB – 64GB Unified Memory).
+- **Disk Space**: ~10 GB – 45 GB per GGUF model (`Q4_K_M` / `Q5_K_M`).
+
+---
+
+### 3. Large Models (100B+ Parameters & Frontier MoE) — *Enterprise Agents*
+> **Best for**: Dedicated multi-GPU clusters, LAN inference servers, or cloud-hosted endpoints requiring frontier intelligence.
+
+| Model | Architecture | Primary Strengths | Recommended Context |
+|---|---|---|---|
+| **DeepSeek-V3 / DeepSeek-R1** | `671B` (37B active MoE) | 👑 **Frontier Open-Weights Intelligence**. Matches Claude 3.5 Sonnet & GPT-4o across coding, math, and planning. | 64k – 128k tokens |
+| **LLaMA 3.1 Instruct** | `405B` Dense | Massive foundation model for synthetic data, full enterprise agent orchestration, and deep domain synthesis. | 128k tokens |
+| **Qwen 2.5 Instruct** | `72B` / `110B` | Massive multilingual coding and multi-step complex problem-solving. | 128k tokens |
+| **WizardLM-2** | `8x22B` MoE | Highly capable Mixture-of-Experts for software engineering and complex reasoning. | 64k tokens |
+| **DBRX Instruct** | `132B` (36B active MoE) | Fast inference speed MoE with high code generation accuracy. | 32k tokens |
+
+**💻 Hardware Requirements (Large Models):**
+- **RAM / VRAM**: 128 GB – 256 GB+ Unified Memory or Multi-GPU Clusters (4x–8x RTX 3090/4090 24GB, 2x–4x NVIDIA A100/H100 80GB, or Apple M2/M3/M4 Ultra with 128GB–192GB Unified Memory).
+- **Alternatively**: Connect Proton to a LAN server or cloud API endpoint running these models using `proton connection`.
+- **Disk Space**: ~70 GB – 250 GB+ NVMe SSD.
+
+---
+
+### ⚡ Hardware Requirements Matrix
+
+| Parameter Scale | Min RAM (CPU Mode) | Recommended GPU (VRAM) | Avg Streaming Speed | Ideal Quantization |
+|---|---|---|---|---|
+| **1B – 3B** | 8 GB RAM | Integrated GPU or 4 GB VRAM | 30 – 80 tok/s | `Q8_0` or `FP16` |
+| **7B – 9B** | 16 GB RAM | 6 GB – 8 GB VRAM (RTX 3060/4060) | 20 – 50 tok/s | `Q4_K_M` or `Q5_K_M` |
+| **14B – 32B** | 32 GB RAM | 12 GB – 24 GB VRAM (RTX 3090/4090) | 15 – 35 tok/s | `Q4_K_M` |
+| **70B – 72B** | 64 GB RAM | 2x 24 GB VRAM (48GB) or 64GB Mac | 10 – 25 tok/s | `Q4_K_M` |
+| **100B+ MoE** | 128 GB RAM | 4x 24 GB VRAM (96GB+) or 128GB Mac | 10 – 20 tok/s | `Q4_K_M` or `IQ4_XS` |
 
 ---
 
