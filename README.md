@@ -1,7 +1,3 @@
-
-
-https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
-
 # ⚛️ Proton — Enterprise Autonomous AI CLI & Agent Platform `v2.4.4`
 
 [![Version](https://img.shields.io/badge/version-2.4.4-blue.svg?style=for-the-badge&logo=appveyor)](https://github.com/arjunmdivekar-afk/Proton)
@@ -33,9 +29,7 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 
 ## 🎥 Introduction to Proton
 
-<div align="center">
-  <img src="assets/introduction-preview.gif" alt="Proton Introduction & Autonomous Agent Walkthrough" width="100%" style="border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-</div>
+https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 
 > 🎬 *Live walkthrough of Proton's autonomous agent lifecycle, terminal browser, live stock intelligence tracker, GraphRAG engine, explicit memory, and automated security verification suite.*
 
