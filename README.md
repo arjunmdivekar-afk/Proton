@@ -1,6 +1,6 @@
-# ⚛️ Proton — Enterprise AI CLI Assistant & Agent Platform `v1.4.0`
+# ⚛️ Proton — Enterprise AI CLI Assistant & Agent Platform `v1.4.2`
 
-[![Version](https://img.shields.io/badge/version-1.4.0-blue.svg)](https://github.com/arjunmdivekar-afk/Proton)
+[![Version](https://img.shields.io/badge/version-1.4.2-blue.svg)](https://github.com/arjunmdivekar-afk/Proton)
 [![Python](https://img.shields.io/badge/python-3.10%2B-brightgreen.svg)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg)]()
@@ -65,7 +65,7 @@ pip install -e .
 ### 3. Verify Installation
 ```bash
 proton --version
-# Output: Proton version 1.4.0
+# Output: Proton version 1.4.2
 ```
 
 ---
