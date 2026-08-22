@@ -36,6 +36,9 @@ proton browser https://react.dev
 proton browser --ai_mode
 proton browser "python tutorial" --ai_mode
 
-# Run diagnostics
+# Run application and AI endpoint diagnostics
 proton doctor
+
+# Run host machine hardware, RAM, CPU, disk, and OS diagnostics
+proton doctor --sys
 ```

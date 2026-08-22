@@ -423,8 +423,12 @@ class ProtonREPL:
                 self.console.print("[dim]Usage: `/session new` or `/session list`[/dim]")
 
         elif base == "/doctor":
-            from proton.cli.doctor_cmd import run_doctor_checks
-            await run_doctor_checks(self.workspace_path)
+            if arg.strip().lower() in ("--sys", "-s", "sys", "system"):
+                from proton.cli.doctor_cmd import run_system_diagnostics
+                await run_system_diagnostics()
+            else:
+                from proton.cli.doctor_cmd import run_doctor_checks
+                await run_doctor_checks(self.workspace_path)
 
         elif base == "/export":
             md = self.session_mgr.export_markdown(self.current_session.id)

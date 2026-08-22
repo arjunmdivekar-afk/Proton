@@ -158,10 +158,19 @@ def ask_command(
     asyncio.run(_run_non_interactive(query, json_mode=json_mode))
 
 
+from proton.cli.doctor_cmd import run_doctor_checks, run_system_diagnostics
+
 @app.command("doctor")
-def doctor_command() -> None:
-    """Run environment, storage, and AI provider health diagnostics."""
-    asyncio.run(run_doctor_checks())
+def doctor_command(
+    sys_mode: bool = typer.Option(
+        False, "--sys", "-s", help="Show host machine system hardware, RAM, CPU, disk, and OS diagnostics instead of app status"
+    ),
+) -> None:
+    """Run environment, storage, and AI provider health diagnostics (or use --sys for host hardware status)."""
+    if sys_mode:
+        asyncio.run(run_system_diagnostics())
+    else:
+        asyncio.run(run_doctor_checks())
 
 
 @app.command("models")
