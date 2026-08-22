@@ -85,16 +85,42 @@ class ContextAssembler:
             return None
 
         results = await self.rag_pipeline.search(query=query, top_k=top_k)
-        if not results:
+        chunks_text = []
+        if results:
+            for r in results:
+                chunks_text.append(f"--- Source {r.citation} (Score: {r.score}) ---\n{r.content}\n")
+
+        # Check if query references symbols in Project Knowledge Graph
+        try:
+            from proton.graph.engine import ProjectGraphEngine
+            from proton.graph.models import NodeType
+            graph_engine = ProjectGraphEngine(self.workspace_root)
+            words = [w.strip("(),.`'\"?:;") for w in query.split() if len(w) > 2]
+            for w in words:
+                node = graph_engine.resolve_symbol(w)
+                if node and node.node_type != NodeType.MODULE:
+                    rep = graph_engine.impact_analysis(w)
+                    if rep.total_blast_radius > 0 or rep.callees or rep.affecting_tests:
+                        graph_summary = (
+                            f"\n--- PROJECT KNOWLEDGE GRAPH (GraphRAG) for `{node.name}` ({node.node_type.value} in `{node.file_path}`) ---\n"
+                            f"• Direct Callers: {', '.join(rep.direct_callers) or 'None'}\n"
+                            f"• Indirect Callers: {', '.join(rep.indirect_callers[:5]) or 'None'}\n"
+                            f"• Subclasses: {', '.join(rep.inheriting_classes) or 'None'}\n"
+                            f"• Automated Tests: {', '.join(rep.affecting_tests) or 'None'}\n"
+                            f"• Calls Downstream: {', '.join(rep.callees[:6]) or 'None'}\n"
+                            f"• Impact Summary: {rep.summary}\n"
+                        )
+                        chunks_text.append(graph_summary)
+                        break
+        except Exception:
+            pass
+
+        if not chunks_text:
             return None
 
-        chunks_text = []
-        for r in results:
-            chunks_text.append(f"--- Source {r.citation} (Score: {r.score}) ---\n{r.content}\n")
-
         rag_prompt = (
-            "RELEVANT PROJECT CONTEXT RETRIEVED FROM REPOSITORY:\n"
+            "RELEVANT PROJECT CONTEXT & KNOWLEDGE GRAPH (GraphRAG):\n"
             + "\n".join(chunks_text)
-            + "\nUse the above verified context to answer accurately. Cite sources if applicable."
+            + "\nUse the above verified context to answer accurately. Cite sources and relationship impact if applicable."
         )
         return Message(role=Role.SYSTEM, content=rag_prompt)

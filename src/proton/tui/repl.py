@@ -556,6 +556,41 @@ class ProtonREPL:
                 ctx = typer.Context(typer.main.get_command(inspect_app))
                 default_inspect_callback(ctx, str(self.workspace_path), json_mode=False)
 
+        elif base in ("/graph", "/knowledge-graph"):
+            parts = arg.strip().split(maxsplit=1)
+            sub = parts[0].lower() if parts else "stats"
+            target_symbol = parts[1] if len(parts) > 1 else ""
+
+            from proton.graph.engine import ProjectGraphEngine
+            engine = ProjectGraphEngine(self.workspace_path)
+
+            if sub in ("build", "index", "rebuild"):
+                from proton.cli.graph_cmd import build_graph_cmd
+                build_graph_cmd(str(self.workspace_path))
+            elif sub in ("impact", "break", "whatif"):
+                if not target_symbol:
+                    self.console.print("[dim]Usage: `/graph impact <function_or_class>`[/dim]")
+                else:
+                    from proton.cli.graph_cmd import impact_graph_cmd
+                    impact_graph_cmd(target_symbol, str(self.workspace_path))
+            elif sub == "callers":
+                if not target_symbol:
+                    self.console.print("[dim]Usage: `/graph callers <function_or_class>`[/dim]")
+                else:
+                    from proton.cli.graph_cmd import callers_graph_cmd
+                    callers_graph_cmd(target_symbol, str(self.workspace_path))
+            elif sub == "tests":
+                if not target_symbol:
+                    self.console.print("[dim]Usage: `/graph tests <function_or_class>`[/dim]")
+                else:
+                    from proton.cli.graph_cmd import tests_graph_cmd
+                    tests_graph_cmd(target_symbol, str(self.workspace_path))
+            else:
+                from proton.cli.graph_cmd import default_graph_callback
+                import typer
+                ctx = typer.Context(typer.main.get_command(graph_app))
+                default_graph_callback(ctx, str(self.workspace_path))
+
         elif base in ("/new", "/reset"):
             active_conn = self.conn_mgr.get_active_connection()
             self.current_session = self.session_mgr.create_session(
