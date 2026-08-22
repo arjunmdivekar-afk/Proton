@@ -215,15 +215,20 @@ class ProtonStockApp:
         """Run ProAura AI stock analysis on fundamentals and trend."""
         self.console.print(f"\n[bold cyan]ProAura AI is analyzing {detail.name} ({detail.symbol})...[/bold cyan]\n")
         prompt = (
-            f"Please perform a financial stock analysis for {detail.name} ({detail.symbol}):\n\n"
-            f"- Current Price: ${detail.price:.2f} ({detail.change_pct:+.2f}%)\n"
-            f"- 52-Week Range: ${detail.fifty_two_low:.2f} - ${detail.fifty_two_high:.2f}\n"
-            f"- Market Cap: {self._format_market_cap(detail.market_cap)}\n"
-            f"- Trailing P/E: {detail.trailing_pe}, Forward P/E: {detail.forward_pe}\n"
-            f"- EPS: ${detail.eps}, Beta: {detail.beta}\n"
-            f"- Sector: {detail.sector}, Industry: {detail.industry}\n"
-            f"- Wall Street Recommendation: {detail.recommendation}, Target Price: ${detail.target_price}\n\n"
-            f"Provide an executive summary covering: 1) Valuation & Health, 2) Growth Drivers, 3) Key Risks, 4) Overall Outlook."
+            f"Review and analyze the following corporate metrics and market data for {detail.name} ({detail.symbol}):\n\n"
+            f"• Current Market Price: ${detail.price:.2f} ({detail.change_pct:+.2f}%)\n"
+            f"• 52-Week Range: ${detail.fifty_two_low:.2f} - ${detail.fifty_two_high:.2f}\n"
+            f"• Market Capitalization: {self._format_market_cap(detail.market_cap)}\n"
+            f"• Trailing P/E: {detail.trailing_pe}, Forward P/E: {detail.forward_pe}\n"
+            f"• Diluted EPS: ${detail.eps}, Beta (Volatility): {detail.beta}\n"
+            f"• Sector: {detail.sector}, Industry: {detail.industry}\n"
+            f"• Analyst Target: ${detail.target_price}, Consensus: {detail.recommendation}\n\n"
+            f"Provide a structured analysis covering:\n"
+            f"1. Valuation & Financial Ratios (what the P/E and EPS reflect)\n"
+            f"2. Business Model & Market Position\n"
+            f"3. Key Catalysts & Growth Drivers\n"
+            f"4. Potential Risks & Headwinds\n"
+            f"5. Financial Metrics Summary"
         )
         await self._stream_ai(prompt)
 
@@ -231,9 +236,9 @@ class ProtonStockApp:
         """Answer specific user question about the active stock."""
         self.console.print(f"\n[bold cyan]ProAura AI answering about {detail.symbol}...[/bold cyan]\n")
         prompt = (
-            f"Stock Context: {detail.name} ({detail.symbol}), Price: ${detail.price:.2f}, Sector: {detail.sector}, P/E: {detail.trailing_pe}.\n\n"
+            f"Stock Context: {detail.name} ({detail.symbol}), Price: ${detail.price:.2f}, Sector: {detail.sector}, P/E: {detail.trailing_pe}, EPS: ${detail.eps}.\n\n"
             f"Question: {question}\n\n"
-            f"Please answer concisely and accurately based on market fundamentals."
+            f"Please explain objectively based on the financial and business metrics."
         )
         await self._stream_ai(prompt)
 
@@ -242,7 +247,7 @@ class ProtonStockApp:
         messages = [
             Message(
                 role=Role.SYSTEM,
-                content="You are ProAura, the expert financial AI analyst in Proton. Provide clear, balanced market insights."
+                content="You are ProAura, an AI financial data analyst and metrics researcher. You analyze publicly available corporate performance data, valuation ratios, business models, and market metrics objectively and educationally. Break down the provided data with clear, structured explanations."
             ),
             Message(role=Role.USER, content=prompt),
         ]
