@@ -1,4 +1,4 @@
-"""Interactive Terminal Stock Dashboard with Live 2-Second Refresh and Detail Charts."""
+"""Interactive Terminal Stock Dashboard with Live 10-Second Refresh, Loading Spinner, and Detail Charts."""
 
 import asyncio
 import os
@@ -103,8 +103,11 @@ class ProtonStockApp:
 
     async def show_stock_detail(self, symbol: str, timeframe: str = "1mo") -> None:
         """Inspect comprehensive stock fundamentals and interactive price chart."""
-        self.console.print(f"\n[cyan]Fetching live market data and chart for {symbol.upper()} ({timeframe.upper()})...[/cyan]")
-        detail = await self.service.fetch_detail(symbol, timeframe=timeframe)
+        with self.console.status(
+            f"[bold cyan]📊 Loading stock data & chart for {symbol.upper()} ({timeframe.upper()})...[/bold cyan]",
+            spinner="dots"
+        ):
+            detail = await self.service.fetch_detail(symbol, timeframe=timeframe)
 
         if not detail or detail.price <= 0:
             self.console.print(f"[red]Could not retrieve data for symbol '{symbol.upper()}'. Check ticker symbol.[/red]")
@@ -183,7 +186,11 @@ class ProtonStockApp:
                 break
             elif sub_cmd in ("1d", "5d", "1m", "1mo", "6m", "6mo", "1y", "5y"):
                 timeframe = "1mo" if sub_cmd == "1m" else ("6mo" if sub_cmd == "6m" else sub_cmd)
-                detail = await self.service.fetch_detail(symbol, timeframe=timeframe)
+                with self.console.status(
+                    f"[bold cyan]📊 Updating chart for {symbol.upper()} ({timeframe.upper()})...[/bold cyan]",
+                    spinner="dots"
+                ):
+                    detail = await self.service.fetch_detail(symbol, timeframe=timeframe)
             elif sub_cmd in ("analyze", "ai", "analysis"):
                 await self._run_ai_stock_analysis(detail)
                 input("\nPress Enter to return to chart...")
@@ -193,8 +200,14 @@ class ProtonStockApp:
                 input("\nPress Enter to return to chart...")
             else:
                 # User typed a different ticker symbol directly
-                detail = await self.service.fetch_detail(sub_cmd, timeframe=timeframe)
-                if not detail or detail.price <= 0:
+                with self.console.status(
+                    f"[bold cyan]📊 Loading stock data for {sub_cmd.upper()}...[/bold cyan]",
+                    spinner="dots"
+                ):
+                    new_detail = await self.service.fetch_detail(sub_cmd, timeframe=timeframe)
+                if new_detail and new_detail.price > 0:
+                    detail = new_detail
+                else:
                     self.console.print(f"[yellow]Symbol '{sub_cmd.upper()}' not found.[/yellow]")
                     time.sleep(1.5)
 
@@ -249,7 +262,7 @@ class ProtonStockApp:
             self.console.print(f"\n[red]AI Analysis Error: {e}[/red]\n")
 
     async def run(self) -> None:
-        """Main stock dashboard loop with live 2-second auto-refresh."""
+        """Main stock dashboard loop with live 10-second auto-refresh and spinning loading bar."""
         # If user passed initial symbol directly (e.g. `proton stock AAPL`)
         if self.initial_symbol:
             await self.show_stock_detail(self.initial_symbol)
@@ -258,8 +271,15 @@ class ProtonStockApp:
         os.system("cls" if sys.platform == "win32" else "clear")
 
         while True:
-            # Fetch 20 stocks for current page
-            quotes = await self.service.fetch_page_quotes(self.current_page)
+            # Fetch 20 stocks for current page with animated loading spinner + stock symbol preview
+            symbols = self.service.get_symbols_for_page(self.current_page)
+            sym_preview = ", ".join(symbols[:5])
+            with self.console.status(
+                f"[bold cyan]📈 Loading {len(symbols)} Live Stocks (Page {self.current_page}: {sym_preview}...)[/bold cyan]",
+                spinner="dots"
+            ):
+                quotes = await self.service.fetch_page_quotes(self.current_page)
+
             os.system("cls" if sys.platform == "win32" else "clear")
 
             table = self.render_market_table(quotes)
@@ -268,24 +288,24 @@ class ProtonStockApp:
             now_str = datetime.now().strftime("%I:%M:%S %p")
             status_line = (
                 f"[dim]────────────────────────────────────────────────────────────────────────────────────────[/dim]\n"
-                f"[bold green]● LIVE (2s Auto-Refresh)[/bold green] [dim]Updated: {now_str}[/dim]  "
+                f"[bold green]● LIVE (10s Auto-Refresh)[/bold green] [dim]Updated: {now_str}[/dim]  "
                 f"[bold]|[/bold]  Page [bold cyan]{self.current_page}/3[/bold cyan]  "
                 f"[bold]|[/bold]  [dim]Type [1-20] or Symbol (e.g. `AAPL`, `NVDA`) to inspect chart[/dim]\n"
                 f"[dim]Controls: `next` / `n` (Next Page) | `prev` / `p` | `page <1-3>` | `refresh` / `r` | `exit` / `q`[/dim]"
             )
             self.console.print(status_line)
 
-            # Wait for user input with 2-second refresh timeout
+            # Wait for user input with 10-second refresh timeout
             prompt_text = HTML(f"<ansicyan><b>proton-stock</b></ansicyan> [<b>Page {self.current_page}</b>] &gt; ")
 
             user_cmd = None
             try:
                 if self.session is not None:
-                    # Async prompt with 2-second timeout for live ticker refresh
+                    # Async prompt with 10-second timeout for live ticker refresh
                     try:
-                        user_cmd = await asyncio.wait_for(self.session.prompt_async(prompt_text), timeout=2.0)
+                        user_cmd = await asyncio.wait_for(self.session.prompt_async(prompt_text), timeout=10.0)
                     except asyncio.TimeoutError:
-                        # Auto-refresh cycle every 2 seconds
+                        # Auto-refresh cycle every 10 seconds
                         continue
                 else:
                     user_cmd = input(f"proton-stock [Page {self.current_page}] > ")
