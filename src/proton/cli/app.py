@@ -198,7 +198,9 @@ def models_command() -> None:
 
 from proton.cli.browser_cmd import launch_browser
 from proton.cli.stock_cmd import launch_stock_dashboard
+from proton.cli.agent_cmd import launch_max_agent
 
+app.command("agent", help="Launch Proton Max-Level Autonomous Agent — 10-stage lifecycle with planning, tools, tests, self-healing, and audit reporting")(launch_max_agent)
 app.command("browser", help="Launch Proton Browser — keyboard-first terminal web browser with DuckDuckGo search, link navigation, and AI mode")(launch_browser)
 app.command("stock", help="Launch Proton Stock Tracker — Live stocks in Rupees (₹) with 10-minute auto-refresh, 20 stocks per page, and detailed charts")(launch_stock_dashboard)
 app.command("stocks", help="Alias for proton stock")(launch_stock_dashboard)

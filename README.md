@@ -14,11 +14,12 @@
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 Quick Start](#-quick-start)
 - [💻 CLI Command Reference](#-cli-command-reference)
-  - [1. Interactive AI Assistant (`proton`)](#1-interactive-ai-assistant-proton)
-  - [2. Terminal Web Browser (`proton browser`)](#2-terminal-web-browser-proton-browser)
-  - [3. Live Stock Market Tracker (`proton stock`)](#3-live-stock-market-tracker-proton-stock)
-  - [4. Host System Diagnostics (`proton doctor --sys`)](#4-host-system-diagnostics-proton-doctor---sys)
-  - [5. Knowledge Base & Hybrid RAG (`proton rag`)](#5-knowledge-base--hybrid-rag-proton-rag)
+  - [1. Max-Level Autonomous Agent (`proton agent`)](#1-max-level-autonomous-agent-proton-agent)
+  - [2. Interactive AI Assistant (`proton`)](#2-interactive-ai-assistant-proton)
+  - [3. Terminal Web Browser (`proton browser`)](#3-terminal-web-browser-proton-browser)
+  - [4. Live Stock Market Tracker (`proton stock`)](#4-live-stock-market-tracker-proton-stock)
+  - [5. Host System Diagnostics (`proton doctor --sys`)](#5-host-system-diagnostics-proton-doctor---sys)
+  - [6. Knowledge Base & Hybrid RAG (`proton rag`)](#6-knowledge-base--hybrid-rag-proton-rag)
 - [🧠 Recommended Models & Hardware Requirements](#-recommended-models--hardware-requirements)
   - [1. Small Models (1B to 10B)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -88,7 +89,28 @@ proton doctor --sys
 
 ## 💻 CLI Command Reference
 
-### 1. Interactive AI Assistant (`proton`)
+### 1. Max-Level Autonomous Agent (`proton agent`)
+Execute end-to-end software engineering tasks with a full **10-stage autonomous lifecycle**:
+
+```text
+Understand Task ➔ Inspect Repo ➔ Create Plan ➔ Ask Approval ➔ Use Tools
+      ➔ Modify Files ➔ Run Tests ➔ Review Changes ➔ Fix Failures ➔ Generate Report
+```
+
+```bash
+# Launch interactive autonomous agent on a goal
+proton agent "Build a responsive sticky navigation header and write tests"
+
+# Run unattended in auto-approve mode
+proton agent "Refactor data service error handling and run pytest" --auto-approve
+
+# Set maximum turn steps limit
+proton agent "Fix failing test cases in auth module" -y --max-steps 30
+```
+
+---
+
+### 2. Interactive AI Assistant (`proton`)
 Launch the interactive terminal session with live token streaming and memory:
 ```bash
 # Launch interactive REPL
@@ -103,7 +125,7 @@ proton ask "Generate quicksort in python" --json
 
 ---
 
-### 2. Terminal Web Browser (`proton browser`)
+### 3. Terminal Web Browser (`proton browser`)
 Browse the internet, search via DuckDuckGo, open numbered links, and summarize pages using AI:
 ```bash
 # Search DuckDuckGo and view results with interactive links
@@ -133,7 +155,7 @@ proton browser "machine learning papers" --ai_mode
 
 ---
 
-### 3. Live Stock Market Tracker (`proton stock`)
+### 4. Live Stock Market Tracker (`proton stock`)
 Live market intelligence in **Indian Rupees (`₹`)** with 10-minute auto-refresh, 20 assets per page, and continuous price charts:
 ```bash
 # Launch live stock dashboard
@@ -168,7 +190,7 @@ proton stock --page 3    # Global Indices, ETFs & Crypto
 
 ---
 
-### 4. Host System Diagnostics (`proton doctor --sys`)
+### 5. Host System Diagnostics (`proton doctor --sys`)
 ```bash
 # Inspect host machine hardware, CPU cores, RAM load bar, and disk storage
 proton doctor --sys
@@ -179,7 +201,7 @@ proton doctor
 
 ---
 
-### 5. Knowledge Base & Hybrid RAG (`proton rag`)
+### 6. Knowledge Base & Hybrid RAG (`proton rag`)
 Ingest large programming datasets and documentation into Proton's SQLite vector store:
 ```bash
 # Download and index comprehensive programming knowledge guides
@@ -197,7 +219,7 @@ proton rag status
 
 ---
 
-### 6. Connection Manager (`proton connection`)
+### 7. Connection Manager (`proton connection`)
 ```bash
 # Interactive setup wizard
 proton connection
@@ -292,6 +314,7 @@ Inside the interactive `proton >` shell, you can use built-in slash commands wit
 
 | Slash Command | Description |
 |---|---|
+| `/agent <goal>` | Launch Proton Max-Level Autonomous Agent with 10-stage lifecycle |
 | `/stock [SYMBOL]` | Launch live stock market tracker with charts in Rupees (`₹`) |
 | `/browser [URL]` | Launch Proton Terminal Web Browser (`/browser --ai_mode`) |
 | `/web-search <q>` | Search DuckDuckGo and summarize results with AI |

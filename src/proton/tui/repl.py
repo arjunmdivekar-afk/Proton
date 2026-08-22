@@ -327,6 +327,16 @@ class ProtonREPL:
                 self.console.print(f"[bold]RAG Status:[/bold] Total indexed chunks: {self.rag_pipeline.store.count()}")
                 self.console.print("[dim]Usage: `/rag fetch` (download coding knowledge), `/rag index`, or `/rag search <query>`[/dim]")
 
+        elif base == "/agent":
+            goal = arg.strip()
+            if not goal:
+                self.console.print("[dim]Usage: `/agent <goal>` (e.g. `/agent build a responsive landing page and run tests`)[/dim]")
+            else:
+                from proton.agent.max_agent import ProtonMaxAgent
+                agent = ProtonMaxAgent(workspace_path=self.workspace_path)
+                await agent.run(goal)
+                self.print_banner()
+
         elif base in ("/stock", "/stocks"):
             sym = arg.strip() if arg.strip() else None
             from proton.stocks.app import ProtonStockApp
