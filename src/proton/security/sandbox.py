@@ -27,6 +27,14 @@ class FilesystemSandbox:
                 try:
                     resolved.relative_to(self.workspace_root)
                 except ValueError:
+                    # If target is absolute but targets workspace filename or subdirectory, safely remap inside workspace
+                    if target.is_absolute() and target.name:
+                        candidate = (self.workspace_root / target.name).resolve()
+                        try:
+                            candidate.relative_to(self.workspace_root)
+                            return candidate
+                        except ValueError:
+                            pass
                     raise SecurityError(
                         f"Filesystem access outside workspace boundary is blocked: {path} (Resolved: {resolved})"
                     )

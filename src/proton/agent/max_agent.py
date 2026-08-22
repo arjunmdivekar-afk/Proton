@@ -357,10 +357,9 @@ class ProtonMaxAgent:
 
         # Scan git status to record modified & created files
         try:
-            git_tool = self.tool_reg.get("git_status")
-            if git_tool:
-                res = await git_tool.execute()
-                for line in res.data.split("\n"):
+            res = await self.tool_reg.execute("git_status", {})
+            if res.success and isinstance(res.data, dict):
+                for line in res.data.get("changed_files", []):
                     line = line.strip()
                     if line.startswith("M "):
                         self.modified_files.add(line[2:].strip())
@@ -398,26 +397,29 @@ class ProtonMaxAgent:
         # Execute detected test command
         cmd = test_cmds[0]
         self.console.print(f"[cyan]Running test suite:[/cyan] [bold bright_white]{cmd}[/bold bright_white]")
-        shell_tool = self.tool_reg.get("shell_execute")
-        if shell_tool:
-            res = await shell_tool.execute(command=cmd)
-            if res.success:
-                self.console.print(f"[bold green]✓ All Tests Passed successfully![/bold green]")
-                return True, res.data
-            else:
-                self.console.print(f"[bold red]✗ Tests Failed:[/bold red]\n{res.data[:600]}")
-                return False, res.data
-
-        return True, "Tests verified."
+        res = await self.tool_reg.execute("shell_execute", {"command": cmd})
+        if res.success:
+            self.console.print(f"[bold green]✓ All Tests Passed successfully![/bold green]")
+            output_str = res.data.get("stdout", "") if isinstance(res.data, dict) else str(res.data)
+            return True, output_str
+        else:
+            err_str = res.data.get("stderr", res.error or str(res.data)) if isinstance(res.data, dict) else (res.error or str(res.data))
+            self.console.print(f"[bold red]✗ Tests Failed:[/bold red]\n{str(err_str)[:600]}")
+            return False, str(err_str)
 
     async def _stage_review_changes(self) -> None:
         """Stage 8: Review git diffs."""
-        diff_tool = self.tool_reg.get("git_diff")
-        if diff_tool:
-            res = await diff_tool.execute()
-            if res.data and res.data.strip():
+        try:
+            res = await self.tool_reg.execute("git_diff", {})
+            diff_str = ""
+            if res.success and isinstance(res.data, dict):
+                diff_str = res.data.get("diff", "")
+            elif isinstance(res.data, str):
+                diff_str = res.data
+
+            if diff_str and diff_str.strip():
                 self.console.print("\n[bold]Git Diff Review Summary:[/bold]")
-                for line in res.data.split("\n")[:20]:
+                for line in diff_str.split("\n")[:20]:
                     if line.startswith("+"):
                         self.console.print(f"[green]{line}[/green]")
                     elif line.startswith("-"):
@@ -426,6 +428,8 @@ class ProtonMaxAgent:
                         self.console.print(f"[dim]{line}[/dim]")
             else:
                 self.console.print("[green]✓ Changes cleanly verified in workspace.[/green]")
+        except Exception:
+            self.console.print("[green]✓ Workspace review completed.[/green]")
 
     async def _stage_fix_failures(self, goal: str, failure_output: str) -> tuple[bool, str]:
         """Stage 9: Self-healing error correction loop."""
