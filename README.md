@@ -29,10 +29,11 @@
 
 ## 🎥 Introduction to Proton
 
-https://github.com/arjunmdivekar-afk/Proton/raw/main/introduction-to-proton.mp4
+<div align="center">
+  <img src="assets/introduction-preview.gif" alt="Proton Introduction & Autonomous Agent Walkthrough" width="100%" style="border-radius: 8px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
+</div>
 
-> 🎬 **[▶️ Click to Watch / Download Full Video Walkthrough](https://github.com/arjunmdivekar-afk/Proton/raw/main/introduction-to-proton.mp4)**  
-> *Full feature walkthrough of Proton's autonomous agent lifecycle, terminal browser, live stock intelligence tracker, GraphRAG engine, explicit memory, and automated security verification suite.*
+> 🎬 *Live walkthrough of Proton's autonomous agent lifecycle, terminal browser, live stock intelligence tracker, GraphRAG engine, explicit memory, and automated security verification suite.*
 
 ---
 
