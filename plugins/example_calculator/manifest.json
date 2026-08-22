@@ -1,0 +1,8 @@
+{
+  "name": "calculator",
+  "version": "1.0.0",
+  "description": "Mathematical calculation plugin for Proton",
+  "author": "Proton Team",
+  "entrypoint": "plugin.py",
+  "permissions": ["math.evaluate"]
+}
