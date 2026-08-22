@@ -338,12 +338,16 @@ class ProtonMaxAgent:
 
         full_output = ""
         prompt = (
-            f"Execute the following task autonomously using available tools. Modify files, create new implementations, "
-            f"and verify correctness:\n\nTask Goal: {goal}"
+            f"You are the autonomous software engineering agent tasked with completing the following objective:\n\n"
+            f"Goal: {goal}\n\n"
+            f"Instructions:\n"
+            f"1. You MUST use tools (e.g. `write_file`, `edit_file`, `shell_execute`, `read_file`) to perform all necessary code changes.\n"
+            f"2. Actually create and write all files directly to the workspace.\n"
+            f"3. Verify that the files and code work properly."
         )
 
         try:
-            async for chunk in engine.stream_run(user_input=prompt, use_rag=True):
+            async for chunk in engine.stream_run(user_input=prompt, use_rag=True, force_tools=True):
                 if isinstance(chunk, str):
                     full_output += chunk
                     self.highlighter.process_chunk(chunk)
@@ -442,7 +446,7 @@ class ProtonMaxAgent:
                 max_steps=10,
             )
 
-            async for chunk in engine.stream_run(user_input=fix_prompt, use_rag=False):
+            async for chunk in engine.stream_run(user_input=fix_prompt, use_rag=False, force_tools=True):
                 if isinstance(chunk, str):
                     self.highlighter.process_chunk(chunk)
             self.highlighter.flush()

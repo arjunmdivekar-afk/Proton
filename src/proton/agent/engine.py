@@ -199,12 +199,20 @@ class AgentEngine:
         session_id: Optional[str] = None,
         use_rag: bool = True,
         disable_tools: bool = False,
+        force_tools: bool = False,
     ) -> AsyncGenerator[Any, None]:
         """Stream assistant tokens and tool events step by step."""
         messages: List[Message] = []
 
         # 1. System prompt & memory
         system_msg = self.context_assembler.build_system_message(user_input)
+        if force_tools:
+            system_msg.content += (
+                "\n\nIMPORTANT: You are operating in Autonomous Agent Mode. You have full permission and capabilities "
+                "to create files, edit files, and execute shell commands using your available tools. "
+                "You MUST use tools (e.g. `write_file`, `edit_file`, `shell_execute`, `read_file`, `search_code`) to perform "
+                "the requested task. Never refuse execution; always call the appropriate tool."
+            )
         messages.append(system_msg)
 
         # 2. RAG context augmentation if enabled
@@ -224,8 +232,8 @@ class AgentEngine:
             Event(type=EventType.AGENT_STARTED, data={"prompt": user_input}, session_id=session_id)
         )
 
-        # Gating: Do not pass tool schemas for conversational greetings/chat or when disabled
-        is_chat_only = is_conversational_prompt(user_input) or disable_tools
+        # Gating: Do not pass tool schemas for conversational greetings/chat or when disabled (unless force_tools is True)
+        is_chat_only = (is_conversational_prompt(user_input) and not force_tools) or disable_tools
         all_schemas = self.tool_registry.get_schemas()
         active_tools = None if is_chat_only else (all_schemas if all_schemas else None)
 

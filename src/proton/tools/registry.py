@@ -31,6 +31,15 @@ class ToolRegistry:
     def get_tool(self, name: str) -> Optional[BaseTool]:
         return self._tools.get(name)
 
+    def get(self, name: str, default: Optional[BaseTool] = None) -> Optional[BaseTool]:
+        return self._tools.get(name, default)
+
+    def __getitem__(self, name: str) -> BaseTool:
+        return self._tools[name]
+
+    def __contains__(self, name: str) -> bool:
+        return name in self._tools
+
     def list_tools(self) -> List[BaseTool]:
         return list(self._tools.values())
 
