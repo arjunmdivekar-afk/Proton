@@ -121,6 +121,12 @@ class StreamingCodeHighlighter:
                 res.append(tok)
         return res
 
+    def reset(self) -> None:
+        """Reset streaming state."""
+        self.in_code_block = False
+        self.code_lang = ""
+        self.buffer = ""
+
     def flush(self) -> None:
         if self.buffer:
             if self.in_code_block:
