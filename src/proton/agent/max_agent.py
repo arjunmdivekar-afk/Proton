@@ -552,7 +552,7 @@ class ProtonMaxAgent:
             f"## 🧪 Test Verification\n"
             f"**Tests Passed:** {'Yes ✓' if report.tests_passed else 'No ✗'}  \n\n"
             f"```text\n{report.test_output[:1500]}\n```\n\n"
-            f"---\n*Generated automatically by Proton Autonomous Agent v1.4.2*\n"
+            f"---\n*Generated automatically by Proton Autonomous Agent v1.4.4*\n"
         )
 
         with open(report_file, "w", encoding="utf-8") as f:
