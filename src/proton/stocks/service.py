@@ -1,4 +1,4 @@
-"""Stock market data provider using yfinance."""
+"""Stock market data provider using yfinance with Indian Rupees (₹) and Global Markets."""
 
 import asyncio
 from dataclasses import dataclass, field
@@ -9,23 +9,24 @@ import yfinance as yf
 # Stock universes categorized into 3 pages of 20 stocks each
 STOCK_PAGES: Dict[int, Dict[str, Any]] = {
     1: {
-        "title": "US Tech Giants & AI Leaders",
+        "title": "Indian Stock Market & NIFTY 50 Leaders (NSE / BSE)",
+        "symbols": [
+            "^NSEI", "^BSESN", "RELIANCE.NS", "TCS.NS", "HDFCBANK.NS", "INFY.NS",
+            "ICICIBANK.NS", "BHARTIARTL.NS", "SBIN.NS", "LT.NS", "ITC.NS",
+            "KOTAKBANK.NS", "HINDUNILVR.NS", "BAJFINANCE.NS", "MARUTI.NS",
+            "SUNPHARMA.NS", "TITAN.NS", "ADANIENT.NS", "WIPRO.NS", "TATASTEEL.NS"
+        ],
+    },
+    2: {
+        "title": "Global Tech Giants & AI Leaders",
         "symbols": [
             "AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "AMD",
             "INTC", "AVGO", "ORCL", "CRM", "NFLX", "ADBE", "CSCO", "QCOM",
             "TXN", "IBM", "NOW", "UBER"
         ],
     },
-    2: {
-        "title": "Blue Chips, Financials & Healthcare",
-        "symbols": [
-            "JPM", "V", "MA", "BAC", "WMT", "JNJ", "PG", "UNH",
-            "HD", "LLY", "XOM", "CVX", "KO", "PEP", "COST", "MRK",
-            "ABBV", "MCD", "DIS", "NKE"
-        ],
-    },
     3: {
-        "title": "Global Indices, ETFs & Crypto",
+        "title": "Global Indices, Commodities & Crypto",
         "symbols": [
             "^GSPC", "^DJI", "^IXIC", "^RUT", "^FTSE", "^N225", "SPY", "QQQ",
             "DIA", "IWM", "VOO", "GLD", "SLV", "USO", "BTC-USD", "ETH-USD",
@@ -46,7 +47,8 @@ class StockQuote:
     day_low: float = 0.0
     volume: int = 0
     market_cap: float = 0.0
-    currency: str = "USD"
+    currency: str = "INR"
+    currency_symbol: str = "₹"
     sparkline_prices: List[float] = field(default_factory=list)
 
 
@@ -75,13 +77,14 @@ class StockDetail:
     recommendation: str = "N/A"
     sector: str = "N/A"
     industry: str = "N/A"
-    currency: str = "USD"
+    currency: str = "INR"
+    currency_symbol: str = "₹"
     history_prices: List[float] = field(default_factory=list)
     history_dates: List[str] = field(default_factory=list)
 
 
 class StockDataService:
-    """Fetches and manages real-time stock quotes and historical charts via yfinance."""
+    """Fetches and manages real-time stock quotes and historical charts via yfinance in Rupees (₹)."""
 
     @staticmethod
     def get_symbols_for_page(page: int = 1) -> List[str]:
@@ -96,6 +99,19 @@ class StockDataService:
     @staticmethod
     def get_total_pages() -> int:
         return len(STOCK_PAGES)
+
+    def get_currency_symbol(self, raw_curr: Optional[str] = "INR") -> str:
+        """Map currency codes to symbols (defaulting to ₹)."""
+        curr = (raw_curr or "INR").upper()
+        if curr in ("INR", "RS", "RUPEES", ""):
+            return "₹"
+        elif curr == "USD":
+            return "$"
+        elif curr == "EUR":
+            return "€"
+        elif curr == "GBP":
+            return "£"
+        return "₹"
 
     async def fetch_page_quotes(self, page: int = 1) -> List[StockQuote]:
         """Fetch quotes for all 20 stocks on the given page."""
@@ -119,6 +135,8 @@ class StockDataService:
                     prev_p = float(fi.previous_close or last_p)
                     chg = last_p - prev_p if prev_p else 0.0
                     chg_pct = (chg / prev_p) * 100 if prev_p else 0.0
+                    raw_curr = fi.currency or ("INR" if ".NS" in sym or ".BO" in sym or "^NSE" in sym or "^BSE" in sym else "INR")
+                    curr_sym = self.get_currency_symbol(raw_curr)
 
                     quotes.append(
                         StockQuote(
@@ -131,14 +149,15 @@ class StockDataService:
                             day_low=float(fi.day_low or last_p),
                             volume=int(fi.last_volume or 0),
                             market_cap=float(fi.market_cap or 0.0),
-                            currency=fi.currency or "USD",
+                            currency=raw_curr,
+                            currency_symbol=curr_sym,
                         )
                     )
                 except Exception:
-                    quotes.append(StockQuote(symbol=sym, name=sym))
+                    quotes.append(StockQuote(symbol=sym, name=self._get_friendly_name(sym)))
         except Exception:
             for sym in symbols:
-                quotes.append(StockQuote(symbol=sym, name=sym))
+                quotes.append(StockQuote(symbol=sym, name=self._get_friendly_name(sym)))
         return quotes
 
     async def fetch_detail(self, symbol: str, timeframe: str = "1mo") -> Optional[StockDetail]:
@@ -148,7 +167,12 @@ class StockDataService:
 
     def _fetch_detail_sync(self, symbol: str, timeframe: str = "1mo") -> Optional[StockDetail]:
         try:
-            t = yf.Ticker(symbol)
+            # If user typed an Indian stock symbol without .NS (e.g. RELIANCE, TCS, INFY)
+            lookup_sym = symbol
+            if lookup_sym in ("RELIANCE", "TCS", "HDFCBANK", "INFY", "ICICIBANK", "BHARTIARTL", "SBIN", "LT", "ITC", "TATAMOTORS", "HINDUNILVR", "BAJFINANCE", "MARUTI", "SUNPHARMA", "TITAN", "ADANIENT", "WIPRO", "TATASTEEL"):
+                lookup_sym = f"{lookup_sym}.NS"
+
+            t = yf.Ticker(lookup_sym)
             fi = t.fast_info
             info = {}
             try:
@@ -161,7 +185,9 @@ class StockDataService:
             chg = last_p - prev_p if prev_p else 0.0
             chg_pct = (chg / prev_p) * 100 if prev_p else 0.0
 
-            # Map timeframe to yfinance period & interval
+            raw_curr = fi.currency or info.get("currency") or ("INR" if ".NS" in lookup_sym or ".BO" in lookup_sym else "INR")
+            curr_sym = self.get_currency_symbol(raw_curr)
+
             tf_map = {
                 "1d": ("1d", "5m"),
                 "5d": ("5d", "15m"),
@@ -183,8 +209,8 @@ class StockDataService:
                 pass
 
             return StockDetail(
-                symbol=symbol,
-                name=info.get("shortName") or info.get("longName") or self._get_friendly_name(symbol),
+                symbol=lookup_sym,
+                name=info.get("shortName") or info.get("longName") or self._get_friendly_name(lookup_sym),
                 price=last_p,
                 change=chg,
                 change_pct=chg_pct,
@@ -206,7 +232,8 @@ class StockDataService:
                 recommendation=info.get("recommendationKey", "N/A").upper(),
                 sector=info.get("sector", "N/A"),
                 industry=info.get("industry", "N/A"),
-                currency=fi.currency or info.get("currency") or "USD",
+                currency=raw_curr,
+                currency_symbol=curr_sym,
                 history_prices=hist_prices,
                 history_dates=hist_dates,
             )
@@ -215,6 +242,18 @@ class StockDataService:
 
     def _get_friendly_name(self, sym: str) -> str:
         names = {
+            # Indian Indices & NSE Stocks
+            "^NSEI": "NIFTY 50 Index", "^BSESN": "SENSEX 30 Index",
+            "RELIANCE.NS": "Reliance Industries", "TCS.NS": "Tata Consultancy Services",
+            "HDFCBANK.NS": "HDFC Bank Ltd", "INFY.NS": "Infosys Ltd",
+            "ICICIBANK.NS": "ICICI Bank Ltd", "BHARTIARTL.NS": "Bharti Airtel Ltd",
+            "SBIN.NS": "State Bank of India", "LT.NS": "Larsen & Toubro Ltd",
+            "ITC.NS": "ITC Limited", "TATAMOTORS.NS": "Tata Motors Ltd",
+            "HINDUNILVR.NS": "Hindustan Unilever", "BAJFINANCE.NS": "Bajaj Finance Ltd",
+            "MARUTI.NS": "Maruti Suzuki Ltd", "SUNPHARMA.NS": "Sun Pharma Industries",
+            "TITAN.NS": "Titan Company Ltd", "ADANIENT.NS": "Adani Enterprises",
+            "WIPRO.NS": "Wipro Limited", "TATASTEEL.NS": "Tata Steel Ltd",
+            # US Tech Leaders
             "AAPL": "Apple Inc.", "MSFT": "Microsoft Corp.", "NVDA": "NVIDIA Corp.",
             "GOOGL": "Alphabet Inc.", "AMZN": "Amazon.com Inc.", "META": "Meta Platforms",
             "TSLA": "Tesla Inc.", "AMD": "Advanced Micro Devices", "INTC": "Intel Corp.",
@@ -222,19 +261,13 @@ class StockDataService:
             "NFLX": "Netflix Inc.", "ADBE": "Adobe Inc.", "CSCO": "Cisco Systems",
             "QCOM": "Qualcomm Inc.", "TXN": "Texas Instruments", "IBM": "IBM Corp.",
             "NOW": "ServiceNow Inc.", "UBER": "Uber Technologies",
-            "JPM": "JPMorgan Chase", "V": "Visa Inc.", "MA": "Mastercard Inc.",
-            "BAC": "Bank of America", "WMT": "Walmart Inc.", "JNJ": "Johnson & Johnson",
-            "PG": "Procter & Gamble", "UNH": "UnitedHealth Group", "HD": "Home Depot",
-            "LLY": "Eli Lilly and Co.", "XOM": "Exxon Mobil Corp.", "CVX": "Chevron Corp.",
-            "KO": "Coca-Cola Co.", "PEP": "PepsiCo Inc.", "COST": "Costco Wholesale",
-            "MRK": "Merck & Co.", "ABBV": "AbbVie Inc.", "MCD": "McDonald's Corp.",
-            "DIS": "Walt Disney Co.", "NKE": "Nike Inc.",
+            # Global Indices & Crypto
             "^GSPC": "S&P 500 Index", "^DJI": "Dow Jones Industrial", "^IXIC": "Nasdaq Composite",
             "^RUT": "Russell 2000", "^FTSE": "FTSE 100", "^N225": "Nikkei 225",
             "SPY": "SPDR S&P 500 ETF", "QQQ": "Invesco QQQ ETF", "DIA": "SPDR Dow Jones ETF",
             "IWM": "iShares Russell 2000", "VOO": "Vanguard S&P 500", "GLD": "SPDR Gold Shares",
             "SLV": "iShares Silver Trust", "USO": "United States Oil Fund",
-            "BTC-USD": "Bitcoin (USD)", "ETH-USD": "Ethereum (USD)", "SOL-USD": "Solana (USD)",
-            "BNB-USD": "Binance Coin", "XRP-USD": "Ripple (USD)", "DOGE-USD": "Dogecoin (USD)",
+            "BTC-USD": "Bitcoin", "ETH-USD": "Ethereum", "SOL-USD": "Solana",
+            "BNB-USD": "Binance Coin", "XRP-USD": "Ripple", "DOGE-USD": "Dogecoin",
         }
         return names.get(sym, sym)

@@ -1,4 +1,4 @@
-"""High-Resolution Fully-Drawn Terminal Stock Price Chart and Sparkline Engine."""
+"""High-Resolution Fully-Drawn Terminal Stock Price Chart in Indian Rupees (₹) and Global Currencies."""
 
 import sys
 from typing import List, Optional
@@ -15,6 +15,7 @@ def render_stock_chart(
     dates: Optional[List[str]] = None,
     symbol: str = "STOCK",
     timeframe: str = "1M",
+    curr_symbol: str = "₹",
     width: int = 65,
     height: int = 11,
 ) -> str:
@@ -98,24 +99,24 @@ def render_stock_chart(
 
     lines = [
         f"[bold cyan]─── {symbol.upper()} Price Trend ({timeframe.upper()}) ───[/bold cyan] "
-        f"[{color}]{sign}{pct:.2f}%[/{color}] [dim](Low: ${min_p:.2f} | High: ${max_p:.2f})[/dim]\n"
+        f"[{color}]{sign}{pct:.2f}%[/{color}] [dim](Low: {curr_symbol}{min_p:,.2f} | High: {curr_symbol}{max_p:,.2f})[/dim]\n"
     ]
 
     # Format Y-axis prices with smooth curve rows
     for row_idx in range(height):
         price_at_row = max_p - (row_idx / (height - 1)) * p_range
         row_str = "".join(braille_grid[row_idx])
-        lines.append(f"[dim]{price_at_row:>9.2f} │[/dim] [{color}]{row_str}[/{color}]")
+        lines.append(f"[dim]{curr_symbol}{price_at_row:>8.2f} │[/dim] [{color}]{row_str}[/{color}]")
 
     # X-axis divider
-    lines.append("[dim]          └" + "─" * width + "[/dim]")
+    lines.append("[dim]           └" + "─" * width + "[/dim]")
 
     # Timeline labels
     start_date = resampled_dates[0][:10] if resampled_dates else "Start"
     end_date = resampled_dates[-1][:10] if resampled_dates else "Latest"
     pad = width - len(start_date) - len(end_date)
     if pad > 0:
-        lines.append(f"[dim]            {start_date}{' ' * pad}{end_date}[/dim]")
+        lines.append(f"[dim]             {start_date}{' ' * pad}{end_date}[/dim]")
 
     return "\n".join(lines)
 

@@ -39,10 +39,11 @@ proton browser "python tutorial" --ai_mode
 # Run application and AI endpoint diagnostics
 proton doctor
 
-# Launch Live Stock Market Tracker (10s auto-refresh, 20 stocks/page)
+# Launch Live Stock Market Tracker in Indian Rupees (₹) (10s auto-refresh, 20 stocks/page)
 proton stock
 
-# Inspect specific stock with deep-dive fundamentals and ASCII price chart
+# Inspect specific stock with deep-dive fundamentals and real-time price chart
+proton stock RELIANCE
+proton stock TCS
 proton stock AAPL
-proton stock NVDA
 ```
