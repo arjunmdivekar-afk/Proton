@@ -123,12 +123,15 @@ async def _run_non_interactive(user_prompt: str, json_mode: bool = False) -> Non
     )
 
     full_output = ""
+    from proton.tui.code_highlighter import StreamingCodeHighlighter
+    highlighter = StreamingCodeHighlighter(console) if not json_mode else None
+
     try:
         async for chunk in engine.stream_run(user_input=user_prompt, use_rag=False):
             if isinstance(chunk, str):
                 full_output += chunk
-                if not json_mode:
-                    print(chunk, end="", flush=True)
+                if not json_mode and highlighter:
+                    highlighter.process_chunk(chunk)
 
         if json_mode:
             res_obj = {
@@ -140,6 +143,8 @@ async def _run_non_interactive(user_prompt: str, json_mode: bool = False) -> Non
             }
             print(json.dumps(res_obj, indent=2))
         else:
+            if highlighter:
+                highlighter.flush()
             print()
 
     except Exception as e:

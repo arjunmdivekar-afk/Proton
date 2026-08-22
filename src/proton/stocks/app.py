@@ -281,6 +281,9 @@ class ProtonStockApp:
             ),
             Message(role=Role.USER, content=prompt),
         ]
+        from proton.tui.code_highlighter import StreamingCodeHighlighter
+        highlighter = StreamingCodeHighlighter(self.console)
+
         status = self.console.status("[bold cyan]Analyzing market data...[/bold cyan]", spinner="dots")
         status.start()
         try:
@@ -289,8 +292,9 @@ class ProtonStockApp:
                     status.stop()
                     status = None
                 if chunk.delta:
-                    self.console.print(chunk.delta, end="", highlight=False)
-            self.console.print("\n")
+                    highlighter.process_chunk(chunk.delta)
+            highlighter.flush()
+            self.console.print()
         except Exception as e:
             if status is not None:
                 status.stop()
