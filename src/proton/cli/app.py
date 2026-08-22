@@ -195,7 +195,7 @@ from proton.cli.browser_cmd import launch_browser
 from proton.cli.stock_cmd import launch_stock_dashboard
 
 app.command("browser", help="Launch Proton Browser — keyboard-first terminal web browser with DuckDuckGo search, link navigation, and AI mode")(launch_browser)
-app.command("stock", help="Launch Proton Stock Tracker — Live stocks with 2-second auto-refresh, 20 stocks per page, and detailed charts")(launch_stock_dashboard)
+app.command("stock", help="Launch Proton Stock Tracker — Live stocks in Rupees (₹) with 10-minute auto-refresh, 20 stocks per page, and detailed charts")(launch_stock_dashboard)
 app.command("stocks", help="Alias for proton stock")(launch_stock_dashboard)
 
 

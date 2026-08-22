@@ -321,7 +321,7 @@ class ProtonStockApp:
             now_str = datetime.now().strftime("%I:%M:%S %p")
             status_line = (
                 f"[dim]────────────────────────────────────────────────────────────────────────────────────────[/dim]\n"
-                f"[bold green]● LIVE (10s Auto-Refresh)[/bold green] [dim]Updated: {now_str}[/dim]  "
+                f"[bold green]● LIVE (10m Auto-Refresh)[/bold green] [dim]Updated: {now_str}[/dim]  "
                 f"[bold]|[/bold]  Page [bold cyan]{self.current_page}/3[/bold cyan]  "
                 f"[bold]|[/bold]  [dim]Type [1-20] or Symbol (e.g. `RELIANCE`, `TCS`, `INFY`) to inspect chart[/dim]\n"
                 f"[dim]Controls: `next` / `n` (Next Page) | `prev` / `p` | `page <1-3>` | `refresh` / `r` | `exit` / `q`[/dim]"
@@ -334,7 +334,7 @@ class ProtonStockApp:
             try:
                 if self.session is not None:
                     try:
-                        user_cmd = await asyncio.wait_for(self.session.prompt_async(prompt_text), timeout=10.0)
+                        user_cmd = await asyncio.wait_for(self.session.prompt_async(prompt_text), timeout=600.0)
                     except asyncio.TimeoutError:
                         continue
                 else:

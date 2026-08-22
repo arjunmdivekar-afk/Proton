@@ -19,6 +19,6 @@ def launch_stock_dashboard(
         help="Market watch page number (1: Tech Giants & AI, 2: Blue Chips & Healthcare, 3: Global Indices & Crypto)",
     ),
 ) -> None:
-    """Launch Proton Stock Market Tracker — Live quotes with 2-second auto-refresh, 20 stocks per page, and detailed price charts."""
+    """Launch Proton Stock Market Tracker — Live quotes in Rupees (₹) with 10-minute auto-refresh, 20 stocks per page, and detailed price charts."""
     app = ProtonStockApp(initial_symbol=symbol, page=page)
     asyncio.run(app.run())
