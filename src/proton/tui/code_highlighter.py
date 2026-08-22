@@ -1,8 +1,9 @@
-"""Stream-aware code block, heading, and markdown syntax highlighter for Proton."""
+"""Stream-aware code block, large heading (#), and markdown syntax highlighter for Proton."""
 
 import re
 import sys
 from rich.console import Console
+from rich.panel import Panel
 from rich.text import Text
 
 if sys.platform == "win32":
@@ -13,7 +14,7 @@ if sys.platform == "win32":
 
 
 class StreamingCodeHighlighter:
-    """Stream-aware formatter that highlights code blocks, resizes headings (#), and highlights markdown text (*)."""
+    """Stream-aware formatter that highlights code blocks, renders large prominent headings (#), and highlights markdown text (*)."""
 
     def __init__(self, console: Console) -> None:
         self.console = console
@@ -50,7 +51,7 @@ class StreamingCodeHighlighter:
             code_text.append(line, style="bright_white on grey15")
             self.console.print(code_text)
         else:
-            # Markdown Headings (#) -> Change Size and Visual Prominence
+            # Markdown Headings (#) -> Render with Large Visual Size and Prominent Framing
             if stripped.startswith("#"):
                 heading_match = re.match(r"^(#{1,6})\s+(.*)$", stripped)
                 if heading_match:
@@ -58,15 +59,26 @@ class StreamingCodeHighlighter:
                     heading_text = heading_match.group(2).strip()
 
                     if level == 1:
-                        divider = "=" * min(65, max(30, len(heading_text) + 8))
-                        self.console.print(f"\n[bold bright_white on grey23]  # {heading_text.upper()}  [/bold bright_white on grey23]")
-                        self.console.print(f"[dim]{divider}[/dim]")
+                        # Level 1 (#): Large double-padded heading panel banner
+                        p = Panel.fit(
+                            f"\n[bold bright_white on grey23]  # {heading_text.upper()}  [/bold bright_white on grey23]\n",
+                            border_style="bold cyan",
+                            style="bold bright_white on grey23",
+                        )
+                        self.console.print()
+                        self.console.print(p)
+                        self.console.print()
                     elif level == 2:
-                        divider = "-" * min(55, max(25, len(heading_text) + 6))
-                        self.console.print(f"\n[bold cyan]## {heading_text}[/bold cyan]")
-                        self.console.print(f"[dim]{divider}[/dim]")
+                        # Level 2 (##): Framed section header
+                        p = Panel.fit(
+                            f"[bold cyan]## {heading_text}[/bold cyan]",
+                            border_style="cyan",
+                        )
+                        self.console.print()
+                        self.console.print(p)
                     elif level == 3:
-                        self.console.print(f"\n[bold yellow]### {heading_text}[/bold yellow]")
+                        # Level 3 (###): Subsection header with bright yellow accent
+                        self.console.print(f"\n[bold bright_yellow]### {heading_text}[/bold bright_yellow]")
                     else:
                         self.console.print(f"\n[bold cyan]#### {heading_text}[/bold cyan]")
                     return
@@ -101,7 +113,7 @@ class StreamingCodeHighlighter:
                 res.append(f" {tok[1:-1]} ", style="bold cyan on grey23")
             elif tok.startswith("**") and tok.endswith("**") and len(tok) >= 4:
                 # **Highlighted text**: bright yellow bold highlight on dark background
-                res.append(tok[2:-2], style="bold bright_yellow on grey23")
+                res.append(f" {tok[2:-2]} ", style="bold bright_yellow on grey23")
             elif tok.startswith("*") and tok.endswith("*") and len(tok) >= 2:
                 # *Italic / highlighted text*: bold yellow
                 res.append(tok[1:-1], style="bold yellow")
