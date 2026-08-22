@@ -211,16 +211,24 @@ class ProtonREPL:
         )
         self.console.print(banner)
 
-        if self.current_session and getattr(self.current_session, "messages", None):
+        if self.current_session and getattr(self.current_session, "messages", None) and len(self.current_session.messages) > 0:
             self.console.print(
                 f"[bold green]● Resumed Conversation Session:[/bold green] [bold cyan]{self.current_session.title}[/bold cyan] "
-                f"[dim]({len(self.current_session.messages)} messages loaded)[/dim]"
+                f"[dim]({len(self.current_session.messages)} messages loaded)[/dim]\n"
             )
-            for msg in self.current_session.messages[-4:]:
-                prefix = "[bold cyan]User:[/bold cyan]" if msg.role.value == "user" else "[bold magenta]Proton:[/bold magenta]"
-                preview = msg.content.strip().split("\n")[0][:90]
-                self.console.print(f"  {prefix} [dim]{preview}[/dim]")
-            self.console.print()
+            highlighter = StreamingCodeHighlighter(self.console)
+            for msg in self.current_session.messages:
+                if msg.role.value == "user":
+                    self.console.print(f"[bold cyan]User:[/bold cyan] {msg.content.strip()}\n")
+                elif msg.role.value == "assistant":
+                    self.console.print(f"[bold magenta]Proton:[/bold magenta]")
+                    highlighter.reset()
+                    highlighter.process_chunk(msg.content.strip())
+                    highlighter.flush()
+                    self.console.print("\n")
+                elif msg.role.value == "tool":
+                    if msg.content:
+                        self.console.print(f"[dim]Tool Result: {msg.content.strip()}[/dim]\n")
 
     def _prompt_and_save_session(self) -> None:
         """Prompt user to name and save conversation session upon exit/Ctrl+T."""
