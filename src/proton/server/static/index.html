@@ -416,10 +416,15 @@
             <div class="settings-content">
               <div id="section-providers" class="settings-section">
                 <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
-                  <div style="font-weight: 500;">Connected AI Model Providers</div>
-                  <button id="settings-refresh-providers" class="btn btn-secondary btn-sm">Refresh & Ping</button>
+                  <div>
+                    <div style="font-weight: 500;">Connected AI Model Providers</div>
+                    <div style="font-size: 12px; color: var(--text-secondary); margin-top: 2px;">Click "Set Active" on any reachable provider to switch your active model engine.</div>
+                  </div>
+                  <div style="display: flex; gap: 8px;">
+                    <button id="settings-add-provider-btn" class="btn btn-primary btn-sm">+ Add Provider</button>
+                    <button id="settings-refresh-providers" class="btn btn-secondary btn-sm">Refresh & Ping</button>
+                  </div>
                 </div>
-                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Configure Local Transformers, LM Studio, Ollama, and OpenAI endpoints with live roundtrip latency metrics.</p>
                 <div class="table-container">
                   <table class="table">
                     <thead><tr><th>Status</th><th>Provider / Name</th><th>Endpoint</th><th>Latency</th><th>Action</th></tr></thead>
@@ -495,6 +500,44 @@
           <span class="kbd-badge">ESC</span>
         </div>
         <div class="palette-results" id="palette-results"></div>
+      </div>
+    </div>
+
+    <!-- Add Provider Modal -->
+    <div id="add-provider-modal" class="modal-overlay">
+      <div class="modal-box" style="width: 440px; display: flex; flex-direction: column; gap: 14px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--border-subtle); padding-bottom: 10px;">
+          <strong style="font-size: 13.5px;">Add AI Model Provider</strong>
+          <button id="close-add-provider-modal" class="btn btn-ghost btn-sm" style="padding: 2px 6px;">✕</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 10px; font-size: 12.5px;">
+          <div>
+            <label style="display: block; margin-bottom: 4px; color: var(--text-secondary);">Provider Type</label>
+            <select id="new-provider-type" class="select" style="width: 100%;">
+              <option value="lmstudio">LM Studio (Local or LAN IP)</option>
+              <option value="ollama">Ollama (Local or LAN IP)</option>
+              <option value="openai">OpenAI / OpenAI-Compatible</option>
+              <option value="anthropic">Anthropic Claude</option>
+              <option value="gemini">Google Gemini</option>
+            </select>
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 4px; color: var(--text-secondary);">Connection Name</label>
+            <input id="new-provider-name" class="input" placeholder="e.g. My GPU Server / LM Studio" />
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 4px; color: var(--text-secondary);">Base URL / Endpoint</label>
+            <input id="new-provider-url" class="input" placeholder="e.g. http://192.168.16.120:1234/v1" value="http://127.0.0.1:1234/v1" />
+          </div>
+          <div>
+            <label style="display: block; margin-bottom: 4px; color: var(--text-secondary);">API Key (Optional for local servers)</label>
+            <input id="new-provider-key" type="password" class="input" placeholder="sk-..." />
+          </div>
+        </div>
+        <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 6px;">
+          <button id="cancel-add-provider-btn" class="btn btn-secondary btn-sm">Cancel</button>
+          <button id="save-add-provider-btn" class="btn btn-primary btn-sm">Save & Connect</button>
+        </div>
       </div>
     </div>
 

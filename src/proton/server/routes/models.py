@@ -218,6 +218,82 @@ async def switch_connection(req: ConnectionSwitchRequest):
 
 
 @router.post(
+    "/connections/add",
+    summary="Add AI Endpoint Connection",
+)
+async def add_connection_endpoint(req: dict):
+    """Add and persist a new inference provider connection profile."""
+    from proton.connection.schema import ConnectionProfile, ProviderType
+
+    conn_mgr = ConnectionManager()
+    name = req.get("name", "Custom Connection").strip()
+    conn_id = req.get("id") or name.lower().replace(" ", "-")
+
+    provider_str = req.get("provider", "lmstudio")
+    try:
+        prov_type = ProviderType(provider_str)
+    except Exception:
+        prov_type = ProviderType.OPENAI_COMPATIBLE
+
+    base_url = req.get("base_url", "http://127.0.0.1:1234/v1").strip()
+
+    # Parse host, port, protocol, base_path from base_url if provided
+    protocol = "http"
+    host = "127.0.0.1"
+    port = 1234
+    base_path = "/v1"
+
+    if "://" in base_url:
+        protocol, rest = base_url.split("://", 1)
+        if "/" in rest:
+            host_port, base_path = rest.split("/", 1)
+            base_path = "/" + base_path
+        else:
+            host_port = rest
+            base_path = ""
+        if ":" in host_port:
+            host, port_str = host_port.split(":", 1)
+            try:
+                port = int(port_str)
+            except ValueError:
+                port = 80 if protocol == "http" else 443
+        else:
+            host = host_port
+            port = 80 if protocol == "http" else 443
+
+    profile = ConnectionProfile(
+        id=conn_id,
+        name=name,
+        provider=prov_type,
+        host=host,
+        port=port,
+        protocol=protocol,
+        base_path=base_path,
+        api_key=req.get("api_key"),
+        enabled=True,
+    )
+
+    conn_mgr.add_connection(profile)
+    return {"status": "added", "connection_id": conn_id, "name": name, "base_url": profile.base_url}
+
+
+@router.delete(
+    "/connections/{connection_id}",
+    summary="Remove AI Endpoint Connection",
+)
+async def delete_connection_endpoint(connection_id: str):
+    """Remove a configured inference connection profile."""
+    conn_mgr = ConnectionManager()
+    if connection_id == "proton-hub":
+        raise HTTPException(status_code=400, detail="Cannot delete built-in Proton Model Hub connection.")
+
+    success = conn_mgr.remove_connection(connection_id)
+    if not success:
+        raise HTTPException(status_code=404, detail=f"Connection '{connection_id}' not found.")
+    return {"status": "deleted", "connection_id": connection_id}
+
+
+@router.post(
     "/models/switch",
     summary="Switch Active Model ID",
 )

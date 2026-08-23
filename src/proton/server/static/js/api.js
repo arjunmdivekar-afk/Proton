@@ -143,6 +143,13 @@ export const api = {
     method: 'POST',
     body: JSON.stringify({ connection_id }),
   }),
+  addConnection: (payload) => request('/v1/connections/add', {
+    method: 'POST',
+    body: JSON.stringify(payload),
+  }),
+  deleteConnection: (connection_id) => request(`/v1/connections/${encodeURIComponent(connection_id)}`, {
+    method: 'DELETE',
+  }),
   setActiveConnection: (connection_id) => request('/v1/connections/switch', {
     method: 'POST',
     body: JSON.stringify({ connection_id }),

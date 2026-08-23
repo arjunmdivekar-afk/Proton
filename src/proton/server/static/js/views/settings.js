@@ -43,6 +43,9 @@ export function initSettingsView() {
         const latencyText = conn.latency_ms !== null && conn.latency_ms !== undefined ? `${conn.latency_ms} ms` : '—';
         const latencyBadge = isOnline ? `<span class="badge badge-emerald">${latencyText}</span>` : `<span class="badge badge-rose">Offline</span>`;
 
+        const isBuiltin = conn.id === 'proton-hub';
+        const deleteBtnHtml = isBuiltin ? '' : `<button class="btn btn-ghost btn-sm btn-delete" title="Delete Connection" style="color:var(--text-dim);">✕</button>`;
+
         tr.innerHTML = `
           <td><span class="status-dot ${isOnline ? 'online' : ''}"></span></td>
           <td>
@@ -52,14 +55,30 @@ export function initSettingsView() {
           <td><span style="font-family:var(--font-mono); font-size:12px; color:var(--text-secondary);">${conn.base_url}</span></td>
           <td>${latencyBadge}</td>
           <td>
-            <div style="display:flex; gap:6px;">
+            <div style="display:flex; gap:6px; align-items:center;">
               <button class="btn btn-secondary btn-sm btn-ping" title="Ping Endpoint">Ping</button>
               <button class="btn ${isActive ? 'btn-primary' : 'btn-secondary'} btn-sm btn-activate" ${isActive ? 'disabled' : ''}>
                 ${isActive ? 'Active' : 'Set Active'}
               </button>
+              ${deleteBtnHtml}
             </div>
           </td>
         `;
+
+        const delBtn = tr.querySelector('.btn-delete');
+        if (delBtn) {
+          delBtn.addEventListener('click', async () => {
+            if (confirm(`Remove connection profile "${conn.name}"?`)) {
+              try {
+                await api.deleteConnection(conn.id);
+                events.emit('toast:show', { message: `Removed connection "${conn.name}"`, type: 'info' });
+                loadProviders();
+              } catch (e) {
+                events.emit('toast:show', { message: `Delete failed: ${e.message}`, type: 'error' });
+              }
+            }
+          });
+        }
 
         tr.querySelector('.btn-ping').addEventListener('click', async (e) => {
           const btn = e.target;
@@ -85,7 +104,7 @@ export function initSettingsView() {
           try {
             await api.setActiveConnection(conn.id);
             state.activeConnection = conn.id;
-            events.emit('toast:show', { message: `Switched provider to ${conn.name}`, type: 'success' });
+            events.emit('toast:show', { message: `Switched active provider to ${conn.name}`, type: 'success' });
             loadProviders();
           } catch (err) {
             events.emit('toast:show', { message: `Failed to switch: ${err.message}`, type: 'error' });
@@ -97,6 +116,67 @@ export function initSettingsView() {
     } catch (err) {
       providersTbody.innerHTML = `<tr><td colspan="5" style="color:var(--accent-rose); padding:16px;">Failed to load providers: ${err.message}</td></tr>`;
     }
+  }
+
+  // Add Provider Modal
+  const addModal = document.getElementById('add-provider-modal');
+  const openModalBtn = document.getElementById('settings-add-provider-btn');
+  const closeModalBtn = document.getElementById('close-add-provider-modal');
+  const cancelModalBtn = document.getElementById('cancel-add-provider-btn');
+  const saveModalBtn = document.getElementById('save-add-provider-btn');
+
+  const provTypeSel = document.getElementById('new-provider-type');
+  const provNameInput = document.getElementById('new-provider-name');
+  const provUrlInput = document.getElementById('new-provider-url');
+  const provKeyInput = document.getElementById('new-provider-key');
+
+  if (provTypeSel && provUrlInput) {
+    provTypeSel.addEventListener('change', () => {
+      const val = provTypeSel.value;
+      if (val === 'lmstudio') provUrlInput.value = 'http://127.0.0.1:1234/v1';
+      else if (val === 'ollama') provUrlInput.value = 'http://127.0.0.1:11434/v1';
+      else if (val === 'openai') provUrlInput.value = 'https://api.openai.com/v1';
+      else if (val === 'anthropic') provUrlInput.value = 'https://api.anthropic.com/v1';
+      else if (val === 'gemini') provUrlInput.value = 'https://generativelanguage.googleapis.com/v1';
+    });
+  }
+
+  function openAddModal() {
+    if (addModal) addModal.classList.add('active');
+  }
+
+  function closeAddModal() {
+    if (addModal) addModal.classList.remove('active');
+  }
+
+  if (openModalBtn) openModalBtn.addEventListener('click', openAddModal);
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeAddModal);
+  if (cancelModalBtn) cancelModalBtn.addEventListener('click', closeAddModal);
+
+  if (saveModalBtn) {
+    saveModalBtn.addEventListener('click', async () => {
+      const name = (provNameInput && provNameInput.value.trim()) || 'Custom Inference';
+      const provider = provTypeSel ? provTypeSel.value : 'lmstudio';
+      const base_url = (provUrlInput && provUrlInput.value.trim()) || 'http://127.0.0.1:1234/v1';
+      const api_key = (provKeyInput && provKeyInput.value.trim()) || null;
+
+      saveModalBtn.disabled = true;
+      saveModalBtn.innerText = 'Connecting...';
+
+      try {
+        await api.addConnection({ name, provider, base_url, api_key });
+        events.emit('toast:show', { message: `Added "${name}" successfully!`, type: 'success' });
+        closeAddModal();
+        if (provNameInput) provNameInput.value = '';
+        if (provKeyInput) provKeyInput.value = '';
+        loadProviders();
+      } catch (err) {
+        events.emit('toast:show', { message: `Failed to add connection: ${err.message}`, type: 'error' });
+      } finally {
+        saveModalBtn.disabled = false;
+        saveModalBtn.innerText = 'Save & Connect';
+      }
+    });
   }
 
   if (refreshProvidersBtn) {

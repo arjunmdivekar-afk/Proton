@@ -58,6 +58,8 @@ def create_app() -> FastAPI:
     )
 
     # Mount API routers
+    from proton.server.routes.doctor import router as doctor_router
+
     app.include_router(health_router)
     app.include_router(chat_router)
     app.include_router(agent_router)
@@ -73,6 +75,7 @@ def create_app() -> FastAPI:
     app.include_router(workspace_router)
     app.include_router(terminal_router)
     app.include_router(developer_router)
+    app.include_router(doctor_router)
 
     # Mount static assets directory
     static_dir = Path(__file__).parent / "static"
