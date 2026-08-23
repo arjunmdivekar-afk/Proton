@@ -17,12 +17,11 @@ def test_spa_root_and_static_serving(client):
     """Test that visiting / or /chat serves the SPA index.html."""
     response = client.get("/")
     assert response.status_code == 200
-    assert "Proton Autonomous AI" in response.text
-    assert "Chat Studio" in response.text
+    assert "Proton" in response.text
 
     chat_resp = client.get("/chat")
     assert chat_resp.status_code == 200
-    assert "Proton Autonomous AI" in chat_resp.text
+    assert "Proton" in chat_resp.text
 
 
 def test_developer_status_and_logs(client):

@@ -100,10 +100,9 @@ export function initChatView() {
 
     if (currentChat.messages.length === 0) {
       messagesContainer.innerHTML = `
-        <div style="margin: auto; text-align: center; color: var(--text-muted); max-width: 440px;">
-          <div style="font-size: 32px; margin-bottom: 12px;">⚛️</div>
-          <h3 style="color: var(--text-primary); margin-bottom: 8px;">Proton Autonomous Assistant</h3>
-          <p style="font-size: 13px;">Type a message or use the command palette (Ctrl+K) to launch autonomous agent workflows.</p>
+        <div style="margin: auto; text-align: center; color: var(--text-muted); max-width: 400px;">
+          <h3 style="color: var(--text-primary); font-size: 16px; font-weight: 500; margin-bottom: 6px;">How can Proton help you today?</h3>
+          <p style="font-size: 13px; color: var(--text-secondary);">Ask code questions, execute terminal commands, or trigger autonomous tasks.</p>
         </div>
       `;
       return;
@@ -119,7 +118,7 @@ export function initChatView() {
     const row = document.createElement('div');
     row.className = `message-row ${role}`;
     row.innerHTML = `
-      <div class="message-avatar">${role === 'user' ? '👤' : '⚛️'}</div>
+      <div class="message-avatar">${role === 'user' ? 'U' : 'P'}</div>
       <div class="message-bubble">${formatMarkdown(content)}</div>
     `;
     messagesContainer.appendChild(row);
@@ -127,12 +126,21 @@ export function initChatView() {
     return row.querySelector('.message-bubble');
   }
 
+  // Sidebar toggle
+  const toggleHistoryBtn = document.getElementById('toggle-chat-history');
+  const chatSidebar = document.getElementById('chat-sidebar');
+  if (toggleHistoryBtn && chatSidebar) {
+    toggleHistoryBtn.addEventListener('click', () => {
+      chatSidebar.classList.toggle('hidden');
+    });
+  }
+
   async function handleSend() {
     const text = textarea.value.trim();
     if (!text || state.isStreaming) return;
 
     textarea.value = '';
-    textarea.style.height = '48px';
+    textarea.style.height = '42px';
 
     // Auto-update session title from first prompt
     if (currentChat.messages.length === 0) {
@@ -166,18 +174,21 @@ export function initChatView() {
         // Update token speed HUD
         const elapsedSec = (performance.now() - tStart) / 1000;
         const tokPerSec = elapsedSec > 0 ? (tokenCount / elapsedSec).toFixed(1) : '0.0';
-        if (tokSpeedEl) tokSpeedEl.innerText = `⚡ ${tokPerSec} tok/s`;
+        if (tokSpeedEl) tokSpeedEl.innerText = `${tokPerSec} tok/s`;
       },
       () => {
         state.isStreaming = false;
         const totalDuration = ((performance.now() - tStart)).toFixed(0);
-        if (latencyEl) latencyEl.innerText = `⏱️ ${totalDuration} ms`;
+        if (latencyEl) latencyEl.innerText = `${totalDuration} ms`;
         currentChat.messages.push({ role: 'assistant', content: assistantText });
         saveSessions();
       },
       (err) => {
         state.isStreaming = false;
         assistantBubble.innerHTML = `<span style="color: var(--accent-rose);">[Error: ${err.message}]</span>`;
+      }
+    );
+  }
       }
     );
   }

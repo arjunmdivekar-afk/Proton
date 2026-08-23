@@ -13,23 +13,23 @@ export function initCommandPalette() {
   if (!overlay || !input || !resultsList) return;
 
   const commands = [
-    { id: 'chat', title: 'Chat Studio', category: 'Navigation', icon: '💬', action: () => router.navigate('/chat') },
-    { id: 'agent', title: 'New Agent Goal', category: 'Action', icon: '🤖', action: () => router.navigate('/agent') },
-    { id: 'terminal', title: 'Open Terminal', category: 'Developer', icon: '💻', action: () => router.navigate('/terminal') },
-    { id: 'workspace', title: 'Workspace Explorer & Diff', category: 'Workspace', icon: '📁', action: () => router.navigate('/workspace') },
-    { id: 'developer', title: 'Developer Server Dashboard', category: 'Developer', icon: '⚡', action: () => router.navigate('/developer') },
-    { id: 'models', title: 'Search & Install Models', category: 'Model Hub', icon: '🧠', action: () => router.navigate('/models') },
-    { id: 'graphrag', title: 'GraphRAG Code Intelligence', category: 'Intelligence', icon: '🌐', action: () => router.navigate('/graphrag') },
-    { id: 'tasks', title: 'Engineering Tasks Kanban', category: 'Tasks', icon: '📋', action: () => router.navigate('/tasks') },
-    { id: 'memory', title: 'Search Memory Store', category: 'Memory', icon: '💾', action: () => router.navigate('/memory') },
-    { id: 'index', title: 'Index Project Codebase', category: 'Action', icon: '🔍', action: async () => {
+    { id: 'chat', title: 'Chat', category: 'Navigation', action: () => router.navigate('/chat') },
+    { id: 'agent', title: 'New Agent Goal', category: 'Action', action: () => router.navigate('/agent') },
+    { id: 'terminal', title: 'Open Terminal', category: 'Developer', action: () => router.navigate('/terminal') },
+    { id: 'workspace', title: 'Workspace Explorer & Diff', category: 'Workspace', action: () => router.navigate('/workspace') },
+    { id: 'developer', title: 'Developer Dashboard', category: 'Developer', action: () => router.navigate('/developer') },
+    { id: 'models', title: 'Models & Hub', category: 'Model Hub', action: () => router.navigate('/models') },
+    { id: 'graphrag', title: 'GraphRAG Code Intelligence', category: 'Intelligence', action: () => router.navigate('/graphrag') },
+    { id: 'tasks', title: 'Tasks Kanban', category: 'Tasks', action: () => router.navigate('/tasks') },
+    { id: 'memory', title: 'Memory Store', category: 'Memory', action: () => router.navigate('/memory') },
+    { id: 'index', title: 'Index Project Codebase', category: 'Action', action: async () => {
       await api.indexGraph();
       events.emit('toast:show', { message: 'Workspace indexing started!', type: 'success' });
       router.navigate('/graphrag');
     }},
-    { id: 'docs', title: 'Interactive Swagger API Docs', category: 'API', icon: '📚', action: () => window.open('/docs', '_blank') },
-    { id: 'doctor', title: 'Run Proton Doctor Diagnostics', category: 'Diagnostics', icon: '🩺', action: () => router.navigate('/diagnostics') },
-    { id: 'settings', title: 'Platform Settings', category: 'Configuration', icon: '⚙️', action: () => router.navigate('/settings') },
+    { id: 'docs', title: 'API Documentation', category: 'API', action: () => window.open('/docs', '_blank') },
+    { id: 'doctor', title: 'Proton Doctor Diagnostics', category: 'Diagnostics', action: () => router.navigate('/diagnostics') },
+    { id: 'settings', title: 'Settings', category: 'Configuration', action: () => router.navigate('/settings') },
   ];
 
   let selectedIndex = 0;
@@ -56,7 +56,7 @@ export function initCommandPalette() {
   function renderResults() {
     resultsList.innerHTML = '';
     if (filteredCommands.length === 0) {
-      resultsList.innerHTML = '<div style="padding: 16px; text-align: center; color: var(--text-muted);">No commands found.</div>';
+      resultsList.innerHTML = '<div style="padding: 12px; text-align: center; color: var(--text-muted); font-size: 12px;">No commands found.</div>';
       return;
     }
 
@@ -65,7 +65,6 @@ export function initCommandPalette() {
       item.className = `palette-item ${idx === selectedIndex ? 'selected' : ''}`;
       item.innerHTML = `
         <div class="palette-item-left">
-          <span class="palette-item-icon">${cmd.icon}</span>
           <span class="palette-item-title">${cmd.title}</span>
         </div>
         <span class="palette-item-category">${cmd.category}</span>

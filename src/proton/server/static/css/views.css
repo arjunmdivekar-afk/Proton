@@ -1,4 +1,4 @@
-/* Proton Web UI - Feature View Specific Styles */
+/* Proton Web UI - Feature View Clean Minimal Styles */
 
 /* ==========================================================================
    1. Chat Studio (/chat)
@@ -11,7 +11,7 @@
 }
 
 .chat-history-sidebar {
-  width: 260px;
+  width: 240px;
   height: 100%;
   background: var(--bg-surface-1);
   border-right: 1px solid var(--border-subtle);
@@ -19,8 +19,12 @@
   flex-direction: column;
 }
 
+.chat-history-sidebar.hidden {
+  display: none;
+}
+
 .chat-history-header {
-  padding: 14px 16px;
+  padding: 10px 14px;
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
@@ -30,20 +34,20 @@
 .session-list {
   flex: 1;
   overflow-y: auto;
-  padding: 10px 8px;
+  padding: 6px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .session-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  border-radius: var(--radius-md);
+  padding: 6px 10px;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  font-size: 13px;
+  font-size: 12.5px;
   cursor: pointer;
   transition: all var(--trans-fast);
 }
@@ -51,12 +55,6 @@
 .session-item:hover, .session-item.active {
   background: var(--bg-surface-2);
   color: var(--text-primary);
-}
-
-.session-item.active {
-  background: rgba(0, 240, 255, 0.08);
-  color: var(--accent-cyan);
-  font-weight: 500;
 }
 
 .chat-main {
@@ -68,139 +66,114 @@
 }
 
 .chat-performance-hud {
-  padding: 6px 20px;
-  background: var(--bg-surface-1);
+  padding: 4px 20px;
+  background: var(--bg-app);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-family: var(--font-mono);
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--text-muted);
 }
 
 .chat-messages {
   flex: 1;
   overflow-y: auto;
-  padding: 24px 32px;
+  padding: 24px 20px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
 }
 
 .message-row {
   display: flex;
-  gap: 14px;
-  max-width: 860px;
+  gap: 12px;
+  max-width: 760px;
   width: 100%;
   margin: 0 auto;
 }
 
-.message-row.user {
-  justify-content: flex-end;
-}
-
 .message-avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-md);
+  width: 24px;
+  height: 24px;
+  border-radius: var(--radius-xs);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 11px;
+  font-weight: 600;
   flex-shrink: 0;
+  background: var(--bg-surface-2);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-subtle);
 }
 
 .message-row.user .message-avatar {
-  background: var(--accent-purple);
-  color: #fff;
-  order: 2;
-}
-
-.message-row.assistant .message-avatar {
-  background: linear-gradient(135deg, #00f0ff, #0077b6);
-  color: #08090d;
+  background: var(--bg-surface-3);
+  color: var(--text-primary);
 }
 
 .message-bubble {
-  padding: 14px 18px;
-  border-radius: var(--radius-lg);
-  font-size: 14px;
+  flex: 1;
+  font-size: 13.5px;
   line-height: 1.6;
-  max-width: 80%;
-  word-break: break-word;
-}
-
-.message-row.user .message-bubble {
-  background: var(--bg-surface-3);
-  border: 1px solid var(--border-card);
-  color: #fff;
-  border-top-right-radius: 2px;
-}
-
-.message-row.assistant .message-bubble {
-  background: var(--bg-surface-1);
-  border: 1px solid var(--border-subtle);
   color: var(--text-primary);
-  border-top-left-radius: 2px;
-  width: 100%;
 }
 
 .message-bubble pre {
-  background: #0d0f15;
+  background: var(--bg-surface-1);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  margin: 10px 0;
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  margin: 8px 0;
   overflow-x: auto;
   font-family: var(--font-mono);
-  font-size: 12.5px;
+  font-size: 12px;
   position: relative;
 }
 
 .message-bubble code {
   font-family: var(--font-mono);
-  font-size: 12.5px;
-  background: rgba(255, 255, 255, 0.06);
-  padding: 2px 5px;
-  border-radius: 4px;
+  font-size: 12px;
+  background: var(--bg-surface-2);
+  padding: 2px 4px;
+  border-radius: var(--radius-xs);
 }
 
 .code-copy-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  padding: 4px 8px;
-  font-size: 11px;
+  top: 6px;
+  right: 6px;
+  padding: 2px 6px;
+  font-size: 10px;
   background: var(--bg-surface-2);
   border: 1px solid var(--border-subtle);
   color: var(--text-secondary);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   cursor: pointer;
 }
 
 .chat-input-container {
-  padding: 16px 32px 20px;
-  background: linear-gradient(180deg, transparent 0%, var(--bg-app) 40%);
+  padding: 12px 20px 16px;
+  max-width: 760px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .chat-input-box {
-  max-width: 860px;
-  margin: 0 auto;
-  background: var(--bg-surface-2);
+  background: var(--bg-surface-1);
   border: 1px solid var(--border-card);
-  border-radius: var(--radius-xl);
-  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  padding: 8px 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  box-shadow: var(--shadow-md);
-  transition: all var(--trans-fast);
+  gap: 6px;
+  transition: border-color var(--trans-fast);
 }
 
 .chat-input-box:focus-within {
-  border-color: var(--accent-cyan);
-  box-shadow: 0 0 0 2px var(--accent-cyan-glow);
+  border-color: var(--border-focus);
 }
 
 .chat-textarea {
@@ -208,12 +181,13 @@
   border: none;
   color: var(--text-primary);
   font-family: var(--font-sans);
-  font-size: 14px;
+  font-size: 13.5px;
   resize: none;
   outline: none;
-  min-height: 48px;
-  max-height: 180px;
+  min-height: 42px;
+  max-height: 140px;
   width: 100%;
+  line-height: 1.4;
 }
 
 .chat-controls-row {
@@ -229,9 +203,9 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: #08090c;
-  padding: 16px;
-  gap: 12px;
+  background: var(--bg-app);
+  padding: 12px;
+  gap: 8px;
 }
 
 .terminal-header {
@@ -240,20 +214,20 @@
   justify-content: space-between;
   background: var(--bg-surface-1);
   border: 1px solid var(--border-subtle);
-  padding: 10px 16px;
-  border-radius: var(--radius-lg);
+  padding: 6px 12px;
+  border-radius: var(--radius-sm);
 }
 
 .terminal-console {
   flex: 1;
-  background: #050608;
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-lg);
-  padding: 16px;
+  background: #000000;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 12px;
   overflow-y: auto;
   font-family: var(--font-mono);
-  font-size: 13px;
-  color: #d1d5db;
+  font-size: 12.5px;
+  color: #e4e4e7;
   line-height: 1.5;
   white-space: pre-wrap;
   word-break: break-all;
@@ -262,16 +236,16 @@
 .terminal-input-bar {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   background: var(--bg-surface-1);
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-lg);
-  padding: 8px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  padding: 6px 12px;
 }
 
 .terminal-prompt-symbol {
-  color: var(--accent-cyan);
-  font-weight: 700;
+  color: var(--text-muted);
+  font-weight: 600;
   font-family: var(--font-mono);
 }
 
@@ -279,9 +253,9 @@
   flex: 1;
   background: transparent;
   border: none;
-  color: #fff;
+  color: #ffffff;
   font-family: var(--font-mono);
-  font-size: 13.5px;
+  font-size: 12.5px;
   outline: none;
 }
 
@@ -295,7 +269,7 @@
 }
 
 .workspace-sidebar {
-  width: 280px;
+  width: 250px;
   height: 100%;
   background: var(--bg-surface-1);
   border-right: 1px solid var(--border-subtle);
@@ -306,16 +280,16 @@
 .workspace-tree {
   flex: 1;
   overflow-y: auto;
-  padding: 8px;
-  font-size: 13px;
+  padding: 6px;
+  font-size: 12.5px;
 }
 
 .tree-node {
   display: flex;
   align-items: center;
   gap: 6px;
-  padding: 5px 8px;
-  border-radius: var(--radius-sm);
+  padding: 4px 6px;
+  border-radius: var(--radius-xs);
   cursor: pointer;
   color: var(--text-secondary);
   user-select: none;
@@ -326,22 +300,16 @@
   color: var(--text-primary);
 }
 
-.tree-node.selected {
-  background: rgba(0, 240, 255, 0.1);
-  color: var(--accent-cyan);
-}
-
 .workspace-editor-pane {
   flex: 1;
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--bg-app);
 }
 
 .editor-header {
-  height: 44px;
-  padding: 0 16px;
+  height: 38px;
+  padding: 0 14px;
   background: var(--bg-surface-1);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
@@ -351,12 +319,12 @@
 
 .editor-code {
   flex: 1;
-  padding: 16px;
+  padding: 12px 16px;
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: 12.5px;
   line-height: 1.5;
-  background: #08090d;
-  color: #e2e8f0;
+  background: var(--bg-app);
+  color: #e4e4e7;
   border: none;
   outline: none;
   resize: none;
@@ -368,49 +336,52 @@
    4. Developer Server Dashboard (/developer)
    ========================================================================== */
 .dev-dashboard {
-  padding: 24px 32px;
+  padding: 20px 24px;
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 16px;
   overflow-y: auto;
+  max-width: 1100px;
+  width: 100%;
+  margin: 0 auto;
 }
 
 .dev-top-banner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--bg-surface-1);
+  background: var(--bg-card);
   border: 1px solid var(--border-card);
-  padding: 16px 20px;
-  border-radius: var(--radius-lg);
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
   flex-wrap: wrap;
-  gap: 14px;
+  gap: 10px;
 }
 
 .reachability-chip {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   background: var(--bg-surface-2);
   border: 1px solid var(--border-subtle);
-  padding: 6px 14px;
-  border-radius: var(--radius-full);
+  padding: 4px 10px;
+  border-radius: var(--radius-sm);
   font-family: var(--font-mono);
-  font-size: 13px;
-  color: var(--accent-emerald);
+  font-size: 12px;
+  color: var(--text-primary);
 }
 
 .dev-logs-box {
-  background: #050608;
-  border: 1px solid var(--border-card);
-  border-radius: var(--radius-lg);
+  background: #000000;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
-  height: 380px;
+  height: 340px;
 }
 
 .dev-logs-header {
-  padding: 10px 16px;
+  padding: 8px 12px;
   background: var(--bg-surface-1);
   border-bottom: 1px solid var(--border-subtle);
   display: flex;
@@ -421,134 +392,93 @@
 .dev-logs-content {
   flex: 1;
   overflow-y: auto;
-  padding: 14px 16px;
+  padding: 10px 12px;
   font-family: var(--font-mono);
-  font-size: 12px;
+  font-size: 11.5px;
   line-height: 1.6;
 }
 
 .log-entry {
   display: flex;
-  gap: 10px;
+  gap: 8px;
 }
 .log-entry .log-time { color: var(--text-dim); }
-.log-entry .log-level-info { color: var(--accent-cyan); font-weight: 600; }
-.log-entry .log-level-debug { color: var(--text-muted); }
-.log-entry .log-level-error { color: var(--accent-rose); font-weight: 600; }
+.log-entry .log-level-info { color: var(--text-secondary); font-weight: 500; }
+.log-entry .log-level-error { color: var(--accent-rose); font-weight: 500; }
 
 /* ==========================================================================
-   5. Model Hub & Connection Switcher (/models)
+   5. Model Hub, Kanban, Settings
    ========================================================================== */
 .models-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-  gap: 16px;
-  padding: 20px 0;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 12px;
+  padding: 14px 0;
 }
 
 .model-card {
   background: var(--bg-card);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 18px;
+  border-radius: var(--radius-md);
+  padding: 14px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  transition: all var(--trans-fast);
+  gap: 8px;
 }
 
-.model-card:hover {
-  border-color: var(--accent-cyan);
-  transform: translateY(-2px);
-  box-shadow: 0 8px 24px rgba(0, 240, 255, 0.1);
-}
-
-/* ==========================================================================
-   6. Kanban Tasks Board (/tasks)
-   ========================================================================== */
 .kanban-board {
   display: flex;
-  gap: 16px;
+  gap: 12px;
   overflow-x: auto;
-  padding: 20px;
+  padding: 14px;
   height: 100%;
 }
 
 .kanban-col {
-  width: 300px;
-  min-width: 300px;
+  width: 260px;
+  min-width: 260px;
   background: var(--bg-surface-1);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-md);
   display: flex;
   flex-direction: column;
-  padding: 12px;
-  gap: 10px;
-}
-
-.kanban-col-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  font-weight: 600;
-  font-size: 13.5px;
-  padding: 4px 6px;
-  color: var(--text-secondary);
-}
-
-.kanban-cards-list {
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  padding: 10px;
+  gap: 8px;
 }
 
 .task-card {
   background: var(--bg-surface-2);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  cursor: grab;
+  border-radius: var(--radius-sm);
+  padding: 10px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  transition: all var(--trans-fast);
+  gap: 6px;
 }
 
-.task-card:hover {
-  border-color: var(--border-card);
-  background: var(--bg-surface-3);
-}
-
-/* ==========================================================================
-   7. Settings Page (/settings)
-   ========================================================================== */
 .settings-layout {
   display: flex;
   height: 100%;
-  max-width: 1100px;
+  max-width: 900px;
   width: 100%;
   margin: 0 auto;
-  padding: 24px;
-  gap: 24px;
+  padding: 20px;
+  gap: 20px;
 }
 
 .settings-nav {
-  width: 220px;
+  width: 180px;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .settings-nav-item {
-  padding: 10px 14px;
-  border-radius: var(--radius-md);
+  padding: 7px 10px;
+  border-radius: var(--radius-sm);
   color: var(--text-secondary);
-  font-weight: 500;
-  font-size: 13.5px;
+  font-size: 13px;
   cursor: pointer;
-  transition: all var(--trans-fast);
 }
 
 .settings-nav-item:hover, .settings-nav-item.active {
@@ -556,20 +486,11 @@
   color: var(--text-primary);
 }
 
-.settings-nav-item.active {
-  color: var(--accent-cyan);
-  background: rgba(0, 240, 255, 0.1);
-  font-weight: 600;
-}
-
 .settings-content {
   flex: 1;
   background: var(--bg-surface-1);
   border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-lg);
-  padding: 24px;
+  border-radius: var(--radius-md);
+  padding: 20px;
   overflow-y: auto;
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
 }
