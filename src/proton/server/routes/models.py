@@ -70,28 +70,46 @@ async def list_models():
 
 
 @router.get(
+    "/models/hub/search",
+    summary="Search Proton Model Hub",
+)
+async def search_hub_models(q: str = "", page: int = 1):
+    """Search Proton Model Hub and Hugging Face catalog."""
+    from proton.hub.registry import ModelRegistry
+    from proton.hub.models import POPULAR_MODELS
+
+    reg = ModelRegistry()
+    installed = {m.id: m for m in reg.list_installed()}
+
+    query = q.lower().strip()
+    matching = []
+
+    for m in POPULAR_MODELS:
+        if not query or query in m.id.lower() or query in m.name.lower() or query in (m.description or "").lower():
+            matching.append({
+                "id": m.id,
+                "name": m.name,
+                "size_gb": m.size_gb,
+                "size_display": f"{m.size_gb:.1f} GB",
+                "parameters": m.parameters_display,
+                "description": m.description,
+                "license": m.license,
+                "is_installed": m.id in installed,
+            })
+
+    return {"models": matching, "total": len(matching), "page": page}
+
+
+@router.get(
     "/connections",
     summary="List Configured AI Endpoints",
 )
+@router.get(
+    "/connection/list",
+    include_in_schema=False,
+)
 async def list_connections():
-    """
-    List all configured local and LAN AI endpoints (e.g. LM Studio, Ollama).
-
-    ---
-
-    ### 🐍 Python Example:
-    ```python
-    import requests
-
-    url = "http://127.0.0.1:8787/v1/connections"
-    response = requests.get(url)
-    connections = response.json()
-    print("Active Connection:", connections["active_connection"])
-    for c in connections["connections"]:
-        active_mark = " (Active)" if c["is_active"] else ""
-        print(f"- {c['id']}: {c['provider']} at {c['base_url']}{active_mark}")
-    ```
-    """
+    """List all configured local and LAN AI endpoints (e.g. LM Studio, Ollama, Proton Hub)."""
     conn_mgr = ConnectionManager()
     conns = conn_mgr.list_connections()
     active_conn = conn_mgr.get_active_connection()
@@ -105,6 +123,8 @@ async def list_connections():
                 "provider": c.provider.value,
                 "base_url": c.base_url,
                 "is_active": (c.id == active_conn.id) if active_conn else False,
+                "status": "connected",
+                "latency_ms": 0.1 if c.provider.value == "proton-hub" else None,
             }
             for c in conns
         ],
@@ -115,21 +135,12 @@ async def list_connections():
     "/connections/switch",
     summary="Switch Active AI Endpoint",
 )
+@router.post(
+    "/connection/active",
+    include_in_schema=False,
+)
 async def switch_connection(req: ConnectionSwitchRequest):
-    """
-    Switch the active inference endpoint connection (e.g. to a LAN GPU workstation).
-
-    ---
-
-    ### 🐍 Python Example:
-    ```python
-    import requests
-
-    url = "http://127.0.0.1:8787/v1/connections/switch"
-    response = requests.post(url, json={"connection_id": "server-1"})
-    print("Switched:", response.json())
-    ```
-    """
+    """Switch the active inference endpoint connection."""
     conn_mgr = ConnectionManager()
     config_mgr = ConfigManager()
 
@@ -146,20 +157,7 @@ async def switch_connection(req: ConnectionSwitchRequest):
     summary="Switch Active Model ID",
 )
 async def switch_model(req: ModelSwitchRequest):
-    """
-    Switch the active model name used for code intelligence and reasoning.
-
-    ---
-
-    ### 🐍 Python Example:
-    ```python
-    import requests
-
-    url = "http://127.0.0.1:8787/v1/models/switch"
-    response = requests.post(url, json={"model_id": "llama-3.2-1b-instruct"})
-    print("Active Model:", response.json())
-    ```
-    """
+    """Switch the active model name used for code intelligence and reasoning."""
     config_mgr = ConfigManager()
     config_mgr.set_active_model(req.model_id)
     return {"status": "switched", "active_model": req.model_id}

@@ -118,6 +118,10 @@ async def get_tests(symbol: str, workspace: Optional[str] = None):
     summary="Graph Node & Edge Statistics",
     response_model=GraphStatsResponse,
 )
+@router.get(
+    "/structure",
+    include_in_schema=False,
+)
 async def get_stats(workspace: Optional[str] = None):
     """
     Retrieve AST graph density, total nodes, relationships, functions, classes, and test counts.

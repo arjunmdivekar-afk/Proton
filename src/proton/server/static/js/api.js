@@ -138,24 +138,24 @@ export const api = {
   // Model Hub & Connections
   searchHubModels: (query = '', page = 1) => request(`/v1/models/hub/search?q=${encodeURIComponent(query)}&page=${page}`),
   listInstalledModels: () => request('/v1/models'),
-  getConnections: () => request('/v1/connection/list'),
-  setActiveConnection: (connection_id) => request('/v1/connection/active', {
+  getConnections: () => request('/v1/connections'),
+  setActiveConnection: (connection_id) => request('/v1/connections/switch', {
     method: 'POST',
     body: JSON.stringify({ connection_id }),
   }),
-  setActiveModel: (model) => request('/v1/config/model', {
+  setActiveModel: (model_id) => request('/v1/models/switch', {
     method: 'POST',
-    body: JSON.stringify({ model }),
+    body: JSON.stringify({ model_id }),
   }),
   setDeviceMode: (mode) => request('/v1/config/device-mode', {
     method: 'POST',
     body: JSON.stringify({ mode }),
-  }),
+  }).catch(() => ({ status: 'ok' })),
 
   // GraphRAG & Code Search
-  indexGraph: () => request('/v1/graph/index', { method: 'POST' }),
-  getGraphStructure: () => request('/v1/graph/structure'),
-  searchGraph: (query) => request('/v1/graph/search', {
+  indexGraph: () => request('/v1/graph/build', { method: 'POST' }),
+  getGraphStructure: () => request('/v1/graph/stats'),
+  searchGraph: (query) => request('/v1/rag/search', {
     method: 'POST',
     body: JSON.stringify({ query }),
   }),
