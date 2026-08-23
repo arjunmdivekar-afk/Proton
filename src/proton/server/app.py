@@ -36,7 +36,7 @@ def create_app() -> FastAPI:
             "GraphRAG AST intelligence, stateful engineering tasks, explicit categorized memory, "
             "model benchmarking, security verification, and deterministic tool execution."
         ),
-        version="2.4.4",
+        version="2.6.4",
         docs_url="/docs",
         redoc_url="/redoc",
         openapi_url="/openapi.json",

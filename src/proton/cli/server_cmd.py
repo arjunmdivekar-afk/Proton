@@ -157,7 +157,7 @@ def launch_server(
     console.print(
         Panel(
             "\n".join(banner_lines),
-            title="[bold cyan]⚛️ PROTON AUTONOMOUS AI SERVER v2.4.4[/bold cyan]",
+            title="[bold cyan]⚛️ PROTON AUTONOMOUS AI SERVER v2.6.4[/bold cyan]",
             subtitle=f"[dim]Binding on [bold]{bind_host}:{port}[/bold] — WiFi Network Sharing Active[/dim]" if is_lan_hosted else f"[dim]Binding on [bold]{bind_host}:{port}[/bold][/dim]",
             border_style="cyan",
         )

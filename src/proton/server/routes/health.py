@@ -41,7 +41,7 @@ async def get_health(request: Request) -> HealthResponse:
 
     return HealthResponse(
         status="ok",
-        version="2.4.4",
+        version="2.6.4",
         uptime_seconds=round(time.time() - start_time, 2),
         workspace=str(Path.cwd().resolve()),
         active_connection=active_conn.id if active_conn else None,
@@ -75,7 +75,7 @@ async def get_info(request: Request) -> ServerInfoResponse:
     """
     return ServerInfoResponse(
         name="Proton Autonomous AI Server",
-        version="2.4.4",
+        version="2.6.4",
         docs_url="/docs",
         openapi_url="/openapi.json",
         endpoints=[

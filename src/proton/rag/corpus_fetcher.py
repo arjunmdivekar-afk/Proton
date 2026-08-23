@@ -40,7 +40,7 @@ async def fetch_and_build_knowledge_corpus(output_dir: Optional[Path] = None) ->
     saved_files: List[Path] = []
 
     headers = {
-        "User-Agent": "Proton-AI-Assistant/2.4.4 (Coding Knowledge Ingestor)",
+        "User-Agent": "Proton-AI-Assistant/2.6.4 (Coding Knowledge Ingestor)",
     }
 
     async with httpx.AsyncClient(timeout=30.0, follow_redirects=True) as client:

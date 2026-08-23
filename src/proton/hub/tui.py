@@ -114,7 +114,7 @@ class ModelHubTUI:
             f"[bold bright_white]⚛️ Proton Model Hub[/bold bright_white]\n"
             f"[dim]{gpu_info}  •  {ram_info}  •  {disk_info}[/dim]\n"
             f"[dim]Search filter: [bold yellow]{self.current_query or 'All Trending Text Generation'}[/bold yellow]  •  Page [bold]{self.current_page}[/bold][/dim]",
-            title="[bold cyan]⚛️ PROTON MODEL HUB v2.4.4[/bold cyan]",
+            title="[bold cyan]⚛️ PROTON MODEL HUB v2.6.4[/bold cyan]",
             border_style="cyan",
         )
         console.print(header_panel)

@@ -7,7 +7,7 @@ from pydantic import BaseModel, Field
 # --- Health & Info ---
 class HealthResponse(BaseModel):
     status: str = "ok"
-    version: str = "2.4.4"
+    version: str = "2.6.4"
     uptime_seconds: float = 0.0
     workspace: str = ""
     active_connection: Optional[str] = None
@@ -19,7 +19,7 @@ class HealthResponse(BaseModel):
         "json_schema_extra": {
             "example": {
                 "status": "ok",
-                "version": "2.4.4",
+                "version": "2.6.4",
                 "uptime_seconds": 124.5,
                 "workspace": "C:\\Users\\arjun.divekar\\Desktop\\Proton",
                 "active_connection": "server-1",
@@ -33,7 +33,7 @@ class HealthResponse(BaseModel):
 
 class ServerInfoResponse(BaseModel):
     name: str = "Proton Server"
-    version: str = "2.4.4"
+    version: str = "2.6.4"
     docs_url: str = "/docs"
     openapi_url: str = "/openapi.json"
     endpoints: List[str] = Field(default_factory=list)
@@ -42,7 +42,7 @@ class ServerInfoResponse(BaseModel):
         "json_schema_extra": {
             "example": {
                 "name": "Proton Autonomous AI Server",
-                "version": "2.4.4",
+                "version": "2.6.4",
                 "docs_url": "/docs",
                 "openapi_url": "/openapi.json",
                 "endpoints": [
@@ -469,7 +469,7 @@ class ToolExecuteResponse(BaseModel):
             "example": {
                 "tool": "read_file",
                 "success": True,
-                "result": "[project]\nname = \"proton-ai\"\nversion = \"2.4.4\"",
+                "result": "[project]\nname = \"proton-ai\"\nversion = \"2.6.4\"",
                 "error": None,
                 "duration_ms": 3.4,
             }

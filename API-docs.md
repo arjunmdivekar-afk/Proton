@@ -1,6 +1,6 @@
-# ⚛️ Proton Server & REST / SSE API Reference `v2.4.4`
+# ⚛️ Proton Server & REST / SSE API Reference `v2.6.4`
 
-[![Version](https://img.shields.io/badge/version-2.4.4-blue.svg?style=for-the-badge&logo=appveyor)](https://github.com/arjunmdivekar-afk/Proton)
+[![Version](https://img.shields.io/badge/version-2.6.4-blue.svg?style=for-the-badge&logo=appveyor)](https://github.com/arjunmdivekar-afk/Proton)
 [![API Protocol](https://img.shields.io/badge/API-REST%20%7C%20SSE-orange.svg?style=for-the-badge)]()
 [![Swagger](https://img.shields.io/badge/Swagger_UI-%2Fdocs-brightgreen.svg?style=for-the-badge)](http://127.0.0.1:8787/docs)
 

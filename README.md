@@ -1,6 +1,6 @@
-# ⚛️ Proton — Enterprise Autonomous AI CLI & Agent Platform `v2.4.4`
+# ⚛️ Proton — Enterprise Autonomous AI CLI & Agent Platform `v2.6.4`
 
-[![Version](https://img.shields.io/badge/version-2.4.4-blue.svg?style=for-the-badge&logo=appveyor)](https://github.com/arjunmdivekar-afk/Proton)
+[![Version](https://img.shields.io/badge/version-2.6.4-blue.svg?style=for-the-badge&logo=appveyor)](https://github.com/arjunmdivekar-afk/Proton)
 [![API Docs](https://img.shields.io/badge/API_Docs-REST_%7C_SSE-blue.svg?style=for-the-badge&logo=fastapi)](API-docs.md)
 [![Swagger UI](https://img.shields.io/badge/Swagger_UI-%2Fdocs-brightgreen.svg?style=for-the-badge&logo=swagger)](API-docs.md)
 [![Python](https://img.shields.io/badge/python-3.10%2B-brightgreen.svg?style=for-the-badge&logo=python)](https://www.python.org/)
@@ -113,7 +113,7 @@ pip install -e .
 ### 3. Verify Version
 ```bash
 proton --version
-# Output: Proton version 2.4.4
+# Output: Proton version 2.6.4
 ```
 
 ---
