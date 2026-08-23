@@ -23,6 +23,11 @@ router = APIRouter(prefix="/v1", tags=["Chat & Streaming"])
     summary="Chat Completion & Streaming SSE",
     response_description="Returns generated text or a Server-Sent Events (SSE) token stream",
 )
+@router.post(
+    "/chat/completions",
+    summary="OpenAI-Compatible Chat Completion & Streaming SSE",
+    response_description="Returns generated text or a Server-Sent Events (SSE) token stream",
+)
 async def chat_completion(request: ChatRequest):
     """
     Generate conversational chat responses or stream tokens in real-time via Server-Sent Events (SSE).
@@ -121,7 +126,15 @@ async def chat_completion(request: ChatRequest):
                     temperature=request.temperature,
                     max_tokens=request.max_tokens,
                 ):
-                    text = chunk.text if hasattr(chunk, "text") else str(chunk)
+                    if hasattr(chunk, "delta"):
+                        text = chunk.delta or ""
+                    elif hasattr(chunk, "text"):
+                        text = chunk.text or ""
+                    elif isinstance(chunk, str):
+                        text = chunk
+                    else:
+                        text = getattr(chunk, "content", "")
+
                     if text:
                         data = {
                             "id": chat_id,
@@ -156,7 +169,14 @@ async def chat_completion(request: ChatRequest):
             temperature=request.temperature,
             max_tokens=request.max_tokens,
         ):
-            text = chunk.text if hasattr(chunk, "text") else str(chunk)
+            if hasattr(chunk, "delta"):
+                text = chunk.delta or ""
+            elif hasattr(chunk, "text"):
+                text = chunk.text or ""
+            elif isinstance(chunk, str):
+                text = chunk
+            else:
+                text = getattr(chunk, "content", "")
             full_content += text
 
         duration_ms = round((time.perf_counter() - start_time) * 1000, 2)

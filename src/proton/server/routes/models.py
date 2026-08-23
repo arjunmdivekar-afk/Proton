@@ -113,30 +113,37 @@ async def search_hub_models(q: str = "", page: int = 1):
 )
 async def list_connections():
     """List all configured AI endpoints with real-time latency and connection status."""
+    import asyncio
     from proton.connection.probe import probe_connection
 
     conn_mgr = ConnectionManager()
     conns = conn_mgr.list_connections()
     active_conn = conn_mgr.get_active_connection()
 
-    connection_data = []
-    for c in conns:
-        latency = None
-        status = "offline"
-
+    async def probe_single(c):
         if c.provider.value in ("proton-hub", "transformers") or c.protocol == "local":
-            latency = 0.1
-            status = "connected"
-        else:
-            try:
-                probe_res = await probe_connection(c)
-                if probe_res.success:
-                    status = "connected"
-                    latency = round(probe_res.latency_ms, 1) if probe_res.latency_ms else None
-            except Exception:
-                status = "offline"
+            return {
+                "id": c.id,
+                "name": c.name,
+                "provider": c.provider.value,
+                "base_url": c.base_url,
+                "is_active": (c.id == active_conn.id) if active_conn else False,
+                "status": "connected",
+                "latency_ms": 0.1,
+                "models_count": len(c.discovered_models) if c.discovered_models else 0,
+            }
 
-        connection_data.append({
+        status = "offline"
+        latency = None
+        try:
+            probe_res = await asyncio.wait_for(probe_connection(c), timeout=0.6)
+            if probe_res.success:
+                status = "connected"
+                latency = round(probe_res.latency_ms, 1) if probe_res.latency_ms else None
+        except Exception:
+            status = "offline"
+
+        return {
             "id": c.id,
             "name": c.name,
             "provider": c.provider.value,
@@ -145,7 +152,9 @@ async def list_connections():
             "status": status,
             "latency_ms": latency,
             "models_count": len(c.discovered_models) if c.discovered_models else 0,
-        })
+        }
+
+    connection_data = await asyncio.gather(*(probe_single(c) for c in conns))
 
     return {
         "active_connection": active_conn.id if active_conn else None,

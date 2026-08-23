@@ -462,6 +462,12 @@ class ProtonREPL:
                 active_mode = config_mgr.config.device_mode or "auto"
                 _render_device_status_panel(active_mode)
 
+        elif base == "/voice":
+            from proton.voice.engine import VoiceModeEngine, VoiceModeConfig
+            voice_engine = VoiceModeEngine(console=self.console)
+            voice_engine.run_sync()
+            self.print_banner()
+
         elif base == "/agent":
             goal = arg.strip()
             if not goal:

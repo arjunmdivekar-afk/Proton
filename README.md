@@ -79,8 +79,7 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 
 ---
 
-## ✨ Key Features
-
+- **🎙️ Autonomous Voice Mode (`proton --voice` / `proton voice`)**: Real-time hands-free voice interface featuring **100% local Whisper speech-to-text (`faster-whisper`)**, sentence-by-sentence streaming text-to-speech (TTS), configurable wake word detection (`"Hey Proton"`), instant voice commands (`"stop"`, `"switch model to <name>"`, `"status"`, `"clear history"`), and an animated Rich terminal audio waveform HUD.
 - **🌐 Proton Server & REST/SSE API (`proton server`)**: Transforms Proton Core into an asynchronous intelligence engine exposed over high-performance REST and Server-Sent Events (`http://127.0.0.1:8787`). Seamlessly connects web apps, browser frontends, IDE extensions, and external orchestrators to Proton's autonomous agent, GraphRAG, memory, tasks, and sandbox execution layers.
 - **🛡️ Continuous Security Verification (`proton security test` / `proton security audit`)**: Transition beyond passive security. Automated real-time defensive verification suite continuously validating guardrails against **path traversal, command injection, secret leakage, malicious tool arguments, prompt injection, workspace escapes, unauthorized network access, and dangerous shell commands** with scored verification reports (100/100).
 - **⚡ 8-Dimension LLM Benchmark Battery (`proton benchmark`)**: Evaluate local and LAN models across **Latency (TTFT), Streaming Throughput (tok/s), Context Retention (needle-in-haystack), Tool Calling (JSON schema), RAG Synthesis, Coding Quality (Python AST validation), Planning, and Error Self-Healing** with letter grading (`A+` to `F`) and agent readiness badges.
@@ -668,6 +667,43 @@ proton connection switch <connection-id>
 
 ---
 
+### 16. Autonomous Voice Mode (`proton --voice` / `proton voice`)
+Proton includes a complete, real-time hands-free voice interface featuring **100% local Whisper speech recognition (`faster-whisper`)**, sentence-level streaming text-to-speech synthesis (TTS), wake word detection, and instant voice commands.
+
+```text
+┌───────────────────────────────────────────────────────────────────────────────────────────┐
+│                                PROTON AUTONOMOUS VOICE MODE                               │
+│                                 `proton --voice` / `/voice`                               │
+├───────────────────────────┬───────────────────────────────┬───────────────────────────────┤
+│    LOCAL WHISPER (STT)    │     STREAMING SYNTHESIS (TTS) │     VOICE COMMAND SHORTCUTS   │
+│  • 100% Local on-device   │  • Sentence-level buffering   │  • "stop" / "cancel" (cut off)│
+│  • Hardware sounddevice   │  • Instant audio playback     │  • "status" (provider/model)  │
+│  • RMS Energy VAD filter  │  • Native SAPI5 & pyttsx3     │  • "switch model to <name>"   │
+│  • Wake word ("Hey Proton")│  • Markdown clean speech     │  • "clear history"            │
+│  • Noise auto-calibration │  • Live audio waveform HUD    │  • "exit" / "goodbye"         │
+└───────────────────────────┴───────────────────────────────┴───────────────────────────────┘
+```
+
+**Commands:**
+```bash
+# 1. Launch interactive Voice Mode directly
+proton --voice
+
+# 2. Launch Voice Mode requiring 'Hey Proton' wake word
+proton voice --wake-word
+
+# 3. Configure voice speed (Words Per Minute)
+proton voice --rate 210
+
+# 4. Launch Voice Mode with a specific model
+proton voice --model Qwen/Qwen2.5-Coder-1.5B-Instruct
+
+# 5. Jump into Voice Mode from within interactive REPL
+/voice
+```
+
+---
+
 ## 🧠 Recommended Models & Hardware Matrix
 
 Proton connects seamlessly to any model hosted locally (via **LM Studio** or **Ollama**) or over your local network (LAN).
@@ -729,8 +765,7 @@ Proton connects seamlessly to any model hosted locally (via **LM Studio** or **O
 
 Inside the interactive `proton >` shell, use built-in slash commands with auto-completion:
 
-| Slash Command | Description |
-|---|---|
+| `/voice` | Launch Proton Autonomous Voice Mode (STT & TTS) |
 | `/set [--cpu\|--gpu\|--partial]` | Configure hardware execution device mode (CPU / GPU / Partial) |
 | `/model-hub` | Explore, inspect, download, and install models via Proton Model Hub |
 | `/security [subcmd]` | Security defense verification & workspace audit (`/security test\|audit`) |
@@ -792,7 +827,7 @@ Proton/
 │       ├── agent/          # Autonomous agent orchestrator, max agent lifecycle, context assembler, & telemetry
 │       ├── benchmark/      # Multi-dimensional LLM benchmark runner (latency, tok/s, context, tools, RAG, coding, planning)
 │       ├── browser/        # Terminal browser engine, HTML parser, & DuckDuckGo scraper
-│       ├── cli/            # Typer CLI commands (app, security_cmd, benchmark_cmd, agent_cmd, task_cmd, memory_cmd, inspect_cmd, graph_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd)
+│       ├── cli/            # Typer CLI commands (app, security_cmd, benchmark_cmd, agent_cmd, task_cmd, memory_cmd, inspect_cmd, graph_cmd, browser_cmd, stock_cmd, doctor_cmd, rag_cmd, voice_cmd)
 │       ├── connection/     # Multi-provider connection manager & latency tester
 │       ├── core/           # Configuration, types, and database management
 │       ├── graph/          # AST code extractor, GraphRAG engine, impact analyzer, and callers map
@@ -801,10 +836,13 @@ Proton/
 │       ├── providers/      # LM Studio, Ollama, & OpenAI-compatible providers
 │       ├── rag/            # Hybrid vector & BM25 store, chunker, and corpus fetcher
 │       ├── security/       # Policy engine, approval manager, sandbox, and automated security verification tester
+│       ├── server/         # Autonomous AI REST & SSE API server (FastAPI)
 │       ├── stocks/         # yfinance data service, chart rasterizer, and TUI app
 │       ├── tasks/          # Persistent task models, manager, runner, and checkpoints
 │       ├── tools/          # File, shell, git, and web search tools
-│       └── tui/            # REPL, code highlighter, and autocomplete
+│       ├── tui/            # REPL, code highlighter, and autocomplete
+│       └── voice/          # 100% Local Whisper STT, streaming TTS, wake word, voice commands, & audio HUD
+├── tests/                  # Automated pytest suite (unit, integration, and security tests)
 ├── pyproject.toml          # Package configuration and dependencies
 ├── .gitignore              # Python, database, and cache ignore rules
 ├── SECURITY.md             # Security architecture and verification policies

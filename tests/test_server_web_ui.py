@@ -13,15 +13,11 @@ def client(tmp_path, monkeypatch):
     return TestClient(app)
 
 
-def test_spa_root_and_static_serving(client):
-    """Test that visiting / or /chat serves the SPA index.html."""
-    response = client.get("/")
-    assert response.status_code == 200
-    assert "Proton" in response.text
-
-    chat_resp = client.get("/chat")
-    assert chat_resp.status_code == 200
-    assert "Proton" in chat_resp.text
+def test_root_redirect_to_docs(client):
+    """Test that visiting / redirects to /docs."""
+    response = client.get("/", follow_redirects=False)
+    assert response.status_code in (307, 308, 302, 303)
+    assert response.headers["location"] == "/docs"
 
 
 def test_developer_status_and_logs(client):

@@ -22,6 +22,7 @@ if sys.platform == "win32":
 from proton.cli.connection_cmd import conn_app
 from proton.cli.doctor_cmd import run_doctor_checks
 from proton.cli.rag_cmd import rag_app
+from proton.cli.voice_cmd import voice_app
 from proton.core.config import ConfigManager
 from proton.connection.manager import ConnectionManager
 from proton.providers.registry import ProviderRegistry
@@ -46,6 +47,7 @@ console = Console()
 # Attach Subcommands
 app.add_typer(conn_app, name="connection", help="Manage AI server connections (LM Studio / Ollama)")
 app.add_typer(rag_app, name="rag", help="Manage RAG indexing and knowledge retrieval")
+app.add_typer(voice_app, name="voice", help="Launch Proton Autonomous Voice Mode (STT & TTS)")
 
 
 def version_callback(value: bool) -> None:
@@ -60,6 +62,7 @@ def main_callback(
     version: Optional[bool] = typer.Option(
         None, "--version", "-v", callback=version_callback, is_eager=True, help="Show Proton version"
     ),
+    voice: bool = typer.Option(False, "--voice", help="Launch Proton in real-time Voice Mode"),
     stdin: bool = typer.Option(False, "--stdin", help="Read prompt/data from stdin"),
     json_mode: bool = typer.Option(False, "--json", help="Output machine-readable JSON"),
     session: Optional[str] = typer.Option(None, "--session", "-s", help="Resume named conversation session"),
@@ -67,6 +70,12 @@ def main_callback(
 ) -> None:
     """Launch Proton interactive REPL or execute prompt non-interactively."""
     if ctx.invoked_subcommand is not None:
+        return
+
+    if voice:
+        from proton.voice.engine import VoiceModeEngine, VoiceModeConfig
+        engine = VoiceModeEngine(config=VoiceModeConfig(), console=console)
+        engine.run_sync()
         return
 
     # Check if piped input was provided
@@ -231,20 +240,37 @@ app.command("stocks", help="Alias for proton stock")(launch_stock_dashboard)
 
 
 def main() -> None:
-    # Check if a dynamic named session flag like `proton --test` was passed directly
-    args = sys.argv[1:]
-    known_flags = {"--version", "-v", "--help", "-h", "--stdin", "--json", "--session", "-s", "--resume"}
-    known_subcmds = {"server", "agent", "browser", "stock", "stocks", "task", "tasks", "security", "memory", "inspect", "graph", "benchmark", "connection", "rag", "ask", "doctor", "model-hub", "modelhub", "hub", "set"}
+    try:
+        args = sys.argv[1:]
+        known_flags = {
+            "--version", "-v", "--help", "-h", "--stdin", "--json",
+            "--session", "-s", "--resume", "--voice", "-w", "--wake-word",
+            "-r", "--rate", "-m", "--model",
+        }
+        known_subcmds = {
+            "server", "agent", "browser", "stock", "stocks", "task", "tasks",
+            "security", "memory", "inspect", "graph", "benchmark", "connection",
+            "rag", "ask", "doctor", "model-hub", "modelhub", "hub", "set", "voice",
+        }
 
-    if args:
-        first = args[0]
-        if first.startswith("--") and first not in known_flags and not any(first.startswith(f"--{k}") for k in ("help", "version", "stdin", "json", "session", "resume")):
-            session_name = first.lstrip("-")
-            repl = ProtonREPL(initial_session=session_name)
-            asyncio.run(repl.run())
-            return
+        if args:
+            first = args[0]
+            if first == "--voice":
+                from proton.voice.engine import VoiceModeEngine, VoiceModeConfig
+                engine = VoiceModeEngine(config=VoiceModeConfig(), console=console)
+                engine.run_sync()
+                return
 
-    app()
+            if first.startswith("--") and first not in known_flags and not any(first.startswith(f"--{k}") for k in ("help", "version", "stdin", "json", "session", "resume", "voice", "model", "rate", "wake")):
+                session_name = first.lstrip("-")
+                repl = ProtonREPL(initial_session=session_name)
+                asyncio.run(repl.run())
+                return
+
+        app()
+    except KeyboardInterrupt:
+        print("\nExiting Proton... Goodbye!")
+        sys.exit(0)
 
 
 if __name__ == "__main__":
