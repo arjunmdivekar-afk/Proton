@@ -230,10 +230,25 @@ class TransformersProvider(ModelProvider):
         prompt += "<|im_start|>assistant\n"
         return prompt
 
+    def _get_eos_token_ids(self) -> List[int]:
+        """Get list of end of sequence and end of turn token IDs."""
+        eos_ids: List[int] = []
+        if self._tokenizer:
+            if self._tokenizer.eos_token_id is not None:
+                if isinstance(self._tokenizer.eos_token_id, list):
+                    eos_ids.extend(self._tokenizer.eos_token_id)
+                else:
+                    eos_ids.append(self._tokenizer.eos_token_id)
+            for special in ("<|eot_id|>", "<|im_end|>", "<|end_of_text|>", "</s>"):
+                tid = self._tokenizer.convert_tokens_to_ids(special)
+                if tid is not None and isinstance(tid, int) and tid > 0 and tid not in eos_ids:
+                    eos_ids.append(tid)
+        return eos_ids or [2]
+
     async def stream_chat(
         self,
         messages: List[Message],
-        model: str,
+        model: Optional[str] = None,
         tools: Optional[List[Dict[str, Any]]] = None,
         temperature: float = 0.7,
         max_tokens: Optional[int] = None,
@@ -253,14 +268,16 @@ class TransformersProvider(ModelProvider):
             skip_special_tokens=True,
         )
 
+        eos_ids = self._get_eos_token_ids()
+
         gen_kwargs = dict(
             **inputs,
             streamer=streamer,
-            max_new_tokens=max_tokens or 2048,
+            max_new_tokens=max_tokens or 512,
             temperature=max(0.01, temperature),
             do_sample=(temperature > 0.05),
             pad_token_id=self._tokenizer.pad_token_id,
-            eos_token_id=self._tokenizer.eos_token_id,
+            eos_token_id=eos_ids if len(eos_ids) > 1 else eos_ids[0],
         )
 
         # Run model generation in background thread
@@ -278,7 +295,7 @@ class TransformersProvider(ModelProvider):
     async def chat_complete(
         self,
         messages: List[Message],
-        model: str,
+        model: Optional[str] = None,
         tools: Optional[List[Dict[str, Any]]] = None,
         temperature: float = 0.7,
         max_tokens: Optional[int] = None,
@@ -289,17 +306,18 @@ class TransformersProvider(ModelProvider):
 
         prompt = self._format_messages_to_prompt(messages)
         inputs = self._tokenizer(prompt, return_tensors="pt").to(self._model.device)
+        eos_ids = self._get_eos_token_ids()
 
         def _generate():
             import torch
             with torch.no_grad():
                 outputs = self._model.generate(
                     **inputs,
-                    max_new_tokens=max_tokens or 2048,
+                    max_new_tokens=max_tokens or 512,
                     temperature=max(0.01, temperature),
                     do_sample=(temperature > 0.05),
                     pad_token_id=self._tokenizer.pad_token_id,
-                    eos_token_id=self._tokenizer.eos_token_id,
+                    eos_token_id=eos_ids if len(eos_ids) > 1 else eos_ids[0],
                 )
             input_len = inputs["input_ids"].shape[1]
             generated_ids = outputs[0][input_len:]
