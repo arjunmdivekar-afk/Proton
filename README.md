@@ -1,10 +1,19 @@
 # ⚛️ Proton — Enterprise Autonomous AI CLI & Agent Platform `v2.4.4`
 
 [![Version](https://img.shields.io/badge/version-2.4.4-blue.svg?style=for-the-badge&logo=appveyor)](https://github.com/arjunmdivekar-afk/Proton)
+[![API Docs](https://img.shields.io/badge/API_Docs-REST_%7C_SSE-blue.svg?style=for-the-badge&logo=fastapi)](API-docs.md)
+[![Swagger UI](https://img.shields.io/badge/Swagger_UI-%2Fdocs-brightgreen.svg?style=for-the-badge&logo=swagger)](API-docs.md)
 [![Python](https://img.shields.io/badge/python-3.10%2B-brightgreen.svg?style=for-the-badge&logo=python)](https://www.python.org/)
 [![License](https://img.shields.io/badge/license-Apache--2.0-blue.svg?style=for-the-badge)](LICENSE)
 [![Platform](https://img.shields.io/badge/platform-Windows%20%7C%20Linux%20%7C%20macOS-lightgrey.svg?style=for-the-badge)]()
 [![Architecture](https://img.shields.io/badge/architecture-GraphRAG%20%7C%20Stateful%20Tasks%20%7C%20Verified%20Security-orange.svg?style=for-the-badge)]()
+
+<div align="center">
+
+| [📖 **README**](README.md) | [🛡️ **Security Policy**](SECURITY.md) | [📚 **REST & SSE API Docs**](API-docs.md) | [⚖️ **License**](LICENSE) |
+|---|---|---|---|
+
+</div>
 
 > **Proton** is an enterprise-grade, provider-neutral AI CLI assistant, autonomous software engineering agent, stateful task manager, code graph intelligence engine (GraphRAG), categorized memory system, automated security verification suite, multi-dimensional model benchmark battery, keyboard-first terminal web browser, and live market intelligence platform. Designed from first principles for developers, DevOps engineers, and researchers operating directly in terminal environments.
 

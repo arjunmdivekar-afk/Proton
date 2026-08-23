@@ -4,6 +4,13 @@
 [![API Protocol](https://img.shields.io/badge/API-REST%20%7C%20SSE-orange.svg?style=for-the-badge)]()
 [![Swagger](https://img.shields.io/badge/Swagger_UI-%2Fdocs-brightgreen.svg?style=for-the-badge)](http://127.0.0.1:8787/docs)
 
+<div align="center">
+
+| [📖 **README**](README.md) | [🛡️ **Security Policy**](SECURITY.md) | [📚 **REST & SSE API Docs**](API-docs.md) | [⚖️ **License**](LICENSE) |
+|---|---|---|---|
+
+</div>
+
 > **Proton Server** decouples the Proton Core intelligence engine from the terminal CLI, exposing an asynchronous, high-performance REST and Server-Sent Events (SSE) gateway. This enables web frontends, browser extensions, desktop applications, IDE plugins (VS Code / JetBrains), and external agent orchestrators to communicate directly with Proton.
 
 ```text

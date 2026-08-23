@@ -1,5 +1,12 @@
 # 🛡️ Proton Security Architecture, Policies & Automated Verification
 
+<div align="center">
+
+| [📖 **README**](README.md) | [🛡️ **Security Policy**](SECURITY.md) | [📚 **REST & SSE API Docs**](API-docs.md) | [⚖️ **License**](LICENSE) |
+|---|---|---|---|
+
+</div>
+
 Proton enforces security, data isolation, human control, and **continuous security verification** as foundational platform requirements.
 
 ---
