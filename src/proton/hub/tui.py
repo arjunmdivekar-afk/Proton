@@ -92,7 +92,7 @@ class ModelHubTUI:
 
     def _load_page(self) -> None:
         """Fetch models for current page."""
-        with console.status("[bold cyan]Querying Hugging Face Transformers models...[/bold cyan]"):
+        with console.status("[bold cyan]Searching Proton Model Hub...[/bold cyan]"):
             self.models, self.has_next, self.current_page = self.client.search_models(
                 query=self.current_query,
                 page=self.current_page,
@@ -111,7 +111,7 @@ class ModelHubTUI:
         disk_info = f"Disk: [bold cyan]{hw.disk_free_gb} GB free[/bold cyan]"
 
         header_panel = Panel(
-            f"[bold bright_white]🤗 Hugging Face Transformers Model Hub[/bold bright_white]\n"
+            f"[bold bright_white]⚛️ Proton Model Hub[/bold bright_white]\n"
             f"[dim]{gpu_info}  •  {ram_info}  •  {disk_info}[/dim]\n"
             f"[dim]Search filter: [bold yellow]{self.current_query or 'All Trending Text Generation'}[/bold yellow]  •  Page [bold]{self.current_page}[/bold][/dim]",
             title="[bold cyan]⚛️ PROTON MODEL HUB v2.4.4[/bold cyan]",
@@ -265,11 +265,11 @@ class ModelHubTUI:
     def _view_and_install_model(self, model_id: str) -> None:
         """Fetch model details, display full metadata screen, and offer install."""
         console.clear()
-        with console.status(f"[bold cyan]Fetching details for '{model_id}' from Hugging Face...[/bold cyan]"):
+        with console.status(f"[bold cyan]Fetching details for '{model_id}' from Proton Model Hub...[/bold cyan]"):
             details = self.client.get_model_details(model_id)
 
         if not details:
-            console.print(Panel(f"[red]Could not retrieve model metadata for '{model_id}'. Verify the model ID exists on Hugging Face.[/red]", border_style="red"))
+            console.print(Panel(f"[red]Could not retrieve model metadata for '{model_id}'. Verify the model ID exists in Proton Model Hub.[/red]", border_style="red"))
             Prompt.ask("\n[dim]Press ENTER to return[/dim]")
             return
 
@@ -306,7 +306,7 @@ class ModelHubTUI:
         console.print(
             Panel(
                 meta_table,
-                title=f"[bold cyan]🤗 Model Details: {details.id}[/bold cyan]  {status_badge}",
+                title=f"[bold cyan]⚛️ Model Details: {details.id}[/bold cyan]  {status_badge}",
                 border_style="cyan",
             )
         )

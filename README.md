@@ -51,7 +51,7 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 60-Second Quick Start](#-60-second-quick-start)
 - [💻 Deep CLI Subsystem Reference](#-deep-cli-subsystem-reference)
-  - [1. Hugging Face Transformers Model Hub (`proton model-hub`)](#1-hugging-face-transformers-model-hub--local-engine-proton-model-hub)
+  - [1. Proton Model Hub (`proton model-hub`)](#1-proton-model-hub--transformers-engine-proton-model-hub)
   - [2. Autonomous AI Server & REST/SSE API (`proton server`)](#2-autonomous-ai-server--restsse-api-proton-server)
   - [3. Security Verification & Live Defense Testing (`proton security`)](#3-security-verification--live-defense-testing-proton-security)
   - [4. Multi-Dimensional LLM Benchmark Battery (`proton benchmark`)](#4-multi-dimensional-llm-benchmark-battery-proton-benchmark)
@@ -160,8 +160,8 @@ proton stock
 
 ## 💻 Deep CLI Subsystem Reference
 
-### 1. Hugging Face Transformers Model Hub & Local Engine (`proton model-hub`)
-Proton integrates standard Hugging Face and Transformers Python libraries (`huggingface_hub`, `transformers`, `torch`), making Transformers a first-class local in-process provider alongside LM Studio and Ollama.
+### 1. Proton Model Hub & Transformers Engine (`proton model-hub`)
+Proton features a native interactive Model Hub and local Transformers execution engine powered by the standard Hugging Face and Transformers Python ecosystem (`huggingface_hub`, `transformers`, `torch`), making Transformers a first-class local in-process provider alongside LM Studio and Ollama.
 
 ```text
 ┌───────────────────────────────────────────────────────────────────────────────────────────┐
@@ -182,7 +182,7 @@ Proton integrates standard Hugging Face and Transformers Python libraries (`hugg
 # Launch interactive Model Hub (Search, 20/page pagination, real progress, 1-click default)
 proton model-hub
 
-# Search Hugging Face models directly from terminal
+# Search and discover models directly from terminal
 proton model-hub search "llama-3.2"
 
 # Install model with real multi-file safetensors progress tracking
@@ -732,7 +732,7 @@ Inside the interactive `proton >` shell, use built-in slash commands with auto-c
 | Slash Command | Description |
 |---|---|
 | `/set [--cpu\|--gpu\|--partial]` | Configure hardware execution device mode (CPU / GPU / Partial) |
-| `/model-hub` | Explore, inspect, download, and install Hugging Face models |
+| `/model-hub` | Explore, inspect, download, and install models via Proton Model Hub |
 | `/security [subcmd]` | Security defense verification & workspace audit (`/security test\|audit`) |
 | `/benchmark [args]` | Benchmark LLM latency, tok/s, context, tools, RAG, coding, planning |
 | `/memory [subcmd]` | Manage categorized memory (`/memory list\|add\|search\|forget\|export\|clear`) |

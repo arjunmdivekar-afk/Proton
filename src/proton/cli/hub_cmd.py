@@ -63,16 +63,16 @@ def search_models(
     query: str = typer.Argument(..., help="Search keyword or model name"),
     limit: int = typer.Option(20, "--limit", "-n", help="Number of results to display"),
 ) -> None:
-    """Search Hugging Face models from the terminal."""
+    """Search Proton Model Hub from the terminal."""
     client = HuggingFaceHubClient()
-    with console.status(f"[bold cyan]Searching Hugging Face for '{query}'...[/bold cyan]"):
+    with console.status(f"[bold cyan]Searching Proton Model Hub for '{query}'...[/bold cyan]"):
         models, _, _ = client.search_models(query=query, page_size=limit)
 
     if not models:
         console.print(f"[yellow]No models found matching '{query}'.[/yellow]")
         return
 
-    table = Table(title=f"Hugging Face Search: '{query}'", show_header=True, header_style="bold cyan")
+    table = Table(title=f"Proton Model Hub Search: '{query}'", show_header=True, header_style="bold cyan")
     table.add_column("#", style="bold yellow", width=3)
     table.add_column("Model ID", style="bold bright_white", width=34)
     table.add_column("Params", style="bold green", width=8)
@@ -96,11 +96,11 @@ def search_models(
 
 @hub_app.command("install")
 def install_model(
-    model_id: str = typer.Argument(..., help="Hugging Face model ID (e.g. meta-llama/Llama-3.2-1B-Instruct)"),
+    model_id: str = typer.Argument(..., help="Model repository ID (e.g. meta-llama/Llama-3.2-1B-Instruct)"),
     set_default: bool = typer.Option(True, "--default/--no-default", help="Set as default model after installation"),
     trust_remote_code: bool = typer.Option(False, "--trust-remote-code", help="Allow custom remote model code"),
 ) -> None:
-    """Download and install a model from Hugging Face."""
+    """Download and install a model from Proton Model Hub."""
     client = HuggingFaceHubClient()
     downloader = ModelDownloader()
     registry = ModelRegistry()
@@ -109,7 +109,7 @@ def install_model(
         details = client.get_model_details(model_id)
 
     if not details:
-        console.print(f"[red]Could not find model '{model_id}' on Hugging Face.[/red]")
+        console.print(f"[red]Could not find model '{model_id}' in Proton Model Hub.[/red]")
         raise typer.Exit(1)
 
     console.print(f"\n[bold cyan]Installing {details.id} ({details.estimated_size_gb:.1f} GB)...[/bold cyan]")
