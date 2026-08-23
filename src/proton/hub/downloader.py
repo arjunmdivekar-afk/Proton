@@ -8,7 +8,7 @@ from pathlib import Path
 from typing import Optional, Callable, Dict, Any, List, Tuple
 from pydantic import BaseModel, Field
 from huggingface_hub import snapshot_download, hf_hub_download, HfApi
-from huggingface_hub.utils import RepositoryNotFoundError
+from huggingface_hub.utils import RepositoryNotFoundError, disable_progress_bars, enable_progress_bars
 
 from proton.core.config import get_proton_home
 
@@ -202,14 +202,24 @@ class ModelDownloader:
             monitor_thread = threading.Thread(target=monitor_dir, daemon=True)
             monitor_thread.start()
 
-            # Execute official Hugging Face snapshot download (handles resume automatically)
+            # Disable raw tqdm streams so Proton Rich Live panel renders cleanly
+            try:
+                disable_progress_bars()
+            except Exception:
+                pass
+
+            # Execute official Hugging Face snapshot download (resumes automatically)
             local_path_str = snapshot_download(
                 repo_id=model_id,
                 local_dir=str(target_folder),
                 token=self.token,
                 max_workers=max_workers,
-                resume_download=True,
             )
+
+            try:
+                enable_progress_bars()
+            except Exception:
+                pass
 
             stop_monitor.set()
             monitor_thread.join(timeout=1.0)

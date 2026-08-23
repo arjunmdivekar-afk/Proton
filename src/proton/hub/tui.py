@@ -376,6 +376,7 @@ class ModelHubTUI:
                 border_style="cyan",
             )
 
+        final_path: Optional[Path] = None
         with Live(make_progress_panel(latest_progress), refresh_per_second=4, console=console) as live:
             def on_progress(p: DownloadProgress):
                 nonlocal latest_progress
@@ -392,9 +393,24 @@ class ModelHubTUI:
                 time.sleep(2)
                 return
             except Exception as e:
-                console.print(f"\n[red]✗ Download failed: {str(e)}[/red]")
-                Prompt.ask("\n[dim]Press ENTER to continue[/dim]")
-                return
+                # If files were actually downloaded to disk despite non-fatal warnings
+                target_dir = self.downloader.download_dir / details.id.replace("/", "--")
+                if target_dir.exists() and any(target_dir.iterdir()):
+                    final_path = target_dir
+                else:
+                    console.print(f"\n[red]✗ Download failed: {str(e)}[/red]")
+                    Prompt.ask("\n[dim]Press ENTER to continue[/dim]")
+                    return
+
+        if not final_path:
+            target_dir = self.downloader.download_dir / details.id.replace("/", "--")
+            if target_dir.exists():
+                final_path = target_dir
+
+        if not final_path:
+            console.print("\n[red]✗ Model directory not found after download.[/red]")
+            Prompt.ask("\n[dim]Press ENTER to continue[/dim]")
+            return
 
         # Register installed model
         record = self.registry.register(

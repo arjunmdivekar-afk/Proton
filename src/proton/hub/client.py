@@ -134,7 +134,6 @@ class HuggingFaceHubClient:
         page: int = 1,
         page_size: int = 20,
         sort: str = "downloads",
-        direction: int = -1,
         filter_task: str = "text-generation",
     ) -> Tuple_SearchResult:
         """
@@ -150,7 +149,6 @@ class HuggingFaceHubClient:
                 search=query if query else None,
                 filter=filter_task if filter_task else None,
                 sort=sort,
-                direction=direction,
                 limit=limit + offset,
                 cardData=True,
             )

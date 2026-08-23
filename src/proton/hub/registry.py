@@ -1,5 +1,7 @@
 """Local model registry for managing installed Transformers models."""
 
+import os
+import re
 import json
 from pathlib import Path
 from typing import List, Optional, Dict, Any
@@ -29,19 +31,82 @@ class InstalledModelRecord(BaseModel):
 class ModelRegistry:
     """Manages tracking, persistence, and default selection of installed models."""
 
-    def __init__(self, registry_file: Optional[Path] = None):
-        self.root_dir = get_proton_home() / "models"
+    def __init__(self, root_dir: Optional[Path] = None, registry_file: Optional[Path] = None):
+        self.root_dir = root_dir or (registry_file.parent if registry_file else (get_proton_home() / "models"))
         self.root_dir.mkdir(parents=True, exist_ok=True)
         self.registry_file = registry_file or (self.root_dir / "registry.json")
 
+    def _scan_cache_dir(self, records: Dict[str, InstalledModelRecord]) -> bool:
+        """Scan cache directory for downloaded models and register any untracked ones."""
+        cache_dir = self.root_dir / "cache"
+        if not cache_dir.exists():
+            return False
+
+        changed = False
+        for folder in cache_dir.iterdir():
+            if not folder.is_dir():
+                continue
+
+            folder_name = folder.name
+            if "--" in folder_name:
+                parts = folder_name.split("--", 1)
+                model_id = f"{parts[0]}/{parts[1]}"
+                author = parts[0]
+                name = parts[1]
+            else:
+                model_id = folder_name
+                author = "Local"
+                name = folder_name
+
+            if model_id not in records:
+                # Calculate size on disk
+                total_bytes = 0
+                for root, _, fnames in os.walk(folder):
+                    for fn in fnames:
+                        fp = Path(root) / fn
+                        try:
+                            total_bytes += fp.stat().st_size
+                        except Exception:
+                            pass
+
+                # If folder has content (> 100KB), auto-register it
+                if total_bytes > 100 * 1024:
+                    # Estimate parameters display
+                    param_disp = "Unknown"
+                    m = re.search(r"[-_]([0-9]+(?:\.[0-9]+)?)[bB](?:[-_]|$)", model_id)
+                    if m:
+                        param_disp = f"{m.group(1)}B"
+
+                    size_gb = round(total_bytes / (1024 ** 3), 2)
+                    records[model_id] = InstalledModelRecord(
+                        id=model_id,
+                        name=name,
+                        author=author,
+                        local_path=str(folder.resolve()),
+                        total_bytes=total_bytes,
+                        size_gb=size_gb,
+                        parameters_display=param_disp,
+                        installed_at=datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                        is_default=(len(records) == 0),
+                    )
+                    changed = True
+
+        return changed
+
     def _load(self) -> Dict[str, InstalledModelRecord]:
-        if not self.registry_file.exists():
-            return {}
-        try:
-            data = json.loads(self.registry_file.read_text(encoding="utf-8"))
-            return {k: InstalledModelRecord(**v) for k, v in data.items()}
-        except Exception:
-            return {}
+        records: Dict[str, InstalledModelRecord] = {}
+        if self.registry_file.exists():
+            try:
+                data = json.loads(self.registry_file.read_text(encoding="utf-8"))
+                records = {k: InstalledModelRecord(**v) for k, v in data.items()}
+            except Exception:
+                records = {}
+
+        # Reconcile cache
+        if self._scan_cache_dir(records):
+            self._save(records)
+
+        return records
 
     def _save(self, records: Dict[str, InstalledModelRecord]) -> None:
         data = {k: v.model_dump(mode="json") for k, v in records.items()}
