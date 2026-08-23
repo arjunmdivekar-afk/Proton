@@ -47,10 +47,10 @@ export function initTasksView() {
         <span class="badge ${badgeColor}">${task.priority || 'Normal'}</span>
         <span style="font-size: 11px; color: var(--text-dim);">#${task.id}</span>
       </div>
-      <strong style="color: var(--text-primary); font-size: 13.5px;">${task.title}</strong>
-      <p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">${task.description || ''}</p>
-      <div style="margin-top: 6px; display: flex; gap: 6px;">
-        <button class="btn btn-secondary btn-sm" style="flex: 1; padding: 3px 6px;" title="Delegate to Autonomous Agent">🤖 Run with Agent</button>
+      <strong style="color: var(--text-primary); font-size: 13px;">${task.title}</strong>
+      ${task.description ? `<p style="font-size: 12px; color: var(--text-secondary); line-height: 1.4;">${task.description}</p>` : ''}
+      <div style="margin-top: 4px; display: flex; gap: 6px;">
+        <button class="btn btn-secondary btn-sm" style="flex: 1; padding: 3px 6px;" title="Delegate to Autonomous Agent">Run with Agent</button>
       </div>
     `;
 
