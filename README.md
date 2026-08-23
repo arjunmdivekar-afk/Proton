@@ -190,12 +190,19 @@ Proton Server decouples Proton Core intelligence from the terminal TUI, exposing
 
 **Commands:**
 ```bash
-# Launch Proton Server on default port 8787
+# Launch Proton Server (auto-hosts on Localhost & Connected WiFi)
 proton server
+
+# Explicitly host on Connected WiFi / LAN
+proton server --host lan
+# or
+proton server --wifi --port 8787
 
 # Bind to custom host/port with hot-reloading
 proton server --host 0.0.0.0 --port 8787 --reload
 ```
+
+When started, Proton displays your **WiFi / LAN Network Address** (e.g. `http://192.168.16.120:8787` and `http://192.168.16.120:8787/docs`) so any phone, laptop, or workstation connected to your WiFi network can immediately access and use the Proton API.
 
 **Core API Surface:**
 | Method | Route | Description |

@@ -66,12 +66,19 @@
 
 ### Start Proton Server
 ```bash
-# Start server on default port 8787
+# Start server (auto-binds to Localhost AND Connected WiFi network)
 proton server
 
-# Bind to custom network interfaces and port
+# Host on Connected WiFi / LAN for other devices on the network
+proton server --host lan
+# or
+proton server --wifi --port 8787
+
+# Bind to custom network interface and port
 proton server --host 0.0.0.0 --port 8787 --reload
 ```
+
+When started, Proton automatically detects your WiFi/LAN IP (e.g. `192.168.16.120:8787`) and provides live endpoints accessible by any device on the same WiFi network.
 
 ---
 

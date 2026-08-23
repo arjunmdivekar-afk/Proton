@@ -1,7 +1,9 @@
 """CLI command to launch Proton Server & REST API (`proton server`)."""
 
+import socket
 import uvicorn
 import typer
+from typing import Optional
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
@@ -12,9 +14,36 @@ from proton.connection.manager import ConnectionManager
 console = Console(safe_box=True)
 
 
+def get_wifi_lan_ip() -> str:
+    """Detect machine's primary WiFi / LAN IPv4 address."""
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    try:
+        s.connect(("8.8.8.8", 1))
+        ip = s.getsockname()[0]
+    except Exception:
+        try:
+            ip = socket.gethostbyname(socket.gethostname())
+        except Exception:
+            ip = "127.0.0.1"
+    finally:
+        s.close()
+    return ip
+
+
 def launch_server(
-    host: str = typer.Option("127.0.0.1", "--host", "-h", help="Bind host address"),
+    host: Optional[str] = typer.Option(
+        None,
+        "--host",
+        "-h",
+        help="Bind host address (e.g. 0.0.0.0, 127.0.0.1, or 'lan'/'wifi' to host on connected WiFi)",
+    ),
     port: int = typer.Option(8787, "--port", "-p", help="Bind port number"),
+    lan: bool = typer.Option(
+        False,
+        "--lan",
+        "--wifi",
+        help="Host on connected WiFi so any device on the network can access http://<WiFi_IP>:<port>",
+    ),
     reload: bool = typer.Option(False, "--reload", "-r", help="Enable auto-reload on code change"),
 ) -> None:
     """Launch Proton Autonomous AI Server & REST/SSE API."""
@@ -22,22 +51,55 @@ def launch_server(
     conn_mgr = ConnectionManager()
     active_conn = conn_mgr.get_active_connection()
 
-    base_url = f"http://{host}:{port}"
-    docs_url = f"http://{host}:{port}/docs"
+    wifi_ip = get_wifi_lan_ip()
 
-    banner_text = (
-        f"[bold bright_white]⚡ Proton Server Running:[/bold bright_white] [bold cyan]{base_url}[/bold cyan]\n"
-        f"[bold bright_white]📚 Interactive Swagger UI:[/bold bright_white] [bold green]{docs_url}[/bold green]\n"
+    # Determine bind host and display addresses
+    if lan or (host and host.lower() in ("0.0.0.0", "lan", "wifi", "auto", "all")):
+        bind_host = "0.0.0.0"
+        is_lan_hosted = True
+    elif host:
+        bind_host = host
+        is_lan_hosted = (bind_host == "0.0.0.0")
+    else:
+        # Default to 0.0.0.0 to enable both localhost and WiFi access out of the box
+        bind_host = "0.0.0.0"
+        is_lan_hosted = True
+
+    local_url = f"http://127.0.0.1:{port}"
+    network_url = f"http://{wifi_ip}:{port}"
+    docs_local = f"http://127.0.0.1:{port}/docs"
+    docs_network = f"http://{wifi_ip}:{port}/docs"
+
+    banner_lines = [
+        f"[bold bright_white]🏠 Local Access:[/bold bright_white] [bold cyan]{local_url}[/bold cyan]",
+    ]
+
+    if is_lan_hosted and wifi_ip != "127.0.0.1":
+        banner_lines.append(
+            f"[bold bright_white]📶 WiFi / LAN Access:[/bold bright_white] [bold green]{network_url}[/bold green] [dim](Anyone on this WiFi)[/dim]"
+        )
+        banner_lines.append(
+            f"[bold bright_white]📚 Interactive Swagger UI:[/bold bright_white] [bold yellow]{docs_network}[/bold yellow]"
+        )
+    else:
+        banner_lines.append(
+            f"[bold bright_white]📚 Interactive Swagger UI:[/bold bright_white] [bold yellow]{docs_local}[/bold yellow]"
+        )
+
+    banner_lines.append(
         f"[bold bright_white]🧠 Active Provider:[/bold bright_white] [magenta]{active_conn.provider.value if active_conn else 'None'}[/magenta] "
-        f"([dim]{active_conn.base_url if active_conn else ''}[/dim])\n"
+        f"([dim]{active_conn.base_url if active_conn else ''}[/dim])"
+    )
+    banner_lines.append(
         f"[bold bright_white]🤖 Active Model:[/bold bright_white] [yellow]{config_mgr.config.active_model or 'default'}[/yellow]"
     )
 
     console.print()
     console.print(
         Panel(
-            banner_text,
+            "\n".join(banner_lines),
             title="[bold cyan]⚛️ PROTON AUTONOMOUS AI SERVER v2.4.4[/bold cyan]",
+            subtitle=f"[dim]Binding on [bold]{bind_host}:{port}[/bold] — WiFi Network Sharing Active[/dim]" if is_lan_hosted else f"[dim]Binding on [bold]{bind_host}:{port}[/bold][/dim]",
             border_style="cyan",
         )
     )
@@ -64,7 +126,7 @@ def launch_server(
 
     uvicorn.run(
         "proton.server.app:app",
-        host=host,
+        host=bind_host,
         port=port,
         reload=reload,
         log_level="info",
