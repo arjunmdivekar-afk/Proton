@@ -37,23 +37,25 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 
 ## 📑 Table of Contents
 - [🎥 Introduction Video](#-introduction-to-proton)
+- [🎥 Introduction Video](#-introduction-to-proton)
 - [✨ Key Features](#-key-features)
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 60-Second Quick Start](#-60-second-quick-start)
 - [💻 Deep CLI Subsystem Reference](#-deep-cli-subsystem-reference)
-  - [1. Security Verification & Live Defense Testing (`proton security`)](#1-security-verification--live-defense-testing-proton-security)
-  - [2. Multi-Dimensional LLM Benchmark Battery (`proton benchmark`)](#2-multi-dimensional-llm-benchmark-battery-proton-benchmark)
-  - [3. Project Knowledge Graph & GraphRAG (`proton graph`)](#3-project-knowledge-graph--graphrag-proton-graph)
-  - [4. Deep Repository & Codebase Inspection (`proton inspect`)](#4-deep-repository--codebase-inspection-proton-inspect)
-  - [5. Persistent Engineering Task Manager (`proton task`)](#5-persistent-engineering-task-manager-proton-task)
-  - [6. Explicit Categorized Domain Memory (`proton memory`)](#6-explicit-categorized-domain-memory-proton-memory)
-  - [7. Max-Level Autonomous Agent Lifecycle (`proton agent`)](#7-max-level-autonomous-agent-lifecycle-proton-agent)
-  - [8. Interactive AI Assistant & Session Resumption (`proton`)](#8-interactive-ai-assistant--session-resumption-proton)
-  - [9. Keyboard-First Terminal Web Browser (`proton browser`)](#9-keyboard-first-terminal-web-browser-proton-browser)
-  - [10. Live Market Intelligence & Stock Charts (`proton stock`)](#10-live-market-intelligence--stock-charts-proton-stock)
-  - [11. Host Diagnostics & Resource Telemetry (`proton doctor --sys`)](#11-host-diagnostics--resource-telemetry-proton-doctor---sys)
-  - [12. Local Knowledge Base & Hybrid RAG (`proton rag`)](#12-local-knowledge-base--hybrid-rag-proton-rag)
-  - [13. Multi-Provider Connection Management (`proton connection`)](#13-multi-provider-connection-management-proton-connection)
+  - [1. Autonomous AI Server & REST/SSE API (`proton server`)](#1-autonomous-ai-server--restsse-api-proton-server)
+  - [2. Security Verification & Live Defense Testing (`proton security`)](#2-security-verification--live-defense-testing-proton-security)
+  - [3. Multi-Dimensional LLM Benchmark Battery (`proton benchmark`)](#3-multi-dimensional-llm-benchmark-battery-proton-benchmark)
+  - [4. Project Knowledge Graph & GraphRAG (`proton graph`)](#4-project-knowledge-graph--graphrag-proton-graph)
+  - [5. Deep Repository & Codebase Inspection (`proton inspect`)](#5-deep-repository--codebase-inspection-proton-inspect)
+  - [6. Persistent Engineering Task Manager (`proton task`)](#6-persistent-engineering-task-manager-proton-task)
+  - [7. Explicit Categorized Domain Memory (`proton memory`)](#7-explicit-categorized-domain-memory-proton-memory)
+  - [8. Max-Level Autonomous Agent Lifecycle (`proton agent`)](#8-max-level-autonomous-agent-lifecycle-proton-agent)
+  - [9. Interactive AI Assistant & Session Resumption (`proton`)](#9-interactive-ai-assistant--session-resumption-proton)
+  - [10. Keyboard-First Terminal Web Browser (`proton browser`)](#10-keyboard-first-terminal-web-browser-proton-browser)
+  - [11. Live Market Intelligence & Stock Charts (`proton stock`)](#11-live-market-intelligence--stock-charts-proton-stock)
+  - [12. Host Diagnostics & Resource Telemetry (`proton doctor --sys`)](#12-host-diagnostics--resource-telemetry-proton-doctor---sys)
+  - [13. Local Knowledge Base & Hybrid RAG (`proton rag`)](#13-local-knowledge-base--hybrid-rag-proton-rag)
+  - [14. Multi-Provider Connection Management (`proton connection`)](#14-multi-provider-connection-management-proton-connection)
 - [🧠 Recommended Models & Hardware Matrix](#-recommended-models--hardware-matrix)
   - [1. Small Models (1B to 10B Parameters)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B Parameters)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -69,6 +71,7 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 
 ## ✨ Key Features
 
+- **🌐 Proton Server & REST/SSE API (`proton server`)**: Transforms Proton Core into an asynchronous intelligence engine exposed over high-performance REST and Server-Sent Events (`http://127.0.0.1:8787`). Seamlessly connects web apps, browser frontends, IDE extensions, and external orchestrators to Proton's autonomous agent, GraphRAG, memory, tasks, and sandbox execution layers.
 - **🛡️ Continuous Security Verification (`proton security test` / `proton security audit`)**: Transition beyond passive security. Automated real-time defensive verification suite continuously validating guardrails against **path traversal, command injection, secret leakage, malicious tool arguments, prompt injection, workspace escapes, unauthorized network access, and dangerous shell commands** with scored verification reports (100/100).
 - **⚡ 8-Dimension LLM Benchmark Battery (`proton benchmark`)**: Evaluate local and LAN models across **Latency (TTFT), Streaming Throughput (tok/s), Context Retention (needle-in-haystack), Tool Calling (JSON schema), RAG Synthesis, Coding Quality (Python AST validation), Planning, and Error Self-Healing** with letter grading (`A+` to `F`) and agent readiness badges.
 - **🌐 Project Knowledge Graph & GraphRAG (`proton graph`)**: Full AST static structural relationship extractor indexing `Function ➔ Calls ➔ Function`, `Class ➔ Inherits ➔ Class`, `Module ➔ Imports ➔ Module`, and `Test ➔ Tests ➔ Function`. Answers *"What will break if I change this function?"* with exact recursive blast-radius impact analysis.
@@ -147,7 +150,63 @@ proton stock
 
 ## 💻 Deep CLI Subsystem Reference
 
-### 1. Security Verification & Live Defense Testing (`proton security`)
+### 1. Autonomous AI Server & REST/SSE API (`proton server`)
+Proton Server decouples Proton Core intelligence from the terminal TUI, exposing an asynchronous, high-performance REST and Server-Sent Events (SSE) gateway at `http://127.0.0.1:8787` for Web UIs, browser extensions, desktop apps, IDE plugins, and remote agents.
+
+```text
+                    ┌─────────────────────┐
+                    │    Proton Core      │
+                    │                     │
+                    │ Agent Engine        │
+                    │ Max Agent           │
+                    │ Tasks               │
+                    │ Memory              │
+                    │ RAG                 │
+                    │ GraphRAG            │
+                    │ Tools               │
+                    │ Security            │
+                    │ Providers           │
+                    └──────────┬──────────┘
+                               │
+                        Proton Server (FastAPI / Uvicorn)
+                               │
+              ┌────────────────┼────────────────┐
+              │                │                │
+              ▼                ▼                ▼
+           CLI/TUI          Web UI          Other Apps / IDEs
+              │                │                │
+              ▼                ▼                ▼
+         Terminal          Browser          API Client
+```
+
+**Commands:**
+```bash
+# Launch Proton Server on default port 8787
+proton server
+
+# Bind to custom host/port with hot-reloading
+proton server --host 0.0.0.0 --port 8787 --reload
+```
+
+**Core API Surface:**
+| Method | Route | Description |
+|---|---|---|
+| `POST` | `/v1/chat` | Streaming SSE (`text/event-stream`) & JSON completions with memory |
+| `POST` | `/v1/agents/run` | Launch 10-stage autonomous software engineering agent |
+| `POST / GET` | `/v1/tasks` | Create, list, inspect, and run stateful engineering tasks |
+| `GET` | `/v1/graph/impact` | Query GraphRAG blast radius & callers for any symbol |
+| `POST / GET` | `/v1/memory` | Explicit categorized domain memory (`PROJECT`, `DECISION`) |
+| `POST` | `/v1/rag/search` | Hybrid vector & BM25 knowledge search |
+| `GET` | `/v1/inspect` | Deep repository architectural and security inspection |
+| `POST` | `/v1/security/test` | Automated real-time defense verification battery |
+| `POST` | `/v1/tools/execute` | Execute deterministic tools within the sandbox |
+| `GET` | `/v1/models` | Discovered models from active local/LAN provider |
+| `GET` | `/v1/health` | Server status, version, uptime, and active connection |
+| `GET` | `/docs` | Interactive Swagger UI API playground |
+
+---
+
+### 2. Security Verification & Live Defense Testing (`proton security`)
 Proton enforces security verification: live automated threat injection to verify that all protective guardrails are active and operating as expected.
 
 ```text
@@ -187,8 +246,8 @@ proton security test --json
 
 ---
 
-### 2. Multi-Dimensional LLM Benchmark Battery (`proton benchmark`)
-Rigorously evaluates whether a connected model has the speed, context retention, and reasoning capabilities required for autonomous software engineering.
+### 3. Multi-Dimensional LLM Benchmark Battery (`proton benchmark`)
+Rigorous evaluates whether a connected model has the speed, context retention, and reasoning capabilities required for autonomous software engineering.
 
 ```text
 ┌──────────────── ⚡ Proton LLM & Provider Benchmark Results ─────────────────┐
@@ -227,7 +286,7 @@ proton benchmark --json
 
 ---
 
-### 3. Project Knowledge Graph & GraphRAG (`proton graph`)
+### 4. Project Knowledge Graph & GraphRAG (`proton graph`)
 Extracts and traverses static AST relationships to answer complex architectural dependency questions:
 
 ```text
@@ -258,7 +317,7 @@ proton graph
 
 ---
 
-### 4. Deep Repository & Codebase Inspection (`proton inspect`)
+### 5. Deep Repository & Codebase Inspection (`proton inspect`)
 Builds a comprehensive structural understanding of any repository before generating code:
 
 ```text
@@ -301,7 +360,7 @@ proton inspect --json
 
 ---
 
-### 5. Persistent Engineering Task Manager (`proton task`)
+### 6. Persistent Engineering Task Manager (`proton task`)
 Isolates multi-step engineering tasks from transient chat sessions. Every task maintains a stateful checkpoint on disk (`~/.proton/tasks/`):
 
 ```text
@@ -346,7 +405,7 @@ proton task delete <task-id>
 
 ---
 
-### 6. Explicit Categorized Domain Memory (`proton memory`)
+### 7. Explicit Categorized Domain Memory (`proton memory`)
 Structure persistent memories into explicit domain categories to eliminate context pollution:
 
 | Category | Domain Scope | Example |
@@ -386,7 +445,7 @@ proton memory clear --type SESSION
 
 ---
 
-### 7. Max-Level Autonomous Agent Lifecycle (`proton agent`)
+### 8. Max-Level Autonomous Agent Lifecycle (`proton agent`)
 Executes end-to-end software engineering tasks with a full **10-stage autonomous lifecycle**:
 
 ```text
@@ -407,7 +466,7 @@ proton agent "Fix failing test cases in auth module" -y --max-steps 30
 
 ---
 
-### 8. Interactive AI Assistant & Session Resumption (`proton`)
+### 9. Interactive AI Assistant & Session Resumption (`proton`)
 Launch the interactive terminal session with live token streaming, tools, and stateful memory:
 ```bash
 # Launch interactive REPL
@@ -435,7 +494,7 @@ proton ask "Generate quicksort in python" --json
 
 ---
 
-### 9. Keyboard-First Terminal Web Browser (`proton browser`)
+### 10. Keyboard-First Terminal Web Browser (`proton browser`)
 Browse the web, query DuckDuckGo, navigate numbered links, and summarize pages using AI:
 ```bash
 # Search DuckDuckGo and view results with interactive links
@@ -465,7 +524,7 @@ proton browser "machine learning papers" --ai_mode
 
 ---
 
-### 10. Live Market Intelligence & Stock Charts (`proton stock`)
+### 11. Live Market Intelligence & Stock Charts (`proton stock`)
 Real-time financial intelligence in **Indian Rupees (`₹`)** with 10-minute auto-refresh, 20 assets per page, and continuous sub-pixel price charts:
 ```bash
 # Launch live stock dashboard
@@ -500,7 +559,7 @@ proton stock --page 3    # Global Indices, ETFs & Crypto
 
 ---
 
-### 11. Host Diagnostics & Resource Telemetry (`proton doctor --sys`)
+### 12. Host Diagnostics & Resource Telemetry (`proton doctor --sys`)
 ```bash
 # Inspect host hardware, CPU cores, RAM load bar, and disk storage
 proton doctor --sys
@@ -511,7 +570,7 @@ proton doctor
 
 ---
 
-### 12. Local Knowledge Base & Hybrid RAG (`proton rag`)
+### 13. Local Knowledge Base & Hybrid RAG (`proton rag`)
 Ingest large programming datasets and documentation into Proton's SQLite vector store:
 ```bash
 # Download and index comprehensive programming knowledge guides
@@ -529,7 +588,7 @@ proton rag status
 
 ---
 
-### 13. Multi-Provider Connection Management (`proton connection`)
+### 14. Multi-Provider Connection Management (`proton connection`)
 ```bash
 # Interactive setup wizard
 proton connection

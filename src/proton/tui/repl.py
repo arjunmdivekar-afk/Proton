@@ -649,6 +649,10 @@ class ProtonREPL:
                 ctx = typer.Context(typer.main.get_command(security_app))
                 default_security_callback(ctx, json_mode=False)
 
+        elif base == "/server":
+            from proton.cli.server_cmd import launch_server
+            launch_server()
+
         elif base in ("/new", "/reset"):
             active_conn = self.conn_mgr.get_active_connection()
             self.current_session = self.session_mgr.create_session(
