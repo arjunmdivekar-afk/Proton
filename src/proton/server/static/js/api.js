@@ -139,6 +139,10 @@ export const api = {
   searchHubModels: (query = '', page = 1) => request(`/v1/models/hub/search?q=${encodeURIComponent(query)}&page=${page}`),
   listInstalledModels: () => request('/v1/models'),
   getConnections: () => request('/v1/connections'),
+  testConnection: (connection_id) => request('/v1/connections/test', {
+    method: 'POST',
+    body: JSON.stringify({ connection_id }),
+  }),
   setActiveConnection: (connection_id) => request('/v1/connections/switch', {
     method: 'POST',
     body: JSON.stringify({ connection_id }),

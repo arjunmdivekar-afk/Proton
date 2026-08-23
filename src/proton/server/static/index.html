@@ -406,14 +406,29 @@
         <div id="view-settings" class="view-panel">
           <div class="settings-layout">
             <aside class="settings-nav">
-              <div class="settings-nav-item active" data-section="model">Model Defaults</div>
+              <div class="settings-nav-item active" data-section="providers">Model Providers</div>
+              <div class="settings-nav-item" data-section="model">Model Defaults</div>
               <div class="settings-nav-item" data-section="appearance">Appearance</div>
               <div class="settings-nav-item" data-section="security">Security</div>
               <div class="settings-nav-item" data-section="network">Network</div>
             </aside>
 
             <div class="settings-content">
-              <div id="section-model" class="settings-section">
+              <div id="section-providers" class="settings-section">
+                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                  <div style="font-weight: 500;">Connected AI Model Providers</div>
+                  <button id="settings-refresh-providers" class="btn btn-secondary btn-sm">Refresh & Ping</button>
+                </div>
+                <p style="font-size: 12px; color: var(--text-secondary); margin-bottom: 12px;">Configure Local Transformers, LM Studio, Ollama, and OpenAI endpoints with live roundtrip latency metrics.</p>
+                <div class="table-container">
+                  <table class="table">
+                    <thead><tr><th>Status</th><th>Provider / Name</th><th>Endpoint</th><th>Latency</th><th>Action</th></tr></thead>
+                    <tbody id="settings-providers-tbody"></tbody>
+                  </table>
+                </div>
+              </div>
+
+              <div id="section-model" class="settings-section" style="display:none;">
                 <div style="font-weight: 500; margin-bottom: 12px;">Model Defaults</div>
                 <div style="display: flex; flex-direction: column; gap: 12px;">
                   <div>

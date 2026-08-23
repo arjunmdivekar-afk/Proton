@@ -112,25 +112,87 @@ async def search_hub_models(q: str = "", page: int = 1):
     include_in_schema=False,
 )
 async def list_connections():
-    """List all configured local and LAN AI endpoints (e.g. LM Studio, Ollama, Proton Hub)."""
+    """List all configured AI endpoints with real-time latency and connection status."""
+    from proton.connection.probe import probe_connection
+
     conn_mgr = ConnectionManager()
     conns = conn_mgr.list_connections()
     active_conn = conn_mgr.get_active_connection()
 
+    connection_data = []
+    for c in conns:
+        latency = None
+        status = "offline"
+
+        if c.provider.value in ("proton-hub", "transformers") or c.protocol == "local":
+            latency = 0.1
+            status = "connected"
+        else:
+            try:
+                probe_res = await probe_connection(c)
+                if probe_res.success:
+                    status = "connected"
+                    latency = round(probe_res.latency_ms, 1) if probe_res.latency_ms else None
+            except Exception:
+                status = "offline"
+
+        connection_data.append({
+            "id": c.id,
+            "name": c.name,
+            "provider": c.provider.value,
+            "base_url": c.base_url,
+            "is_active": (c.id == active_conn.id) if active_conn else False,
+            "status": status,
+            "latency_ms": latency,
+            "models_count": len(c.discovered_models) if c.discovered_models else 0,
+        })
+
     return {
         "active_connection": active_conn.id if active_conn else None,
-        "connections": [
-            {
-                "id": c.id,
-                "name": c.name,
-                "provider": c.provider.value,
-                "base_url": c.base_url,
-                "is_active": (c.id == active_conn.id) if active_conn else False,
-                "status": "connected",
-                "latency_ms": 0.1 if c.provider.value == "proton-hub" else None,
-            }
-            for c in conns
-        ],
+        "connections": connection_data,
+    }
+
+
+@router.post(
+    "/connections/test",
+    summary="Test Connection Latency",
+)
+async def test_connection_endpoint(req: dict):
+    """Test live connectivity and latency for an AI endpoint."""
+    from proton.connection.probe import probe_connection
+    from proton.connection.schema import ConnectionProfile, ProviderType
+
+    conn_id = req.get("connection_id")
+    conn_mgr = ConnectionManager()
+
+    if conn_id:
+        profile = conn_mgr.get_connection(conn_id)
+        if not profile:
+            raise HTTPException(status_code=404, detail=f"Connection '{conn_id}' not found.")
+    else:
+        provider_str = req.get("provider", "openai")
+        try:
+            prov_type = ProviderType(provider_str)
+        except Exception:
+            prov_type = ProviderType.OPENAI_COMPATIBLE
+
+        profile = ConnectionProfile(
+            id=req.get("name", "custom").lower().replace(" ", "-"),
+            name=req.get("name", "Custom Connection"),
+            provider=prov_type,
+            host=req.get("host", "127.0.0.1"),
+            port=int(req.get("port", 1234)),
+            protocol=req.get("protocol", "http"),
+            base_path=req.get("base_path", "/v1"),
+            api_key=req.get("api_key"),
+        )
+
+    res = await probe_connection(profile)
+    return {
+        "success": res.success,
+        "latency_ms": round(res.latency_ms, 2) if res.latency_ms else None,
+        "error": res.error_message,
+        "discovered_models": res.discovered_models,
     }
 
 
