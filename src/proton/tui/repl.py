@@ -446,6 +446,12 @@ class ProtonREPL:
             else:
                 self.console.print("[dim]Usage: `/task [create <goal> | list | show <id> | run <id> | pause <id> | cancel <id>]`[/dim]")
 
+        elif base in ("/model-hub", "/hub", "/modelhub"):
+            from proton.hub.tui import ModelHubTUI
+            hub_tui = ModelHubTUI()
+            hub_tui.run()
+            self.print_banner()
+
         elif base == "/agent":
             goal = arg.strip()
             if not goal:

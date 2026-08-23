@@ -11,6 +11,8 @@ PATTERNS = [
     re.compile(r'(?i)bearer\s+([a-zA-Z0-9_\-\.]{20,})'),
     # OpenAI format
     re.compile(r'sk-[a-zA-Z0-9]{20,}'),
+    # Hugging Face access tokens
+    re.compile(r'hf_[a-zA-Z0-9]{20,}'),
     # GitHub personal access tokens
     re.compile(r'gh[pousr]_[a-zA-Z0-9]{36,}'),
     # AWS access key / secret

@@ -209,7 +209,11 @@ from proton.cli.memory_cmd import memory_app
 from proton.cli.benchmark_cmd import benchmark_app
 from proton.cli.security_cmd import security_app
 from proton.cli.server_cmd import launch_server
+from proton.cli.hub_cmd import hub_app
 
+app.add_typer(hub_app, name="model-hub", help="Explore, inspect, install, and manage Hugging Face Transformers models")
+app.add_typer(hub_app, name="modelhub", help="Alias for proton model-hub")
+app.add_typer(hub_app, name="hub", help="Alias for proton model-hub")
 app.add_typer(task_app, name="task", help="Manage persistent development tasks (create, list, show, run, pause, resume, cancel)")
 app.add_typer(task_app, name="tasks", help="Alias for proton task")
 app.add_typer(security_app, name="security", help="Security verification, automated defense testing, and workspace audit")
@@ -228,7 +232,7 @@ def main() -> None:
     # Check if a dynamic named session flag like `proton --test` was passed directly
     args = sys.argv[1:]
     known_flags = {"--version", "-v", "--help", "-h", "--stdin", "--json", "--session", "-s", "--resume"}
-    known_subcmds = {"server", "agent", "browser", "stock", "stocks", "task", "tasks", "security", "memory", "inspect", "graph", "benchmark", "connection", "rag", "ask", "doctor"}
+    known_subcmds = {"server", "agent", "browser", "stock", "stocks", "task", "tasks", "security", "memory", "inspect", "graph", "benchmark", "connection", "rag", "ask", "doctor", "model-hub", "modelhub", "hub"}
 
     if args:
         first = args[0]

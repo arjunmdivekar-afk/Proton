@@ -59,6 +59,18 @@ class ConnectionManager:
             base_path="/v1",
             enabled=True,
         )
+        default_transformers = ConnectionProfile(
+            id="transformers",
+            name="Hugging Face Transformers (Local Engine)",
+            provider=ProviderType.TRANSFORMERS,
+            host="127.0.0.1",
+            port=0,
+            protocol="local",
+            base_path="",
+            enabled=True,
+            status=ConnectionStatus.CONNECTED,
+        )
+        self._connections["transformers"] = default_transformers
         self._connections["default-lmstudio"] = default_lmstudio
         self._connections["default-ollama"] = default_ollama
         self.save()

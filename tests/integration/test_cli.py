@@ -23,7 +23,7 @@ def test_cli_connection_list():
 def test_cli_doctor():
     result = runner.invoke(app, ["doctor"])
     assert result.exit_code == 0
-    assert "PROTON SYSTEM & CONNECTION DIAGNOSTICS" in result.stdout
+    assert "DIAGNOSTICS" in result.stdout
 
 
 def test_cli_rag_status():

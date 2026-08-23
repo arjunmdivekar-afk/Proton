@@ -6,6 +6,7 @@ from proton.providers.base import ModelProvider
 from proton.providers.lmstudio import LMStudioProvider
 from proton.providers.ollama import OllamaProvider
 from proton.providers.openai_compatible import OpenAICompatibleProvider
+from proton.providers.transformers import TransformersProvider
 
 
 class ProviderRegistry:
@@ -21,7 +22,13 @@ class ProviderRegistry:
             return cls._instances[cache_key]
 
         provider: ModelProvider
-        if profile.provider == ProviderType.LMSTUDIO:
+        if profile.provider == ProviderType.TRANSFORMERS:
+            from proton.core.config import ConfigManager
+            cfg = ConfigManager()
+            provider = TransformersProvider(
+                model_id=cfg.config.active_model,
+            )
+        elif profile.provider == ProviderType.LMSTUDIO:
             provider = LMStudioProvider(
                 base_url=profile.base_url,
                 api_key=profile.api_key,

@@ -9,6 +9,7 @@ from proton.core.types import ModelInfo
 
 
 class ProviderType(str, Enum):
+    TRANSFORMERS = "transformers"
     LMSTUDIO = "lmstudio"
     OLLAMA = "ollama"
     OPENAI_COMPATIBLE = "openai_compatible"
