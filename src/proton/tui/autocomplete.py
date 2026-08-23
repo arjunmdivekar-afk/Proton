@@ -5,6 +5,8 @@ from prompt_toolkit.completion import Completer, Completion
 from prompt_toolkit.document import Document
 
 SLASH_COMMANDS = {
+    "/set": "Configure model hardware execution device (--CPU, --GPU, --Partial)",
+    "/device": "Alias for /set hardware mode",
     "/model-hub": "Explore, inspect, install, and manage Hugging Face Transformers models",
     "/hub": "Alias for /model-hub",
     "/server": "Launch Proton Autonomous AI Server & REST API (http://127.0.0.1:8787)",

@@ -194,6 +194,12 @@ proton model-hub hardware
 # List locally installed models and switch default
 proton model-hub list
 proton model-hub default meta-llama/Llama-3.2-1B-Instruct
+
+# Configure Hardware Device Execution Mode across all installed models:
+proton set --CPU       # Run entirely on CPU & System RAM (0% GPU usage, ideal without GPU)
+proton set --GPU       # Run dedicated on NVIDIA CUDA / Apple MPS (0% CPU inference)
+proton set --Partial   # Hybrid mixture: Auto-splits layers between GPU VRAM and CPU RAM
+proton set             # View current hardware configuration and active device mode
 ```
 
 ---
@@ -725,6 +731,8 @@ Inside the interactive `proton >` shell, use built-in slash commands with auto-c
 
 | Slash Command | Description |
 |---|---|
+| `/set [--cpu\|--gpu\|--partial]` | Configure hardware execution device mode (CPU / GPU / Partial) |
+| `/model-hub` | Explore, inspect, download, and install Hugging Face models |
 | `/security [subcmd]` | Security defense verification & workspace audit (`/security test\|audit`) |
 | `/benchmark [args]` | Benchmark LLM latency, tok/s, context, tools, RAG, coding, planning |
 | `/memory [subcmd]` | Manage categorized memory (`/memory list\|add\|search\|forget\|export\|clear`) |

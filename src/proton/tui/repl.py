@@ -452,6 +452,16 @@ class ProtonREPL:
             hub_tui.run()
             self.print_banner()
 
+        elif base in ("/set", "/device"):
+            from proton.cli.set_cmd import set_hardware_mode, _render_device_status_panel
+            clean_arg = arg.strip().lstrip("-").lower()
+            if clean_arg in ("cpu", "gpu", "partial", "auto"):
+                set_hardware_mode(clean_arg)
+            else:
+                config_mgr = ConfigManager()
+                active_mode = config_mgr.config.device_mode or "auto"
+                _render_device_status_panel(active_mode)
+
         elif base == "/agent":
             goal = arg.strip()
             if not goal:

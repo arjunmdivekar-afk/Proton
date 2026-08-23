@@ -10,6 +10,7 @@ from proton.core.types import Message, Role, ModelInfo, ModelCapabilities
 from proton.providers.base import ModelProvider, StreamChunk, ChatResponse
 from proton.hub.registry import ModelRegistry
 from proton.hub.hardware import detect_hardware
+from proton.core.config import ConfigManager
 
 
 class TransformersProvider(ModelProvider):
@@ -64,12 +65,41 @@ class TransformersProvider(ModelProvider):
         if self._tokenizer.pad_token_id is None:
             self._tokenizer.pad_token_id = self._tokenizer.eos_token_id
 
-        # Determine precision and device
-        dtype = torch.bfloat16 if torch.cuda.is_available() and torch.cuda.is_bf16_supported() else (
-            torch.float16 if torch.cuda.is_available() else torch.float32
-        )
+        # Determine precision and device based on Proton device mode: "cpu" | "gpu" | "partial" | "auto"
+        config_mgr = ConfigManager()
+        mode = (self.device or config_mgr.config.device_mode or "auto").lower()
 
-        device_map = "auto" if torch.cuda.is_available() else None
+        hw = detect_hardware()
+        has_cuda = torch.cuda.is_available()
+        has_mps = hw.has_mps
+
+        if mode == "cpu":
+            # Strict CPU + System RAM execution (Zero GPU allocation)
+            dtype = torch.float32
+            device_map = {"": "cpu"}
+        elif mode == "gpu":
+            # Strict GPU execution
+            if has_cuda:
+                dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+                device_map = {"": "cuda:0"}
+            elif has_mps:
+                dtype = torch.float16
+                device_map = None
+            else:
+                dtype = torch.float32
+                device_map = {"": "cpu"}
+        elif mode == "partial":
+            # Partial: Mixture / auto-split of GPU and CPU RAM
+            dtype = torch.bfloat16 if has_cuda and torch.cuda.is_bf16_supported() else (
+                torch.float16 if has_cuda or has_mps else torch.float32
+            )
+            device_map = "auto" if (has_cuda or has_mps) else None
+        else:
+            # Default auto
+            dtype = torch.bfloat16 if has_cuda and torch.cuda.is_bf16_supported() else (
+                torch.float16 if has_cuda else torch.float32
+            )
+            device_map = "auto" if has_cuda else None
 
         self._model = AutoModelForCausalLM.from_pretrained(
             model_path,
@@ -79,9 +109,12 @@ class TransformersProvider(ModelProvider):
             low_cpu_mem_usage=True,
         )
 
-        if not torch.cuda.is_available():
-            hw = detect_hardware()
-            if hw.has_mps:
+        if device_map is None:
+            if mode == "gpu" and has_mps:
+                self._model = self._model.to("mps")
+            elif mode == "cpu":
+                self._model = self._model.to("cpu")
+            elif has_mps:
                 self._model = self._model.to("mps")
             else:
                 self._model = self._model.to("cpu")

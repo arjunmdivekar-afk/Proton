@@ -52,6 +52,7 @@ class UIConfig(BaseModel):
 class ProtonConfig(BaseModel):
     active_connection: str = "default-lmstudio"
     active_model: Optional[str] = None
+    device_mode: str = "auto"  # "cpu", "gpu", "partial", "auto"
     workspace_dir: str = Field(default_factory=lambda: str(Path.cwd()))
     home_dir: str = Field(default_factory=lambda: str(Path.home() / ".proton"))
     security: SecurityConfig = Field(default_factory=SecurityConfig)
@@ -118,6 +119,8 @@ class ConfigManager:
             data["active_connection"] = os.environ["PROTON_ACTIVE_CONNECTION"]
         if "PROTON_ACTIVE_MODEL" in os.environ:
             data["active_model"] = os.environ["PROTON_ACTIVE_MODEL"]
+        if "PROTON_DEVICE_MODE" in os.environ:
+            data["device_mode"] = os.environ["PROTON_DEVICE_MODE"]
 
         config = ProtonConfig(**data) if data else ProtonConfig()
         config.workspace_dir = str(self.workspace_path)
@@ -137,6 +140,10 @@ class ConfigManager:
 
     def set_active_model(self, model_id: Optional[str]) -> None:
         self._config.active_model = model_id
+        self.save_global()
+
+    def set_device_mode(self, mode: str) -> None:
+        self._config.device_mode = mode.lower()
         self.save_global()
 
     def update(self, **kwargs: Any) -> None:
