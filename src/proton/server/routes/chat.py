@@ -1,4 +1,4 @@
-"""Chat completion and token streaming routes."""
+"""Chat completion and token streaming routes with Python client examples."""
 
 import json
 import time
@@ -18,9 +18,71 @@ from proton.agent.context import ContextAssembler
 router = APIRouter(prefix="/v1", tags=["Chat & Streaming"])
 
 
-@router.post("/chat")
+@router.post(
+    "/chat",
+    summary="Chat Completion & Streaming SSE",
+    response_description="Returns generated text or a Server-Sent Events (SSE) token stream",
+)
 async def chat_completion(request: ChatRequest):
-    """Generate a chat response. Supports standard JSON and Server-Sent Events (SSE) streaming."""
+    """
+    Generate conversational chat responses or stream tokens in real-time via Server-Sent Events (SSE).
+
+    ---
+
+    ### 🐍 Python Example — Streaming Tokens (SSE with `httpx`):
+    ```python
+    import httpx
+    import json
+
+    url = "http://127.0.0.1:8787/v1/chat"
+    payload = {
+        "messages": [
+            {"role": "user", "content": "Explain how GraphRAG impact analysis calculates blast radius."}
+        ],
+        "stream": True,
+        "temperature": 0.7,
+        "use_memory": True
+    }
+
+    with httpx.stream("POST", url, json=payload, timeout=60.0) as response:
+        print("Connected! Streaming tokens:")
+        for line in response.iter_lines():
+            if line.startswith("data: ") and line != "data: [DONE]":
+                chunk = json.loads(line[6:])
+                delta = chunk["choices"][0]["delta"].get("content", "")
+                print(delta, end="", flush=True)
+        print("\\n[Stream Finished]")
+    ```
+
+    ---
+
+    ### 🐍 Python Example — Standard JSON Response (`requests`):
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/chat"
+    payload = {
+        "messages": [
+            {"role": "user", "content": "What is Proton's current version?"}
+        ],
+        "stream": False
+    }
+
+    response = requests.post(url, json=payload)
+    data = response.json()
+    print("Response:", data["content"])
+    print(f"Latency: {data['duration_ms']} ms")
+    ```
+
+    ---
+
+    ### 💻 cURL Example:
+    ```bash
+    curl -N -X POST http://127.0.0.1:8787/v1/chat \\
+      -H "Content-Type: application/json" \\
+      -d '{"messages": [{"role": "user", "content": "Hello!"}], "stream": true}'
+    ```
+    """
     config_mgr = ConfigManager()
     conn_mgr = ConnectionManager()
     active_conn = conn_mgr.get_active_connection()

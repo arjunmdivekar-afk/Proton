@@ -204,6 +204,8 @@ proton server --host 0.0.0.0 --port 8787 --reload
 | `GET` | `/v1/health` | Server status, version, uptime, and active connection |
 | `GET` | `/docs` | Interactive Swagger UI API playground |
 
+> 📖 **Full API Reference**: Check out [**`API-docs.md`**](API-docs.md) for full request/response schemas, SSE streaming guides, and Python SDK integration snippets.
+
 ---
 
 ### 2. Security Verification & Live Defense Testing (`proton security`)

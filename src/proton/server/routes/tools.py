@@ -1,4 +1,4 @@
-"""Deterministic Tools API routes."""
+"""Deterministic Tools API routes with Python client examples."""
 
 import time
 from pathlib import Path
@@ -42,9 +42,28 @@ def _get_registry(workspace_path: Optional[Path] = None) -> ToolRegistry:
     return reg
 
 
-@router.get("", response_model=List[ToolInfo])
+@router.get(
+    "",
+    summary="List Registered Deterministic Tools",
+    response_model=List[ToolInfo],
+)
 async def list_tools():
-    """List all registered tools, risk ratings, and JSON schemas."""
+    """
+    List all deterministic tools with risk ratings and JSON Schema definitions for LLM tool calling.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/tools"
+    response = requests.get(url)
+    tools = response.json()
+    for t in tools:
+        print(f"- {t['name']} [{t['risk_level']}]: {t['description']}")
+    ```
+    """
     reg = _get_registry()
     tools = reg.list_tools()
     return [
@@ -58,9 +77,33 @@ async def list_tools():
     ]
 
 
-@router.post("/execute", response_model=ToolExecuteResponse)
+@router.post(
+    "/execute",
+    summary="Execute Deterministic Tool",
+    response_model=ToolExecuteResponse,
+)
 async def execute_tool(req: ToolExecuteRequest):
-    """Securely execute a tool within the sandbox with policy checks."""
+    """
+    Execute a deterministic tool inside the workspace sandbox with policy verification.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/tools/execute"
+    payload = {
+        "tool": "read_file",
+        "arguments": {"path": "pyproject.toml"}
+    }
+
+    response = requests.post(url, json=payload)
+    result = response.json()
+    print("Success:", result["success"])
+    print("Content:", result["result"])
+    ```
+    """
     ws = Path(req.workspace).resolve() if req.workspace else Path.cwd()
     reg = _get_registry(ws)
 

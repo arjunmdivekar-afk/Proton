@@ -1,4 +1,4 @@
-"""Models, Providers, and Connections API routes."""
+"""Models, Providers, and Connections API routes with Python client examples."""
 
 from typing import List, Optional
 from fastapi import APIRouter, HTTPException
@@ -11,9 +11,29 @@ from proton.providers.registry import ProviderRegistry
 router = APIRouter(prefix="/v1", tags=["Models & Providers"])
 
 
-@router.get("/models")
+@router.get(
+    "/models",
+    summary="List Discovered AI Models",
+)
 async def list_models():
-    """List all available models discovered from active AI provider."""
+    """
+    List all available models discovered dynamically from the active AI provider runtime.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/models"
+    response = requests.get(url)
+    data = response.json()
+    print(f"Active Model: {data['active_model']}")
+    print(f"Provider: {data['provider']} ({data['base_url']})")
+    for m in data["models"]:
+        print(f"- {m['id']} (Context: {m.get('context_window')})")
+    ```
+    """
     conn_mgr = ConnectionManager()
     active_conn = conn_mgr.get_active_connection()
     if not active_conn:
@@ -49,9 +69,29 @@ async def list_models():
         }
 
 
-@router.get("/connections")
+@router.get(
+    "/connections",
+    summary="List Configured AI Endpoints",
+)
 async def list_connections():
-    """List all configured local and LAN AI endpoints (LM Studio, Ollama)."""
+    """
+    List all configured local and LAN AI endpoints (e.g. LM Studio, Ollama).
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/connections"
+    response = requests.get(url)
+    connections = response.json()
+    print("Active Connection:", connections["active_connection"])
+    for c in connections["connections"]:
+        active_mark = " (Active)" if c["is_active"] else ""
+        print(f"- {c['id']}: {c['provider']} at {c['base_url']}{active_mark}")
+    ```
+    """
     conn_mgr = ConnectionManager()
     conns = conn_mgr.list_connections()
     active_conn = conn_mgr.get_active_connection()
@@ -71,9 +111,25 @@ async def list_connections():
     }
 
 
-@router.post("/connections/switch")
+@router.post(
+    "/connections/switch",
+    summary="Switch Active AI Endpoint",
+)
 async def switch_connection(req: ConnectionSwitchRequest):
-    """Switch active AI inference connection."""
+    """
+    Switch the active inference endpoint connection (e.g. to a LAN GPU workstation).
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/connections/switch"
+    response = requests.post(url, json={"connection_id": "server-1"})
+    print("Switched:", response.json())
+    ```
+    """
     conn_mgr = ConnectionManager()
     config_mgr = ConfigManager()
 
@@ -85,9 +141,25 @@ async def switch_connection(req: ConnectionSwitchRequest):
     return {"status": "switched", "active_connection": req.connection_id, "base_url": conn.base_url}
 
 
-@router.post("/models/switch")
+@router.post(
+    "/models/switch",
+    summary="Switch Active Model ID",
+)
 async def switch_model(req: ModelSwitchRequest):
-    """Switch active AI model."""
+    """
+    Switch the active model name used for code intelligence and reasoning.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/models/switch"
+    response = requests.post(url, json={"model_id": "llama-3.2-1b-instruct"})
+    print("Active Model:", response.json())
+    ```
+    """
     config_mgr = ConfigManager()
     config_mgr.set_active_model(req.model_id)
     return {"status": "switched", "active_model": req.model_id}

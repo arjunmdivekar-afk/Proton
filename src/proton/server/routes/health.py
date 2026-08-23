@@ -1,4 +1,4 @@
-"""Health and server info routes."""
+"""Health and server info routes with Python client examples."""
 
 import time
 from pathlib import Path
@@ -12,9 +12,29 @@ router = APIRouter(prefix="/v1", tags=["Health & System"])
 start_time = time.time()
 
 
-@router.get("/health", response_model=HealthResponse)
+@router.get(
+    "/health",
+    summary="Server Health & Active Model Status",
+    response_model=HealthResponse,
+)
 async def get_health(request: Request) -> HealthResponse:
-    """Get server status, active model, provider details, and system uptime."""
+    """
+    Get server status, software version, uptime, system load, active AI provider, and active model.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/health"
+    response = requests.get(url)
+    health = response.json()
+    print(f"Status: {health['status']} (v{health['version']})")
+    print(f"Active Model: {health['active_model']}")
+    print(f"Provider: {health['provider_type']} ({health['base_url']})")
+    ```
+    """
     config_mgr = ConfigManager()
     conn_mgr = ConnectionManager()
     active_conn = conn_mgr.get_active_connection()
@@ -31,9 +51,28 @@ async def get_health(request: Request) -> HealthResponse:
     )
 
 
-@router.get("/info", response_model=ServerInfoResponse)
+@router.get(
+    "/info",
+    summary="Server Endpoints & Capability Manifest",
+    response_model=ServerInfoResponse,
+)
 async def get_info(request: Request) -> ServerInfoResponse:
-    """List available API capabilities and documentation links."""
+    """
+    List available API capabilities, documentation URLs, and OpenAPI specification.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/info"
+    response = requests.get(url)
+    info = response.json()
+    print("Documentation:", info["docs_url"])
+    print("Total Endpoints:", len(info["endpoints"]))
+    ```
+    """
     return ServerInfoResponse(
         name="Proton Autonomous AI Server",
         version="2.4.4",

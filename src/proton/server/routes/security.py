@@ -1,4 +1,4 @@
-"""Security Verification API routes."""
+"""Security Verification API routes with Python client examples."""
 
 from pathlib import Path
 from typing import Optional
@@ -12,9 +12,25 @@ from proton.core.config import ConfigManager
 router = APIRouter(prefix="/v1/security", tags=["Security & Governance"])
 
 
-@router.get("")
+@router.get(
+    "",
+    summary="Get Security Posture & Guardrails",
+)
 async def get_security_posture():
-    """Get active security configuration, approval policy, and sandboxing rules."""
+    """
+    Get active approval policy, workspace isolation boundary, and command blacklist.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/security"
+    response = requests.get(url)
+    print("Security Posture:", response.json())
+    ```
+    """
     config_mgr = ConfigManager()
     cfg = config_mgr.config.security
     workspace = Path.cwd().resolve()
@@ -29,9 +45,38 @@ async def get_security_posture():
     }
 
 
-@router.post("/test", response_model=SecurityVerificationResponse)
+@router.post(
+    "/test",
+    summary="Run Automated Defense Verification Battery",
+    response_model=SecurityVerificationResponse,
+)
 async def run_security_tests(workspace: Optional[str] = None):
-    """Run automated defense verification battery against 8 threat vectors."""
+    """
+    Run automated defensive verification battery across 8 threat vectors:
+    - Path Traversal & Escapes
+    - Workspace Containment
+    - Command Injection & Chaining
+    - Dangerous Shell Blacklist
+    - Secret Token Redaction
+    - Malicious Tool Argument Grader
+    - Prompt Injection Heuristics
+    - Unauthorized Network Boundaries
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/security/test"
+    response = requests.post(url)
+    data = response.json()
+    print(f"Score: {data['security_score']} / 100 - {data['verdict']}")
+    for check in data["checks"]:
+        status = "PASS ✓" if check["passed"] else "FAIL ✗"
+        print(f"- [{status}] {check['name']}: {check['risk_mitigated']}")
+    ```
+    """
     ws = Path(workspace).resolve() if workspace else Path.cwd()
     tester = SecurityTester(ws)
     rep = tester.run_all_tests()
@@ -58,9 +103,25 @@ async def run_security_tests(workspace: Optional[str] = None):
     )
 
 
-@router.get("/audit")
+@router.get(
+    "/audit",
+    summary="Workspace Static Security Audit",
+)
 async def run_security_audit(workspace: Optional[str] = None):
-    """Scan workspace for exposed API keys, dangerous code patterns, and CVEs."""
+    """
+    Scan workspace files for hardcoded secrets, dangerous patterns, and CVEs.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/security/audit"
+    response = requests.get(url)
+    print("Static Audit:", response.json())
+    ```
+    """
     ws = Path(workspace).resolve() if workspace else Path.cwd()
     analyzer = RepoAnalyzer(ws)
     sec = analyzer.audit_security()

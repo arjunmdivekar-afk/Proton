@@ -1,4 +1,4 @@
-"""Categorized Memory API routes."""
+"""Categorized Memory API routes with Python client examples."""
 
 from datetime import datetime
 from typing import List, Optional
@@ -17,9 +17,28 @@ def _format_created_at(dt) -> str:
     return str(dt) if dt else datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
 
-@router.get("", response_model=List[MemoryItemResponse])
+@router.get(
+    "",
+    summary="List Categorized Memories",
+    response_model=List[MemoryItemResponse],
+)
 async def list_memories(memory_type: Optional[str] = None):
-    """List categorized memories, optionally filtered by type."""
+    """
+    List categorized memories stored in SQLite (`~/.proton/knowledge/memory.db`).
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/memory"
+    response = requests.get(url, params={"memory_type": "DECISION"})
+    memories = response.json()
+    for m in memories:
+        print(f"- [{m['type']}] #{m['id']}: {m['content']}")
+    ```
+    """
     t_enum = MemoryType.from_str(memory_type) if memory_type else None
     records = memory_manager.list_all(memory_type=t_enum)
     return [
@@ -34,9 +53,32 @@ async def list_memories(memory_type: Optional[str] = None):
     ]
 
 
-@router.post("", response_model=MemoryItemResponse)
+@router.post(
+    "",
+    summary="Add Categorized Memory",
+    response_model=MemoryItemResponse,
+)
 async def add_memory(req: MemoryAddRequest):
-    """Add a structured memory item (PROJECT, DECISION, PREFERENCE, FACT, TASK, USER, SESSION)."""
+    """
+    Store an explicit memory item categorized under `PROJECT`, `DECISION`, `PREFERENCE`, `FACT`, `TASK`, `USER`, or `SESSION`.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/memory"
+    payload = {
+        "content": "Prefer single-file implementation for standalone components.",
+        "memory_type": "PREFERENCE",
+        "confidence": 1.0
+    }
+
+    response = requests.post(url, json=payload)
+    print("Saved Record:", response.json())
+    ```
+    """
     t_enum = MemoryType.from_str(req.memory_type)
     record = memory_manager.remember(
         content=req.content,
@@ -51,9 +93,33 @@ async def add_memory(req: MemoryAddRequest):
     )
 
 
-@router.post("/search", response_model=List[MemoryItemResponse])
+@router.post(
+    "/search",
+    summary="Search Categorized Memory",
+    response_model=List[MemoryItemResponse],
+)
 async def search_memories(req: MemorySearchRequest):
-    """Search categorized memories by keyword or semantic query."""
+    """
+    Search stored memories by keyword or semantic phrase.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/memory/search"
+    payload = {
+        "query": "standalone components",
+        "memory_type": "PREFERENCE",
+        "limit": 5
+    }
+
+    response = requests.post(url, json=payload)
+    for m in response.json():
+        print(f"Match: {m['content']}")
+    ```
+    """
     t_enum = MemoryType.from_str(req.memory_type) if req.memory_type else None
     records = memory_manager.recall(query=req.query, memory_type=t_enum)
     return [
@@ -68,18 +134,48 @@ async def search_memories(req: MemorySearchRequest):
     ]
 
 
-@router.delete("/{memory_id}")
+@router.delete(
+    "/{memory_id}",
+    summary="Delete Memory Record",
+)
 async def delete_memory(memory_id: int):
-    """Delete a memory item by ID."""
+    """
+    Delete a specific memory record by ID.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    response = requests.delete(f"http://127.0.0.1:8787/v1/memory/1")
+    print("Deleted:", response.json())
+    ```
+    """
     success = memory_manager.forget(memory_id)
     if not success:
         raise HTTPException(status_code=404, detail=f"Memory item {memory_id} not found.")
     return {"status": "deleted", "id": memory_id}
 
 
-@router.delete("")
+@router.delete(
+    "",
+    summary="Clear Memories",
+)
 async def clear_memories(memory_type: Optional[str] = None):
-    """Clear memories (by category or all)."""
+    """
+    Clear all memories or memories within a category.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    response = requests.delete("http://127.0.0.1:8787/v1/memory", params={"memory_type": "SESSION"})
+    print("Cleared:", response.json())
+    ```
+    """
     t_enum = MemoryType.from_str(memory_type) if memory_type else None
     count = memory_manager.clear(memory_type=t_enum)
     return {"status": "cleared", "deleted_count": count}

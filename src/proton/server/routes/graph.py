@@ -1,4 +1,4 @@
-"""Project Knowledge Graph & GraphRAG API routes."""
+"""Project Knowledge Graph & GraphRAG API routes with Python client examples."""
 
 from pathlib import Path
 from typing import List, Optional
@@ -10,9 +10,35 @@ from proton.graph.engine import ProjectGraphEngine
 router = APIRouter(prefix="/v1/graph", tags=["Project Knowledge Graph"])
 
 
-@router.get("/impact", response_model=GraphImpactResponse)
+@router.get(
+    "/impact",
+    summary="Calculate Change Impact & Blast Radius",
+    response_model=GraphImpactResponse,
+)
 async def get_impact(symbol: str, workspace: Optional[str] = None):
-    """Analyze Change Impact & Blast Radius ("What will break if I change this function?")."""
+    """
+    Perform Change Impact Analysis ("What will break if I change this function or class?").
+
+    Traverses AST static call and inheritance chains to discover direct callers, indirect callers,
+    importing modules, and affected unit test suites.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/graph/impact"
+    params = {"symbol": "validate_path"}
+
+    response = requests.get(url, params=params)
+    data = response.json()
+    print(f"Target: {data['symbol']}")
+    print(f"Blast Radius Score: {data['total_blast_radius']}")
+    print("Direct Callers:", data["direct_callers"])
+    print("Tests Affected:", data["tests_affected"])
+    ```
+    """
     ws = Path(workspace).resolve() if workspace else Path.cwd()
     engine = ProjectGraphEngine(ws)
     report = engine.impact_analysis(symbol)
@@ -29,9 +55,25 @@ async def get_impact(symbol: str, workspace: Optional[str] = None):
     )
 
 
-@router.get("/callers")
+@router.get(
+    "/callers",
+    summary="Discover Symbol Callers",
+)
 async def get_callers(symbol: str, workspace: Optional[str] = None):
-    """Discover all functions and modules that call a given symbol."""
+    """
+    Find all functions and modules that call a given symbol.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/graph/callers"
+    response = requests.get(url, params={"symbol": "validate_path"})
+    print("Callers:", response.json())
+    ```
+    """
     ws = Path(workspace).resolve() if workspace else Path.cwd()
     engine = ProjectGraphEngine(ws)
     nodes = engine.get_incoming_calls(symbol)
@@ -42,9 +84,25 @@ async def get_callers(symbol: str, workspace: Optional[str] = None):
     }
 
 
-@router.get("/tests")
+@router.get(
+    "/tests",
+    summary="Discover Tests Covering Symbol",
+)
 async def get_tests(symbol: str, workspace: Optional[str] = None):
-    """Discover all automated unit tests covering a given symbol."""
+    """
+    Discover all automated test functions that execute or test a given symbol.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/graph/tests"
+    response = requests.get(url, params={"symbol": "validate_path"})
+    print("Covering Tests:", response.json()["tests"])
+    ```
+    """
     ws = Path(workspace).resolve() if workspace else Path.cwd()
     engine = ProjectGraphEngine(ws)
     tests = engine.get_tests_for_symbol(symbol)
@@ -55,9 +113,28 @@ async def get_tests(symbol: str, workspace: Optional[str] = None):
     }
 
 
-@router.get("/stats", response_model=GraphStatsResponse)
+@router.get(
+    "/stats",
+    summary="Graph Node & Edge Statistics",
+    response_model=GraphStatsResponse,
+)
 async def get_stats(workspace: Optional[str] = None):
-    """Get node, edge, and density statistics for project knowledge graph."""
+    """
+    Retrieve AST graph density, total nodes, relationships, functions, classes, and test counts.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/graph/stats"
+    response = requests.get(url)
+    stats = response.json()
+    print(f"Total Nodes: {stats['total_nodes']}, Edges: {stats['total_edges']}")
+    print(f"Functions: {stats['functions']}, Classes: {stats['classes']}")
+    ```
+    """
     ws = Path(workspace).resolve() if workspace else Path.cwd()
     engine = ProjectGraphEngine(ws)
     stats = engine.get_stats()
@@ -71,9 +148,25 @@ async def get_stats(workspace: Optional[str] = None):
     )
 
 
-@router.post("/build")
+@router.post(
+    "/build",
+    summary="Rebuild Knowledge Graph",
+)
 async def build_graph(workspace: Optional[str] = None):
-    """Rebuild AST structural graph for current workspace."""
+    """
+    Scan codebase files and rebuild AST structural knowledge graph in SQLite.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/graph/build"
+    response = requests.post(url)
+    print("Rebuilt Graph:", response.json())
+    ```
+    """
     ws = Path(workspace).resolve() if workspace else Path.cwd()
     engine = ProjectGraphEngine(ws)
     stats = engine.build_graph()

@@ -1,4 +1,4 @@
-"""RAG & Knowledge Base API routes."""
+"""RAG & Knowledge Base API routes with Python client examples."""
 
 from pathlib import Path
 from typing import List
@@ -12,9 +12,35 @@ from proton.rag.pipeline import RAGPipeline
 router = APIRouter(prefix="/v1/rag", tags=["Knowledge & RAG"])
 
 
-@router.post("/search", response_model=RagSearchResponse)
+@router.post(
+    "/search",
+    summary="Hybrid Vector & BM25 Search",
+    response_model=RagSearchResponse,
+)
 async def search_rag(req: RagSearchRequest):
-    """Search knowledge base with hybrid BM25 and cosine distance matching."""
+    """
+    Search SQLite vector store using combined BM25 keyword matching and cosine embedding distance.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/rag/search"
+    payload = {
+        "query": "hybrid vector BM25 similarity scoring",
+        "top_k": 3,
+        "min_similarity": 0.25
+    }
+
+    response = requests.post(url, json=payload)
+    results = response.json()
+    print(f"Total Matches: {results['total']}")
+    for r in results["results"]:
+        print(f"- [{r['score']:.2f}] {r['citation']}")
+    ```
+    """
     db_path = get_proton_home() / "rag_index.db"
     store = SQLiteHybridVectorStore(db_path)
     results = store.search(query=req.query, top_k=req.top_k, min_similarity=req.min_similarity)
@@ -38,9 +64,25 @@ async def search_rag(req: RagSearchRequest):
     )
 
 
-@router.post("/index")
+@router.post(
+    "/index",
+    summary="Index Workspace Codebase",
+)
 async def index_workspace(workspace: str = None):
-    """Index codebase files into local SQLite vector store."""
+    """
+    Scan workspace files, create parent-child chunks, and compute vector embeddings in SQLite.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/rag/index"
+    response = requests.post(url)
+    print("Indexing Complete:", response.json())
+    ```
+    """
     ws = Path(workspace).resolve() if workspace else Path.cwd()
     pipeline = RAGPipeline(ws)
     stats = await pipeline.index_directory()
@@ -52,9 +94,25 @@ async def index_workspace(workspace: str = None):
     }
 
 
-@router.get("/status")
+@router.get(
+    "/status",
+    summary="Get RAG Knowledge Store Status",
+)
 async def get_rag_status():
-    """Get total indexed documents and database statistics."""
+    """
+    Get indexed chunk counts and SQLite vector database path.
+
+    ---
+
+    ### 🐍 Python Example:
+    ```python
+    import requests
+
+    url = "http://127.0.0.1:8787/v1/rag/status"
+    response = requests.get(url)
+    print("RAG Status:", response.json())
+    ```
+    """
     db_path = get_proton_home() / "rag_index.db"
     store = SQLiteHybridVectorStore(db_path)
     count = store.count()
