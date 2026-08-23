@@ -6,7 +6,7 @@ import time
 from typing import List, Tuple, Optional
 import httpx
 
-from proton.connection.schema import ConnectionProfile, ConnectionTestResult, ConnectionStatus
+from proton.connection.schema import ConnectionProfile, ConnectionTestResult, ConnectionStatus, ProviderType
 from proton.core.types import ModelInfo, ModelCapabilities
 
 
@@ -39,6 +39,24 @@ async def probe_connection(profile: ConnectionProfile) -> ConnectionTestResult:
         port=profile.port,
         base_url=profile.base_url,
     )
+
+    # 0. Local in-process engine (Proton Model Hub / Transformers)
+    if profile.provider in (ProviderType.PROTON_HUB, ProviderType.TRANSFORMERS) or profile.protocol == "local":
+        try:
+            from proton.hub.registry import ModelRegistry
+            reg = ModelRegistry()
+            installed = reg.list_installed()
+            models_list = [m.id for m in installed]
+            result.tcp_reachable = True
+            result.http_reachable = True
+            result.models_endpoint_reachable = True
+            result.latency_ms = 0.1
+            result.discovered_models = models_list
+            result.success = True
+            return result
+        except Exception as e:
+            result.error_message = f"Failed to inspect Proton Model Hub registry: {str(e)}"
+            return result
 
     # 1. TCP Check
     tcp_ok, tcp_err = await test_tcp_connectivity(profile.host, profile.port, timeout=profile.timeout_seconds / 2)

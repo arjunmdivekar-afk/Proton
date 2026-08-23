@@ -22,7 +22,7 @@ class ProviderRegistry:
             return cls._instances[cache_key]
 
         provider: ModelProvider
-        if profile.provider == ProviderType.TRANSFORMERS:
+        if profile.provider in (ProviderType.PROTON_HUB, ProviderType.TRANSFORMERS):
             from proton.core.config import ConfigManager
             cfg = ConfigManager()
             provider = TransformersProvider(

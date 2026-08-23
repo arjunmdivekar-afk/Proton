@@ -9,6 +9,7 @@ from proton.core.types import ModelInfo
 
 
 class ProviderType(str, Enum):
+    PROTON_HUB = "proton-hub"
     TRANSFORMERS = "transformers"
     LMSTUDIO = "lmstudio"
     OLLAMA = "ollama"
@@ -44,7 +45,9 @@ class ConnectionProfile(BaseModel):
 
     @property
     def base_url(self) -> str:
-        """Construct full base URL, e.g. http://192.168.1.50:1234/v1"""
+        """Construct full base URL, e.g. http://192.168.1.50:1234/v1 or local://in-process"""
+        if self.protocol == "local" or self.provider in (ProviderType.PROTON_HUB, ProviderType.TRANSFORMERS):
+            return "local://in-process (Transformers Engine)"
         # Normalize base_path
         path = self.base_path.strip("/")
         base = f"{self.protocol}://{self.host}:{self.port}"
