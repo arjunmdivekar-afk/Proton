@@ -82,7 +82,7 @@ class Router {
       panel.classList.remove('active');
     });
 
-    const targetPanel = document.getElementById(`view-${baseTab}`);
+    const targetPanel = document.getElementById(`view-${baseTab}`) || document.getElementById('view-chat');
     if (targetPanel) {
       targetPanel.classList.add('active');
     }

@@ -21,7 +21,7 @@ import { initSecurityView } from './views/security.js';
 import { initSettingsView } from './views/settings.js';
 import { initDiagnosticsView } from './views/diagnostics.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+function bootstrap() {
   loadPersistedState();
 
   // Initialize Router mapping
@@ -43,21 +43,21 @@ document.addEventListener('DOMContentLoaded', () => {
   router.addRoute('/settings', (params) => {});
 
   // Initialize feature views
-  initChatView();
-  initAgentView();
-  initTerminalView();
-  initWorkspaceView();
-  initDeveloperView();
-  initModelsView();
-  initGraphView();
-  initTasksView();
-  initMemoryView();
-  initSecurityView();
-  initSettingsView();
-  initDiagnosticsView();
+  try { initChatView(); } catch (e) { console.error("Error initializing Chat:", e); }
+  try { initAgentView(); } catch (e) { console.error("Error initializing Agent:", e); }
+  try { initTerminalView(); } catch (e) { console.error("Error initializing Terminal:", e); }
+  try { initWorkspaceView(); } catch (e) { console.error("Error initializing Workspace:", e); }
+  try { initDeveloperView(); } catch (e) { console.error("Error initializing Developer:", e); }
+  try { initModelsView(); } catch (e) { console.error("Error initializing Models:", e); }
+  try { initGraphView(); } catch (e) { console.error("Error initializing Graph:", e); }
+  try { initTasksView(); } catch (e) { console.error("Error initializing Tasks:", e); }
+  try { initMemoryView(); } catch (e) { console.error("Error initializing Memory:", e); }
+  try { initSecurityView(); } catch (e) { console.error("Error initializing Security:", e); }
+  try { initSettingsView(); } catch (e) { console.error("Error initializing Settings:", e); }
+  try { initDiagnosticsView(); } catch (e) { console.error("Error initializing Diagnostics:", e); }
 
   // Initialize Command Palette (Ctrl + K)
-  initCommandPalette();
+  try { initCommandPalette(); } catch (e) { console.error("Error initializing Palette:", e); }
 
   // Setup Navigation Clicks
   document.querySelectorAll('.nav-item').forEach(el => {
@@ -93,8 +93,8 @@ document.addEventListener('DOMContentLoaded', () => {
       if (data.system) {
         const cpuEl = document.getElementById('header-cpu-val');
         const ramEl = document.getElementById('header-ram-val');
-        if (cpuEl) cpuEl.innerText = `${data.system.cpu_percent || 14}%`;
-        if (ramEl) ramEl.innerText = `${data.system.ram_percent || 48}%`;
+        if (cpuEl) cpuEl.innerText = `${data.system.cpu_percent || 12}%`;
+        if (ramEl) ramEl.innerText = `${data.system.ram_percent || 45}%`;
       }
     } catch (e) {}
   }
@@ -104,7 +104,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Resolve initial route
   router.resolve();
-});
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootstrap);
+} else {
+  bootstrap();
+}
 
 function showToast(message, type = 'info') {
   const container = document.getElementById('toast-container');
@@ -113,7 +119,7 @@ function showToast(message, type = 'info') {
   const toast = document.createElement('div');
   toast.className = `toast toast-${type}`;
   toast.innerHTML = `
-    <span>${type === 'success' ? '✓' : (type === 'error' ? '✗' : 'ℹ')}</span>
+    <span>${type === 'success' ? '✓' : (type === 'error' ? '✕' : 'ℹ')}</span>
     <span>${message}</span>
   `;
   container.appendChild(toast);
