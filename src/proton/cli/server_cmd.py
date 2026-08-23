@@ -35,7 +35,7 @@ def launch_server(
         None,
         "--host",
         "-h",
-        help="Bind host address (e.g. 0.0.0.0, 127.0.0.1, or 'lan'/'wifi' to host on connected WiFi)",
+        help="Bind host address (e.g. 0.0.0.0, 192.168.16.120:3856, or 'lan'/'wifi' to host on connected WiFi)",
     ),
     port: int = typer.Option(8787, "--port", "-p", help="Bind port number"),
     lan: bool = typer.Option(
@@ -53,17 +53,38 @@ def launch_server(
 
     wifi_ip = get_wifi_lan_ip()
 
+    # Intelligent host & port parser (handles "192.168.16.120:3856", "http://...", ":3856", etc.)
+    if host:
+        host = host.strip()
+        if host.startswith("http://"):
+            host = host[7:]
+        elif host.startswith("https://"):
+            host = host[8:]
+        host = host.rstrip("/")
+
+        if ":" in host:
+            parts = host.split(":", 1)
+            host_str = parts[0].strip()
+            port_str = parts[1].strip()
+            if port_str.isdigit():
+                port = int(port_str)
+            host = host_str if host_str else "0.0.0.0"
+
     # Determine bind host and display addresses
-    if lan or (host and host.lower() in ("0.0.0.0", "lan", "wifi", "auto", "all")):
+    if lan or not host or host.lower() in ("0.0.0.0", "lan", "wifi", "auto", "all"):
         bind_host = "0.0.0.0"
         is_lan_hosted = True
-    elif host:
+    elif host == wifi_ip:
+        # Binding to 0.0.0.0 safely covers the specific WiFi IP across all OS network adapters
+        bind_host = "0.0.0.0"
+        is_lan_hosted = True
+    elif host in ("127.0.0.1", "localhost"):
+        bind_host = "127.0.0.1"
+        is_lan_hosted = False
+    else:
+        # Other custom IP or hostname
         bind_host = host
         is_lan_hosted = (bind_host == "0.0.0.0")
-    else:
-        # Default to 0.0.0.0 to enable both localhost and WiFi access out of the box
-        bind_host = "0.0.0.0"
-        is_lan_hosted = True
 
     local_url = f"http://127.0.0.1:{port}"
     network_url = f"http://{wifi_ip}:{port}"
