@@ -46,7 +46,6 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 
 ## 📑 Table of Contents
 - [🎥 Introduction Video](#-introduction-to-proton)
-- [🎥 Introduction Video](#-introduction-to-proton)
 - [✨ Key Features](#-key-features)
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 60-Second Quick Start](#-60-second-quick-start)
@@ -66,6 +65,7 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
   - [13. Host Diagnostics & Resource Telemetry (`proton doctor --sys`)](#13-host-diagnostics--resource-telemetry-proton-doctor---sys)
   - [14. Local Knowledge Base & Hybrid RAG (`proton rag`)](#14-local-knowledge-base--hybrid-rag-proton-rag)
   - [15. Multi-Provider Connection Management (`proton connection`)](#15-multi-provider-connection-management-proton-connection)
+  - [16. Autonomous Voice Mode (`proton --voice` / `proton voice`)](#16-autonomous-voice-mode-proton---voice--proton-voice)
 - [🧠 Recommended Models & Hardware Matrix](#-recommended-models--hardware-matrix)
   - [1. Small Models (1B to 10B Parameters)](#1-small-models-1b-to-10b-parameters--fast-local-execution)
   - [2. Medium Models (10B to 100B Parameters)](#2-medium-models-10b-to-100b-parameters--coding--deep-reasoning)
@@ -78,6 +78,8 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 - [📜 License](#-license)
 
 ---
+
+## ✨ Key Features
 
 - **🎙️ Autonomous Voice Mode (`proton --voice` / `proton voice`)**: Real-time hands-free voice interface featuring **100% local Whisper speech-to-text (`faster-whisper`)**, sentence-by-sentence streaming text-to-speech (TTS), configurable wake word detection (`"Hey Proton"`), instant voice commands (`"stop"`, `"switch model to <name>"`, `"status"`, `"clear history"`), and an animated Rich terminal audio waveform HUD.
 - **🌐 Proton Server & REST/SSE API (`proton server`)**: Transforms Proton Core into an asynchronous intelligence engine exposed over high-performance REST and Server-Sent Events (`http://127.0.0.1:8787`). Seamlessly connects web apps, browser frontends, IDE extensions, and external orchestrators to Proton's autonomous agent, GraphRAG, memory, tasks, and sandbox execution layers.
@@ -153,6 +155,9 @@ proton --test
 # 9. Launch terminal browser or live stock market tracker
 proton browser "fastapi tutorial"
 proton stock
+
+# 10. Launch hands-free real-time Voice Mode (Local Whisper STT & Streaming TTS)
+proton --voice
 ```
 
 ---
