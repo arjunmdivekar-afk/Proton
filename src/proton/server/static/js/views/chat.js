@@ -189,9 +189,6 @@ export function initChatView() {
       }
     );
   }
-      }
-    );
-  }
 
   if (sendBtn) sendBtn.addEventListener('click', handleSend);
   if (textarea) {
