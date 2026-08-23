@@ -47,6 +47,7 @@ https://github.com/user-attachments/assets/ad1aaa4e-ec61-4247-8d73-e94580b5b250
 ## 📑 Table of Contents
 - [🎥 Introduction Video](#-introduction-to-proton)
 - [✨ Key Features](#-key-features)
+- [🎙️ Autonomous Voice Mode (`proton --voice`)](#16-autonomous-voice-mode-proton---voice--proton-voice)
 - [📦 Quick Installation](#-quick-installation)
 - [🚀 60-Second Quick Start](#-60-second-quick-start)
 - [💻 Deep CLI Subsystem Reference](#-deep-cli-subsystem-reference)
