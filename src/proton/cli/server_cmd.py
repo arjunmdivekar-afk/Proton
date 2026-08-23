@@ -1,7 +1,10 @@
 """CLI command to launch Proton Server & REST API (`proton server`)."""
 
+import copy
 import socket
 import uvicorn
+from uvicorn.config import LOGGING_CONFIG
+from uvicorn.logging import DefaultFormatter
 import typer
 from typing import Optional
 from rich.console import Console
@@ -12,6 +15,39 @@ from proton.core.config import ConfigManager
 from proton.connection.manager import ConnectionManager
 
 console = Console(safe_box=True)
+
+
+class ProtonUvicornFormatter(DefaultFormatter):
+    """Custom uvicorn log formatter that formats 0.0.0.0 to the active WiFi / LAN IP."""
+
+    def __init__(
+        self,
+        fmt: Optional[str] = None,
+        datefmt: Optional[str] = None,
+        style: str = "%",
+        use_colors: Optional[bool] = None,
+        display_ip: str = "127.0.0.1",
+    ):
+        super().__init__(fmt=fmt, datefmt=datefmt, style=style, use_colors=use_colors)
+        self.display_ip = display_ip
+
+    def format(self, record):
+        formatted = super().format(record)
+        if "http://0.0.0.0:" in formatted:
+            formatted = formatted.replace("http://0.0.0.0:", f"http://{self.display_ip}:")
+        return formatted
+
+
+def get_custom_log_config(display_ip: str) -> dict:
+    """Build uvicorn logging configuration with the display IP."""
+    log_config = copy.deepcopy(LOGGING_CONFIG)
+    log_config["formatters"]["default"] = {
+        "()": ProtonUvicornFormatter,
+        "fmt": "%(levelprefix)s %(message)s",
+        "use_colors": None,
+        "display_ip": display_ip,
+    }
+    return log_config
 
 
 def get_wifi_lan_ip() -> str:
@@ -74,17 +110,19 @@ def launch_server(
     if lan or not host or host.lower() in ("0.0.0.0", "lan", "wifi", "auto", "all"):
         bind_host = "0.0.0.0"
         is_lan_hosted = True
+        display_ip = wifi_ip if wifi_ip != "127.0.0.1" else "127.0.0.1"
     elif host == wifi_ip:
-        # Binding to 0.0.0.0 safely covers the specific WiFi IP across all OS network adapters
         bind_host = "0.0.0.0"
         is_lan_hosted = True
+        display_ip = wifi_ip
     elif host in ("127.0.0.1", "localhost"):
         bind_host = "127.0.0.1"
         is_lan_hosted = False
+        display_ip = "127.0.0.1"
     else:
-        # Other custom IP or hostname
         bind_host = host
         is_lan_hosted = (bind_host == "0.0.0.0")
+        display_ip = wifi_ip if bind_host == "0.0.0.0" else bind_host
 
     local_url = f"http://127.0.0.1:{port}"
     network_url = f"http://{wifi_ip}:{port}"
@@ -145,10 +183,12 @@ def launch_server(
     console.print(table)
     console.print("\n[dim]Press [bold]Ctrl+C[/bold] to stop the server.[/dim]\n")
 
+    log_config = get_custom_log_config(display_ip)
+
     uvicorn.run(
         "proton.server.app:app",
         host=bind_host,
         port=port,
         reload=reload,
-        log_level="info",
+        log_config=log_config,
     )
