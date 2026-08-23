@@ -57,13 +57,69 @@ class TransformersProvider(ModelProvider):
         # Unload previous model to prevent VRAM leaks
         self.unload_model()
 
-        # Tokenizer setup
-        self._tokenizer = AutoTokenizer.from_pretrained(
-            model_path,
-            trust_remote_code=self.trust_remote_code,
-        )
+        # Detect if model directory contains GGUF files
+        gguf_file = None
+        p = Path(model_path)
+        if p.is_dir():
+            gguf_files = list(p.glob("*.gguf"))
+            if gguf_files:
+                gguf_file = gguf_files[0].name
+        elif p.is_file() and p.suffix.lower() == ".gguf":
+            gguf_file = p.name
+            model_path = str(p.parent)
+
+        # Robust Tokenizer Setup
+        self._tokenizer = None
+        if gguf_file:
+            try:
+                self._tokenizer = AutoTokenizer.from_pretrained(
+                    model_path,
+                    gguf_file=gguf_file,
+                    trust_remote_code=self.trust_remote_code,
+                )
+            except Exception:
+                pass
+
+        if self._tokenizer is None:
+            try:
+                self._tokenizer = AutoTokenizer.from_pretrained(
+                    model_path,
+                    trust_remote_code=self.trust_remote_code,
+                )
+            except Exception:
+                pass
+
+        if self._tokenizer is None:
+            # Fallback candidates for popular quantized GGUF architectures
+            cand = model_id.lower()
+            candidates = []
+            if "llama-3.2-1b" in cand:
+                candidates.append("unsloth/Llama-3.2-1B-Instruct")
+            elif "llama-3.2-3b" in cand:
+                candidates.append("unsloth/Llama-3.2-3B-Instruct")
+            elif "llama-3" in cand or "llama3" in cand:
+                candidates.append("unsloth/llama-3-8b-Instruct")
+            elif "qwen" in cand:
+                candidates.append("Qwen/Qwen2.5-Coder-1.5B-Instruct")
+
+            for tc in candidates:
+                try:
+                    self._tokenizer = AutoTokenizer.from_pretrained(
+                        tc,
+                        trust_remote_code=self.trust_remote_code,
+                    )
+                    break
+                except Exception:
+                    continue
+
+        if self._tokenizer is None:
+            self._tokenizer = AutoTokenizer.from_pretrained(
+                model_id,
+                trust_remote_code=self.trust_remote_code,
+            )
+
         if self._tokenizer.pad_token_id is None:
-            self._tokenizer.pad_token_id = self._tokenizer.eos_token_id
+            self._tokenizer.pad_token_id = self._tokenizer.eos_token_id or 0
 
         # Determine precision and device based on Proton device mode: "cpu" | "gpu" | "partial" | "auto"
         config_mgr = ConfigManager()
@@ -74,11 +130,9 @@ class TransformersProvider(ModelProvider):
         has_mps = hw.has_mps
 
         if mode == "cpu":
-            # Strict CPU + System RAM execution (Zero GPU allocation)
             dtype = torch.float32
             device_map = {"": "cpu"}
         elif mode == "gpu":
-            # Strict GPU execution
             if has_cuda:
                 dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
                 device_map = {"": "cuda:0"}
@@ -89,24 +143,30 @@ class TransformersProvider(ModelProvider):
                 dtype = torch.float32
                 device_map = {"": "cpu"}
         elif mode == "partial":
-            # Partial: Mixture / auto-split of GPU and CPU RAM
             dtype = torch.bfloat16 if has_cuda and torch.cuda.is_bf16_supported() else (
                 torch.float16 if has_cuda or has_mps else torch.float32
             )
             device_map = "auto" if (has_cuda or has_mps) else None
         else:
-            # Default auto
             dtype = torch.bfloat16 if has_cuda and torch.cuda.is_bf16_supported() else (
                 torch.float16 if has_cuda else torch.float32
             )
             device_map = "auto" if has_cuda else None
 
+        model_kwargs = {
+            "trust_remote_code": self.trust_remote_code,
+            "low_cpu_mem_usage": True,
+        }
+        if gguf_file:
+            model_kwargs["gguf_file"] = gguf_file
+        if dtype is not None and not gguf_file:
+            model_kwargs["torch_dtype"] = dtype
+        if device_map is not None:
+            model_kwargs["device_map"] = device_map
+
         self._model = AutoModelForCausalLM.from_pretrained(
             model_path,
-            torch_dtype=dtype,
-            device_map=device_map,
-            trust_remote_code=self.trust_remote_code,
-            low_cpu_mem_usage=True,
+            **model_kwargs,
         )
 
         if device_map is None:
