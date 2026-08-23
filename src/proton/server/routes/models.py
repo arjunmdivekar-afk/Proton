@@ -75,29 +75,32 @@ async def list_models():
 )
 async def search_hub_models(q: str = "", page: int = 1):
     """Search Proton Model Hub and Hugging Face catalog."""
+    from proton.hub.client import HuggingFaceHubClient
     from proton.hub.registry import ModelRegistry
-    from proton.hub.models import POPULAR_MODELS
 
     reg = ModelRegistry()
     installed = {m.id: m for m in reg.list_installed()}
 
-    query = q.lower().strip()
-    matching = []
-
-    for m in POPULAR_MODELS:
-        if not query or query in m.id.lower() or query in m.name.lower() or query in (m.description or "").lower():
-            matching.append({
+    client = HuggingFaceHubClient()
+    try:
+        results, has_next, total = client.search_models(query=q if q.strip() else None, page=page, page_size=20)
+        models = [
+            {
                 "id": m.id,
                 "name": m.name,
-                "size_gb": m.size_gb,
-                "size_display": f"{m.size_gb:.1f} GB",
+                "size_gb": m.estimated_size_gb,
+                "size_display": f"{m.estimated_size_gb:.1f} GB" if m.estimated_size_gb else "Auto",
                 "parameters": m.parameters_display,
-                "description": m.description,
+                "downloads_display": f"{m.downloads:,}" if m.downloads else "10k+",
+                "description": f"{m.architecture} | {m.license}",
                 "license": m.license,
                 "is_installed": m.id in installed,
-            })
-
-    return {"models": matching, "total": len(matching), "page": page}
+            }
+            for m in results
+        ]
+        return {"models": models, "total": total, "has_next": has_next, "page": page}
+    except Exception as e:
+        return {"models": [], "total": 0, "has_next": False, "page": page, "error": str(e)}
 
 
 @router.get(

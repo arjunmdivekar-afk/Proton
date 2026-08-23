@@ -45,6 +45,64 @@ async def get_security_posture():
     }
 
 
+@router.get(
+    "/policy",
+    summary="Get Security Policy Mode",
+)
+async def get_policy():
+    """Get active security approval mode and sandbox status."""
+    config_mgr = ConfigManager()
+    cfg = config_mgr.config.security
+    return {
+        "strict_approval": cfg.approval_policy.value == "strict",
+        "sandbox_mode": cfg.sandbox_workspace_only,
+    }
+
+
+@router.post(
+    "/policy",
+    summary="Update Security Policy Mode",
+)
+async def update_policy(payload: dict):
+    """Update active security approval mode and sandbox settings."""
+    config_mgr = ConfigManager()
+    from proton.core.types import ApprovalPolicy
+    if "strict_approval" in payload:
+        config_mgr.config.security.approval_policy = ApprovalPolicy.STRICT if payload["strict_approval"] else ApprovalPolicy.AUTO_APPROVED
+    if "sandbox_mode" in payload:
+        config_mgr.config.security.sandbox_workspace_only = bool(payload["sandbox_mode"])
+    config_mgr.save()
+    return {"success": True}
+
+
+@router.get(
+    "/audit",
+    summary="Get Security Audit Logs",
+)
+async def get_audit_logs():
+    """Get security audit events recorded from tools and terminal."""
+    from proton.security.audit import AuditLogger
+    import sqlite3
+    logger = AuditLogger()
+    logs = []
+    try:
+        with sqlite3.connect(str(logger.db_path)) as conn:
+            conn.row_factory = sqlite3.Row
+            rows = conn.execute("SELECT * FROM audit_logs ORDER BY id DESC LIMIT 50").fetchall()
+            for r in rows:
+                logs.append({
+                    "id": r["id"],
+                    "timestamp": r["timestamp"],
+                    "action_type": r["event_type"],
+                    "tool_name": r["tool_name"],
+                    "allowed": r["decision"] == "allowed",
+                    "target": r["details_json"],
+                })
+    except Exception:
+        pass
+    return {"audit_logs": logs}
+
+
 @router.post(
     "/test",
     summary="Run Automated Defense Verification Battery",
